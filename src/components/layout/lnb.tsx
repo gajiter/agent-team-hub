@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { ProjectSelector } from '@/components/layout/project-selector'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 interface NavItemDef {
   href: string
@@ -141,8 +142,12 @@ export function LNB() {
         ))}
       </div>
 
-      {/* Project Status Chip */}
-      <div className="mt-auto p-4">
+      {/* Bottom: Theme Toggle + Project Status */}
+      <div className="mt-auto p-4 space-y-2">
+        <div className="flex items-center justify-between px-3 py-1">
+          <span className="text-xs text-muted-foreground">Theme</span>
+          <ThemeToggle />
+        </div>
         <div className="flex items-center gap-2 px-3 py-2.5 bg-card border border-border rounded-lg text-sm text-muted-foreground">
           <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
           Project Active

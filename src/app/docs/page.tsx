@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect, useMemo, Suspense } from 'react'
+import { useState, useEffect, useMemo, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Topbar } from '@/components/layout/topbar'
 import { Badge } from '@/components/ui/badge'
 import { useProject } from '@/hooks/use-project'
 import DocList from '@/components/docs/doc-list'
 import DocViewer from '@/components/docs/doc-viewer'
+import DocToc from '@/components/docs/doc-toc'
 import type { DocMeta, Category } from '@/components/docs/doc-list'
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -26,6 +27,7 @@ function DocsPageContent() {
   const [loading, setLoading] = useState(true)
   const [docContent, setDocContent] = useState<string | null>(null)
   const [docLoading, setDocLoading] = useState(false)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   const selectedPath = searchParams.get('path')
 
@@ -108,14 +110,33 @@ function DocsPageContent() {
           loading={loading}
           onSelect={handleSelect}
         />
-        <div className="flex-1 flex flex-col overflow-hidden bg-card">
-          <DocViewer
-            selectedDoc={selectedDoc}
-            docContent={docContent}
-            docLoading={docLoading}
-            categories={categories}
-            onSelectRef={handleSelect}
-          />
+
+        {/* Document viewer + TOC */}
+        <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 flex flex-col overflow-hidden bg-card">
+            <DocViewer
+              selectedDoc={selectedDoc}
+              selectedPath={selectedPath}
+              docContent={docContent}
+              docLoading={docLoading}
+              categories={categories}
+              onSelectRef={handleSelect}
+              onNavigate={(path) => router.push(path)}
+              scrollRef={scrollAreaRef}
+            />
+          </div>
+
+          {/* TOC: 문서가 선택되고 로딩이 완료되면 표시 */}
+          {selectedPath ? (
+            docContent && !docLoading ? (
+              <DocToc
+                content={docContent}
+                scrollContainerRef={scrollAreaRef}
+              />
+            ) : (
+              <div className="w-[200px] min-w-[200px] border-l border-border" />
+            )
+          ) : null}
         </div>
       </div>
     </>
