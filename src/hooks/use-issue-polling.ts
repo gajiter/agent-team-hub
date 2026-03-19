@@ -63,10 +63,11 @@ export function useIssuePolling(options: UseIssuePollingOptions): UseIssuePollin
   /** Lightweight polling: compare fingerprint, full fetch only on change */
   const poll = useCallback(async () => {
     if (!projectId) return
+    const ppid = projectId
     try {
       if (isBrowserMode()) {
-        const summaries = await issueService.getSummaries(projectId)
-        const locksList = await issueService.getLocks(projectId)
+        const summaries = await issueService.getSummaries(ppid)
+        const locksList = await issueService.getLocks(ppid)
         setConnected(true)
 
         const lockMap = new Map<string, IssueLockStatus>()
@@ -119,6 +120,7 @@ export function useIssuePolling(options: UseIssuePollingOptions): UseIssuePollin
 
     let cancelled = false
 
+    const pid = projectId // narrow to string for closure
     async function init() {
       setLoading(true)
       fingerprintRef.current = ''
@@ -132,16 +134,16 @@ export function useIssuePolling(options: UseIssuePollingOptions): UseIssuePollin
 
         // Set initial fingerprint
         if (isBrowserMode()) {
-          const summaries = await issueService.getSummaries(projectId)
+          const summaries = await issueService.getSummaries(pid)
           if (!cancelled) {
             fingerprintRef.current = issueService.computeFingerprint(summaries)
-            const locksList = await issueService.getLocks(projectId)
+            const locksList = await issueService.getLocks(pid)
             const lockMap = new Map<string, IssueLockStatus>()
             for (const lock of locksList) lockMap.set(lock.issueId, lock)
             setLocks(lockMap)
           }
         } else {
-          const res = await fetch(`/api/issues/poll?projectId=${projectId}`)
+          const res = await fetch(`/api/issues/poll?projectId=${pid}`)
           if (res.ok && !cancelled) {
             const data: PollResponse = await res.json()
             fingerprintRef.current = data.fingerprint
@@ -172,6 +174,7 @@ export function useIssuePolling(options: UseIssuePollingOptions): UseIssuePollin
   /** Manual refresh */
   const refresh = useCallback(async () => {
     if (!projectId) return
+    const rpid = projectId
     setLoading(true)
     try {
       const sorted = await fetchFullIssues()
@@ -181,14 +184,14 @@ export function useIssuePolling(options: UseIssuePollingOptions): UseIssuePollin
 
       // Refresh fingerprint too
       if (isBrowserMode()) {
-        const summaries = await issueService.getSummaries(projectId)
+        const summaries = await issueService.getSummaries(rpid)
         fingerprintRef.current = issueService.computeFingerprint(summaries)
-        const locksList = await issueService.getLocks(projectId)
+        const locksList = await issueService.getLocks(rpid)
         const lockMap = new Map<string, IssueLockStatus>()
         for (const lock of locksList) lockMap.set(lock.issueId, lock)
         setLocks(lockMap)
       } else {
-        const res = await fetch(`/api/issues/poll?projectId=${projectId}`)
+        const res = await fetch(`/api/issues/poll?projectId=${rpid}`)
         if (res.ok) {
           const data: PollResponse = await res.json()
           fingerprintRef.current = data.fingerprint
