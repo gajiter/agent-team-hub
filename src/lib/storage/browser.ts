@@ -147,6 +147,34 @@ export class BrowserStorageProvider implements StorageProvider {
     return entries
   }
 
+  async createDirectory(projectPath: string, relativePath: string): Promise<void> {
+    const root = await this.getRootHandle(projectPath)
+    const segments = this.splitPath(relativePath)
+    let current = root
+    for (const segment of segments) {
+      current = await current.getDirectoryHandle(segment, { create: true })
+    }
+  }
+
+  async listSubDirectories(projectPath: string, relativePath: string): Promise<string[]> {
+    const root = await this.getRootHandle(projectPath)
+    const segments = this.splitPath(relativePath)
+    let dir: FileSystemDirectoryHandle
+    try {
+      dir = await this.navigateToParent(root, segments)
+    } catch {
+      return []
+    }
+
+    const subDirs: string[] = []
+    for await (const [name, handle] of (dir as any).entries()) {
+      if (handle.kind === 'directory') {
+        subDirs.push(name)
+      }
+    }
+    return subDirs
+  }
+
   async exists(projectPath: string, relativePath: string): Promise<boolean> {
     try {
       const root = await this.getRootHandle(projectPath)
@@ -169,4 +197,11 @@ export class BrowserStorageProvider implements StorageProvider {
       return false
     }
   }
+}
+
+// Singleton for browser mode
+let _instance: BrowserStorageProvider | null = null
+export function getBrowserStorage(): BrowserStorageProvider {
+  if (!_instance) _instance = new BrowserStorageProvider()
+  return _instance
 }
