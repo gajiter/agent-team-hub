@@ -1,9 +1,20 @@
 <!-- agent-team-hub:start -->
-## 이슈 관리 시스템
-이슈 관리 시스템은 에이전트의 주요 태스크 관리 도구입니다.
-- 모든 업무는 이슈로 추적: 기존 이슈 할당 작업은 물론, 사람의 채팅 지시나 자발적 업무도 이슈를 먼저 생성한 뒤 진행
-- 이슈 기반 작업 시 상태 전환 필수 (open → in-progress → resolved)
-- `.claude/rules/hub-workflow.md` 규칙을 반드시 준수할 것
+## 이슈 관리 시스템 (필수)
+
+**어떤 업무든 코드를 작성하거나 파일을 수정하기 전에, 반드시 이슈를 먼저 생성하라.**
+
+이것은 선택이 아니라 필수 규칙이다. 사람의 채팅 지시, 자발적 업무 발견, 다른 에이전트 요청 — 모두 이슈 생성이 선행되어야 한다.
+
+### 이슈 생성 절차
+1. `issues/_index.json` 읽기 → `nextId` 확인
+2. `issues/ISS-{nextId를 3자리 패딩}.json` 생성 (스키마: `.claude/skills/hub/SKILL.md`)
+3. `_index.json`의 `nextId`를 +1 증가시켜 저장
+4. 이슈 status를 `in-progress`로 변경 후 작업 시작
+
+### 상태 전환
+- 작업 시작: status → `in-progress`
+- 작업 완료: status → `resolved` + comments에 작업 내역 기록
+- 상세 규칙: `.claude/rules/hub-workflow.md`
 
 ## 구조화 데이터 관리
 기획 산출물(PRD, 기능 명세, 역할/권한, 유저 플로우)은 `data/` 디렉토리에 JSON으로 관리합니다.
