@@ -27,7 +27,7 @@ export default function AgentsPage() {
     try {
       const res = await fetch(`/api/agents?projectId=${projectId}`)
       const data = await res.json()
-      setAgents(Array.isArray(data) ? data : [])
+      setAgents(Array.isArray(data.agents) ? data.agents : [])
     } catch {
       setAgents([])
     } finally {
@@ -55,10 +55,11 @@ export default function AgentsPage() {
     const method = editingAgent ? 'PUT' : 'POST'
     const body = {
       ...data,
-      ...(editingAgent ? { originalName: editingAgent.name } : {}),
+      projectId,
+      ...(editingAgent ? { fileName: editingAgent.fileName } : {}),
     }
 
-    await fetch(`/api/agents?projectId=${projectId}`, {
+    await fetch('/api/agents', {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

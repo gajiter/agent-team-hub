@@ -23,7 +23,8 @@ function fetchAgents(projectId: string): Promise<AgentInfo[]> {
   fetchPromise = fetch(`/api/agents?projectId=${projectId}`)
     .then((r) => r.json())
     .then((data: unknown) => {
-      const agents = Array.isArray(data) ? (data as AgentInfo[]) : []
+      const parsed = data as { agents?: unknown }
+      const agents = Array.isArray(parsed.agents) ? (parsed.agents as AgentInfo[]) : []
       cachedAgents = agents
       fetchPromise = null
       return agents

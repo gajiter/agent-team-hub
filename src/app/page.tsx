@@ -56,10 +56,10 @@ export default function DashboardPage() {
       setProjectInitialized(null)
       return
     }
-    fetch(`/api/projects/${projectId}`)
+    fetch(`/api/files?projectId=${projectId}&path=${encodeURIComponent('.hub/config.json')}`)
       .then((r) => r.json())
       .then((data) => {
-        setProjectInitialized(data.config?.initialized ?? false)
+        setProjectInitialized(data.exists ?? false)
       })
       .catch(() => setProjectInitialized(false))
   }, [projectId])
@@ -152,7 +152,11 @@ export default function DashboardPage() {
     if (!projectId) return
     setInitializing(true)
     try {
-      const res = await fetch(`/api/projects/${projectId}/init`, { method: 'POST' })
+      const res = await fetch('/api/init', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId }),
+      })
       if (res.ok) {
         setProjectInitialized(true)
       }

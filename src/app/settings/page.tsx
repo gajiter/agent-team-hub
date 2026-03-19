@@ -102,7 +102,11 @@ export default function SettingsPage() {
   }
 
   const handleRemoveProject = async (project: Project) => {
-    await fetch(`/api/projects?id=${project.id}`, { method: 'DELETE' })
+    await fetch('/api/projects', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: project.id }),
+    })
     await refreshProjects()
   }
 

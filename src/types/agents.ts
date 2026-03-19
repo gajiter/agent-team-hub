@@ -5,6 +5,7 @@ export interface AgentInfo {
   color: string
   emoji: string
   role: string
+  responsibilities?: string[]
   content: string  // Full markdown content
   fileName: string // Original file name
 }
