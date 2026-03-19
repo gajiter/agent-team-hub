@@ -26,7 +26,10 @@ export default function UserFlowPage() {
       .then(({ content, exists }) => {
         setDataExists(exists)
         if (exists) {
-          try { setFlow(JSON.parse(content)) } catch { /* fallback */ }
+          try {
+            const parsed = JSON.parse(content)
+            setFlow({ ...FALLBACK_FLOW, ...parsed, sections: parsed.sections ?? [] })
+          } catch { /* fallback */ }
         }
       })
       .catch(() => {})

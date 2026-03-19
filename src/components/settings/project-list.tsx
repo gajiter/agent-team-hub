@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { Project } from '@/types/project'
@@ -8,7 +9,7 @@ interface ProjectListProps {
   projects: Project[]
   currentProjectId: string | null
   onOpen: (project: Project) => void
-  onInitialize: (project: Project) => void
+  onInitialize: (project: Project) => Promise<boolean>
   onRemove: (project: Project) => void
 }
 
@@ -19,6 +20,35 @@ export default function ProjectList({
   onInitialize,
   onRemove,
 }: ProjectListProps) {
+  const [initStatus, setInitStatus] = useState<Record<string, boolean | null>>({})
+  const [initLoading, setInitLoading] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    projects.forEach(async (project) => {
+      try {
+        const res = await fetch(`/api/init?projectId=${encodeURIComponent(project.id)}`)
+        if (res.ok) {
+          const data = await res.json()
+          setInitStatus((prev) => ({ ...prev, [project.id]: data.initialized }))
+        }
+      } catch {
+        // ignore
+      }
+    })
+  }, [projects])
+
+  const handleInitialize = async (project: Project) => {
+    setInitLoading((prev) => ({ ...prev, [project.id]: true }))
+    try {
+      const success = await onInitialize(project)
+      if (success) {
+        setInitStatus((prev) => ({ ...prev, [project.id]: true }))
+      }
+    } finally {
+      setInitLoading((prev) => ({ ...prev, [project.id]: false }))
+    }
+  }
+
   if (projects.length === 0) {
     return (
       <div className="text-sm text-muted-foreground text-center py-8">
@@ -41,6 +71,8 @@ export default function ProjectList({
         <tbody>
           {projects.map(project => {
             const isCurrent = project.id === currentProjectId
+            const initialized = initStatus[project.id]
+            const loading = initLoading[project.id]
             return (
               <tr key={project.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
                 <td className="py-3 px-4">
@@ -55,7 +87,13 @@ export default function ProjectList({
                   <span className="text-xs font-mono text-muted-foreground">{project.path}</span>
                 </td>
                 <td className="py-3 px-4">
-                  <Badge variant="outline" className="text-xs">등록됨</Badge>
+                  {initialized === null || initialized === undefined ? (
+                    <Badge variant="outline" className="text-xs">확인 중...</Badge>
+                  ) : initialized ? (
+                    <Badge variant="default" className="text-xs bg-emerald-600">초기화됨</Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-xs">미초기화</Badge>
+                  )}
                 </td>
                 <td className="py-3 px-4 text-right">
                   <div className="flex items-center justify-end gap-2">
@@ -64,8 +102,13 @@ export default function ProjectList({
                         열기
                       </Button>
                     )}
-                    <Button size="sm" variant="outline" onClick={() => onInitialize(project)}>
-                      초기화
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleInitialize(project)}
+                      disabled={loading}
+                    >
+                      {loading ? '초기화 중...' : initialized ? '재초기화' : '초기화'}
                     </Button>
                     <Button size="sm" variant="destructive" onClick={() => onRemove(project)}>
                       삭제

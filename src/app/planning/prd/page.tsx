@@ -92,7 +92,24 @@ export default function PrdPage() {
       .then(({ content, exists }) => {
         setDataExists(exists)
         if (exists) {
-          try { setPrd(JSON.parse(content)) } catch { /* fallback */ }
+          try {
+            const parsed = JSON.parse(content)
+            const sections = parsed.sections ?? {}
+            setPrd({
+              ...FALLBACK_PRD,
+              ...parsed,
+              sections: {
+                ...FALLBACK_SECTIONS,
+                ...sections,
+                vision: { ...FALLBACK_SECTIONS.vision, ...sections.vision },
+                target: { ...FALLBACK_SECTIONS.target, ...sections.target },
+                nonFunctionalRequirements: { ...FALLBACK_SECTIONS.nonFunctionalRequirements, ...sections.nonFunctionalRequirements },
+                mvpScope: { ...FALLBACK_SECTIONS.mvpScope, ...sections.mvpScope },
+                kpi: { ...FALLBACK_SECTIONS.kpi, ...sections.kpi },
+                properties: { ...FALLBACK_SECTIONS.properties, ...sections.properties },
+              },
+            })
+          } catch { /* fallback */ }
         }
       })
       .catch(() => {})

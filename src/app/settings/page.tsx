@@ -76,14 +76,25 @@ export default function SettingsPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: data.name, path: data.path }),
     })
+
+    if (!res.ok) {
+      alert('프로젝트 추가에 실패했습니다.')
+      return
+    }
+
     const result = await res.json()
 
     if (data.initialize && result.project) {
-      await fetch('/api/init', {
+      const initRes = await fetch('/api/init', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ projectId: result.project.id }),
       })
+
+      if (!initRes.ok) {
+        const err = await initRes.json().catch(() => ({}))
+        alert(`프로젝트는 추가되었으나 초기화에 실패했습니다: ${err.error || '알 수 없는 오류'}`)
+      }
     }
 
     await refreshProjects()
@@ -93,12 +104,25 @@ export default function SettingsPage() {
     setCurrentProject(project)
   }
 
-  const handleInitializeProject = async (project: Project) => {
-    await fetch('/api/init', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ projectId: project.id }),
-    })
+  const handleInitializeProject = async (project: Project): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/init', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: project.id }),
+      })
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        alert(`초기화 실패: ${err.error || '알 수 없는 오류'}`)
+        return false
+      }
+
+      return true
+    } catch {
+      alert('초기화 중 오류가 발생했습니다.')
+      return false
+    }
   }
 
   const handleRemoveProject = async (project: Project) => {

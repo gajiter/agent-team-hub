@@ -44,9 +44,9 @@ function FeaturesPageContent() {
         setDataExists(exists)
         if (exists) {
           try {
-            const data: FeaturesData = JSON.parse(content)
-            setFeatures(data.features)
-            setRequirements(data.requirements)
+            const data = JSON.parse(content)
+            setFeatures(data.features ?? [])
+            setRequirements(data.requirements ?? [])
             setRelations(data.relations ?? [])
           } catch { /* keep fallback */ }
         }

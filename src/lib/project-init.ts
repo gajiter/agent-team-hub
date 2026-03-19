@@ -57,10 +57,43 @@ export async function initializeProject(projectPath: string): Promise<string[]> 
 
   // 7. Create empty data files if not exist
   const dataFiles: Record<string, object> = {
-    'data/prd.json': { title: '', description: '', goals: [], constraints: [] },
-    'data/features.json': { features: [] },
-    'data/roles.json': { roles: [] },
-    'data/userflow.json': { flows: [] }
+    'data/prd.json': {
+      version: '2.0',
+      project: '',
+      updatedAt: '',
+      progress: 0,
+      sections: {
+        vision: { oneLiner: '', goals: [], background: [] },
+        coreValues: [],
+        target: { userTypes: [], personas: [], scenarios: [] },
+        userStories: [],
+        nonFunctionalRequirements: { performance: [], security: [], deployment: [], dataManagement: [] },
+        mvpScope: { included: [], excluded: [] },
+        roadmap: [],
+        kpi: { operationalStability: [], usability: [], business: [] },
+        constraints: [],
+        openIssues: [],
+        properties: { serviceName: '', version: '', status: '', basedOn: '' },
+      },
+    },
+    'data/features.json': {
+      version: '1.0',
+      project: '',
+      requirements: [],
+      features: [],
+      relations: [],
+    },
+    'data/roles.json': {
+      version: '1.0',
+      project: '',
+      roles: [],
+      permissions: [],
+    },
+    'data/userflow.json': {
+      version: '1.0',
+      project: '',
+      sections: [],
+    },
   }
 
   for (const [filePath, defaultContent] of Object.entries(dataFiles)) {
@@ -71,6 +104,10 @@ export async function initializeProject(projectPath: string): Promise<string[]> 
   }
 
   return created
+}
+
+export async function checkInitialized(projectPath: string): Promise<boolean> {
+  return storage.exists(projectPath, '.hub/config.json')
 }
 
 export async function insertClaudeMdSection(projectPath: string): Promise<void> {

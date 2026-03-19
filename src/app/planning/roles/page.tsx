@@ -163,7 +163,15 @@ export default function RolesPage() {
       .then(({ content, exists }) => {
         setDataExists(exists)
         if (exists) {
-          try { setData(JSON.parse(content)) } catch { /* fallback */ }
+          try {
+            const parsed = JSON.parse(content)
+            setData({
+              ...FALLBACK,
+              ...parsed,
+              roles: parsed.roles ?? [],
+              permissions: parsed.permissions ?? [],
+            })
+          } catch { /* fallback */ }
         }
       })
       .catch(() => {})
