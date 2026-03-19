@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { initService } from '@/lib/services/init-service'
 import type { Project } from '@/types/project'
 
 interface ProjectListProps {
@@ -26,11 +27,8 @@ export default function ProjectList({
   useEffect(() => {
     projects.forEach(async (project) => {
       try {
-        const res = await fetch(`/api/init?projectId=${encodeURIComponent(project.id)}`)
-        if (res.ok) {
-          const data = await res.json()
-          setInitStatus((prev) => ({ ...prev, [project.id]: data.initialized }))
-        }
+        const initialized = await initService.checkInit(project.id)
+        setInitStatus((prev) => ({ ...prev, [project.id]: initialized }))
       } catch {
         // ignore
       }

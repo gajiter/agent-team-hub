@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useProject } from '@/hooks/use-project'
+import { fileService } from '@/lib/services/file-service'
 import type { PrdData, PrdSections } from '@/types/prd'
 
 const FALLBACK_SECTIONS: PrdSections = {
@@ -87,8 +88,7 @@ export default function PrdPage() {
 
   useEffect(() => {
     if (!projectId) return
-    fetch(`/api/files?projectId=${projectId}&path=data/prd.json`)
-      .then(r => r.json())
+    fileService.readFile(projectId, 'data/prd.json')
       .then(({ content, exists }) => {
         setDataExists(exists)
         if (exists) {

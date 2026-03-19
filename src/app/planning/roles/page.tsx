@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { useProject } from '@/hooks/use-project'
+import { fileService } from '@/lib/services/file-service'
 import type { RolesData, Role, Permission } from '@/types/roles'
 import type { FeaturesData, Requirement } from '@/types/features'
 
@@ -158,8 +159,7 @@ export default function RolesPage() {
   useEffect(() => {
     if (!projectId) return
 
-    fetch(`/api/files?projectId=${projectId}&path=data/roles.json`)
-      .then(r => r.json())
+    fileService.readFile(projectId, 'data/roles.json')
       .then(({ content, exists }) => {
         setDataExists(exists)
         if (exists) {
@@ -176,8 +176,7 @@ export default function RolesPage() {
       })
       .catch(() => {})
 
-    fetch(`/api/files?projectId=${projectId}&path=data/features.json`)
-      .then(r => r.json())
+    fileService.readFile(projectId, 'data/features.json')
       .then(({ content, exists }) => {
         if (exists) {
           try { setFeaturesData(JSON.parse(content)) } catch { /* ignore */ }

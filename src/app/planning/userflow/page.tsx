@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Topbar } from '@/components/layout/topbar'
 import FlowDiagram from '@/components/ui/flow-diagram'
 import { useProject } from '@/hooks/use-project'
+import { fileService } from '@/lib/services/file-service'
 import type { UserFlowData } from '@/types/userflow'
 
 const FALLBACK_FLOW: UserFlowData = {
@@ -21,8 +22,7 @@ export default function UserFlowPage() {
 
   useEffect(() => {
     if (!projectId) return
-    fetch(`/api/files?projectId=${projectId}&path=data/userflow.json`)
-      .then(r => r.json())
+    fileService.readFile(projectId, 'data/userflow.json')
       .then(({ content, exists }) => {
         setDataExists(exists)
         if (exists) {

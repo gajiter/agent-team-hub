@@ -11,18 +11,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
-
-interface DirectoryEntry {
-  name: string
-  path: string
-}
-
-interface DirectoryInfo {
-  current: string
-  parent: string
-  directories: DirectoryEntry[]
-  isProject: boolean
-}
+import { directoryService, isBrowserMode } from '@/lib/services/directory-service'
+import type { BrowseResult } from '@/lib/services/directory-service'
 
 interface FolderBrowserDialogProps {
   open: boolean
@@ -37,9 +27,88 @@ export default function FolderBrowserDialog({
   onSelect,
   initialPath,
 }: FolderBrowserDialogProps) {
+  const browserMode = isBrowserMode()
+
+  // Browser mode: simple picker UI
+  if (browserMode) {
+    return (
+      <BrowserModePicker
+        open={open}
+        onOpenChange={onOpenChange}
+        onSelect={onSelect}
+      />
+    )
+  }
+
+  // Server mode: directory tree browsing
+  return (
+    <ServerModeBrowser
+      open={open}
+      onOpenChange={onOpenChange}
+      onSelect={onSelect}
+      initialPath={initialPath}
+    />
+  )
+}
+
+function BrowserModePicker({
+  open,
+  onOpenChange,
+  onSelect,
+}: Omit<FolderBrowserDialogProps, 'initialPath'>) {
+  const [picking, setPicking] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handlePick = async () => {
+    setPicking(true)
+    setError(null)
+    try {
+      const result = await directoryService.pickDirectory()
+      onSelect(result.path)
+      onOpenChange(false)
+    } catch {
+      setError('폴더 선택이 취소되었거나 지원되지 않습니다')
+    } finally {
+      setPicking(false)
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle>폴더 선택</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col items-center gap-4 py-6">
+          <p className="text-sm text-muted-foreground text-center">
+            프로젝트 폴더를 선택하세요. 브라우저에서 폴더 접근 권한을 요청합니다.
+          </p>
+          <Button onClick={handlePick} disabled={picking}>
+            {picking ? '선택 중...' : '폴더 선택'}
+          </Button>
+          {error && (
+            <p className="text-xs text-destructive">{error}</p>
+          )}
+        </div>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            취소
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function ServerModeBrowser({
+  open,
+  onOpenChange,
+  onSelect,
+  initialPath,
+}: FolderBrowserDialogProps) {
   const [currentPath, setCurrentPath] = useState(initialPath || '')
   const [pathInput, setPathInput] = useState('')
-  const [dirInfo, setDirInfo] = useState<DirectoryInfo | null>(null)
+  const [dirInfo, setDirInfo] = useState<BrowseResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -47,10 +116,7 @@ export default function FolderBrowserDialog({
     setLoading(true)
     setError(null)
     try {
-      const params = path ? `?path=${encodeURIComponent(path)}` : ''
-      const res = await fetch(`/api/directories${params}`)
-      if (!res.ok) throw new Error('Failed to read directory')
-      const data: DirectoryInfo = await res.json()
+      const data = await directoryService.browse(path)
       setDirInfo(data)
       setCurrentPath(data.current)
       setPathInput(data.current)
@@ -124,10 +190,10 @@ export default function FolderBrowserDialog({
               ) : dirInfo ? (
                 <div className="divide-y divide-border">
                   {/* Parent directory */}
-                  {dirInfo.current !== dirInfo.parent && (
+                  {dirInfo.parent && dirInfo.current !== dirInfo.parent && (
                     <button
                       type="button"
-                      onClick={() => handleNavigate(dirInfo.parent)}
+                      onClick={() => handleNavigate(dirInfo.parent!)}
                       className="flex items-center gap-2 w-full px-3 py-2 text-sm text-left hover:bg-accent/50 transition-colors"
                     >
                       <span className="text-muted-foreground">📁</span>

@@ -6,6 +6,7 @@ import { Topbar } from '@/components/layout/topbar'
 import FeatureTreeView from '@/components/planning/feature-tree-view'
 import FeatureDirectoryView from '@/components/planning/feature-directory-view'
 import { useProject } from '@/hooks/use-project'
+import { fileService } from '@/lib/services/file-service'
 import type { Feature, Requirement, Relation, FeaturesData } from '@/types/features'
 
 type ViewMode = 'tree' | 'directory'
@@ -38,8 +39,7 @@ function FeaturesPageContent() {
 
   useEffect(() => {
     if (!projectId) return
-    fetch(`/api/files?projectId=${projectId}&path=data/features.json`)
-      .then(r => r.json())
+    fileService.readFile(projectId, 'data/features.json')
       .then(({ content, exists }) => {
         setDataExists(exists)
         if (exists) {
