@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTheme } from 'next-themes'
 import { Topbar } from '@/components/layout/topbar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
@@ -22,8 +23,9 @@ export default function SettingsPage() {
   const { projects, currentProject, setCurrentProject, refreshProjects } = useProject()
   const [addDialogOpen, setAddDialogOpen] = useState(false)
 
+  const { theme, setTheme: setNextTheme } = useTheme()
+
   // Settings state
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [language, setLanguage] = useState('ko')
   const [port, setPort] = useState(3000)
   const [settingsLoading, setSettingsLoading] = useState(true)
@@ -33,7 +35,6 @@ export default function SettingsPage() {
     fetch('/api/settings')
       .then(r => r.json())
       .then(data => {
-        if (data.theme) setTheme(data.theme)
         if (data.language) setLanguage(data.language)
         if (data.port) setPort(data.port)
       })
@@ -54,9 +55,8 @@ export default function SettingsPage() {
     }
   }, [])
 
-  const handleThemeChange = (newTheme: 'dark' | 'light') => {
-    setTheme(newTheme)
-    document.documentElement.className = newTheme
+  const handleThemeChange = (newTheme: string) => {
+    setNextTheme(newTheme)
     saveSettings({ theme: newTheme })
   }
 
@@ -174,15 +174,16 @@ export default function SettingsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="text-sm font-medium text-foreground">테마</div>
-                      <div className="text-xs text-muted-foreground">다크/라이트 모드 전환</div>
+                      <div className="text-xs text-muted-foreground">다크/라이트/시스템 모드 전환</div>
                     </div>
-                    <Select value={theme} onValueChange={(v) => handleThemeChange(v as 'dark' | 'light')}>
+                    <Select value={theme} onValueChange={handleThemeChange}>
                       <SelectTrigger className="w-32">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="dark">다크</SelectItem>
                         <SelectItem value="light">라이트</SelectItem>
+                        <SelectItem value="dark">다크</SelectItem>
+                        <SelectItem value="system">시스템</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

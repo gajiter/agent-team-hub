@@ -134,7 +134,7 @@ function DocsPageContent() {
                 scrollContainerRef={scrollAreaRef}
               />
             ) : (
-              <div className="w-[200px] min-w-[200px] border-l border-border" />
+              <div className="w-[260px] min-w-[260px] border-l border-border" />
             )
           ) : null}
         </div>

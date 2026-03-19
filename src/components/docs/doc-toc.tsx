@@ -116,7 +116,7 @@ export default function DocToc({ content, scrollContainerRef }: DocTocProps) {
   if (headings.length === 0) return null
 
   return (
-    <div className="w-[200px] min-w-[200px] border-l border-border flex flex-col bg-card">
+    <div className="w-[260px] min-w-[260px] border-l border-border flex flex-col bg-card">
       <div className="px-3 py-2.5 border-b border-border">
         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">목차</span>
       </div>
