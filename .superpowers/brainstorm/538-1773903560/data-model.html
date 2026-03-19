@@ -1,0 +1,153 @@
+<h2>Section 2: Project Directory Structure & Data Models</h2>
+<p class="subtitle">How agent-team-hub organizes files in each project</p>
+
+<div class="section">
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">Project Directory Structure</div>
+      <div class="mockup-body" style="font-family: monospace; font-size: 13px; line-height: 1.8; padding: 20px;">
+<pre style="margin:0; white-space: pre;">
+my-project/
+├── .hub/                    # Hub config (per-project)
+│   ├── config.json          # Project settings
+│   └── agents/              # Agent definitions
+│       ├── planner.md
+│       ├── backend.md
+│       └── frontend.md
+│
+├── docs/                    # Markdown documents
+│   ├── plans/
+│   │   └── context.md
+│   ├── develop/
+│   │   ├── architecture.md
+│   │   └── backend-spec.md
+│   └── research/
+│       └── tech-research.md
+│
+├── issues/                  # Issue tracking
+│   ├── _index.json          # {nextId, metadata}
+│   ├── ISS-001.json
+│   ├── ISS-002.json
+│   └── archive/
+│       └── ISS-000.json
+│
+├── data/                    # Planning data (JSON)
+│   ├── prd.json
+│   ├── features.json
+│   ├── roles.json
+│   └── userflow.json
+│
+└── .claude/                 # Claude Code config
+    └── skills/
+        └── hub.md           # Hub skill for agents
+</pre>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Global Config (~/.agent-team-hub/)</div>
+      <div class="mockup-body" style="font-family: monospace; font-size: 13px; line-height: 1.8; padding: 20px;">
+<pre style="margin:0; white-space: pre;">
+~/.agent-team-hub/
+├── config.json
+│   {
+│     "projects": [
+│       {
+│         "id": "proj-1",
+│         "name": "My Project",
+│         "path": "/Users/me/my-project",
+│         "createdAt": "2026-03-19"
+│       }
+│     ],
+│     "settings": {
+│       "theme": "dark",
+│       "language": "ko",
+│       "port": 3000
+│     }
+│   }
+│
+└── (future: user preferences,
+     cached data, etc.)
+</pre>
+
+<hr style="border-color: rgba(255,255,255,0.1); margin: 16px 0;">
+
+<strong style="color: #60a5fa;">Issue Schema (ISS-NNN.json)</strong>
+<pre style="margin: 8px 0; white-space: pre; font-size: 12px;">
+{
+  "id": "ISS-001",
+  "title": "string",
+  "description": "string",
+  "status": "open|in-progress|
+             resolved|closed",
+  "priority": "critical|high|
+               medium|low",
+  "type": "task|bug|feature|
+           question|decision",
+  "assignee": "string",
+  "assignees": ["string"],
+  "reporter": "string",
+  "labels": ["string"],
+  "relatedFiles": ["path"],
+  "relatedIds": ["F-001"],
+  "comments": [{
+    "author": "string",
+    "content": "string",
+    "createdAt": "ISO 8601"
+  }],
+  "createdAt": "ISO 8601",
+  "updatedAt": "ISO 8601"
+}
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Document Frontmatter Schema</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="font-family: monospace; font-size: 13px; padding: 16px;">
+<pre style="margin:0; white-space: pre;">
+---
+title: "Document Title"              # Required
+description: "Brief description"     # Optional
+author: "agent-name or human"        # Required
+emoji: "📝"                          # Optional (display icon)
+type: "plan | develop | research"    # Required (maps to menu category)
+references: ["docs/...", "data/..."] # Optional (related files)
+createdAt: "2026-03-19"              # Required
+---
+
+Markdown content here...
+</pre>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Agent Definition Schema (.hub/agents/*.md)</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="font-family: monospace; font-size: 13px; padding: 16px;">
+<pre style="margin:0; white-space: pre;">
+---
+name: "Backend Developer"
+description: "API design and implementation"
+model: "claude-sonnet-4-6"          # AI model used
+color: "#3b82f6"                     # Display color
+emoji: "⚙️"                          # Display icon
+role: "developer"                    # Role category
+---
+
+## Responsibilities
+- Design and implement API endpoints
+- Write database schemas
+...
+
+## Data Ownership
+- docs/develop/backend-spec.md (owner)
+- docs/develop/api-reference.md (owner)
+</pre>
+    </div>
+  </div>
+</div>
