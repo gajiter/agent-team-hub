@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import type { AgentInfo } from '@/types/agents'
+import { agentService } from '@/lib/services/agent-service'
 
 interface UseAgentsResult {
   agents: AgentInfo[]
@@ -20,11 +21,8 @@ function fetchAgents(projectId: string): Promise<AgentInfo[]> {
   // Clear cache for new project
   cachedAgents = null
   cachedProjectId = projectId
-  fetchPromise = fetch(`/api/agents?projectId=${projectId}`)
-    .then((r) => r.json())
-    .then((data: unknown) => {
-      const parsed = data as { agents?: unknown }
-      const agents = Array.isArray(parsed.agents) ? (parsed.agents as AgentInfo[]) : []
+  fetchPromise = agentService.getAll(projectId)
+    .then((agents) => {
       cachedAgents = agents
       fetchPromise = null
       return agents

@@ -1,6 +1,7 @@
 'use client'
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import type { Project } from '@/types/project'
+import { projectService } from '@/lib/services/project-service'
 
 interface ProjectContextValue {
   currentProject: Project | null
@@ -25,9 +26,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
 
   const refreshProjects = useCallback(async () => {
     try {
-      const res = await fetch('/api/projects')
-      const data = await res.json()
-      setProjects(data.projects || [])
+      const projects = await projectService.getProjects()
+      setProjects(projects)
     } catch (err) {
       console.error('Failed to fetch projects:', err)
     }

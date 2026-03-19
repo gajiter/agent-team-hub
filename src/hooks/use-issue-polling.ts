@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { Issue } from '@/types/issues'
 import type { IssueLockStatus } from '@/types/issues'
+import { issueService } from '@/lib/services/issue-service'
+import { isBrowserMode } from '@/lib/services/mode'
 
 interface PollResponse {
   fingerprint: string
@@ -50,9 +52,7 @@ export function useIssuePolling(options: UseIssuePollingOptions): UseIssuePollin
   /** Fetch full issue data */
   const fetchFullIssues = useCallback(async (): Promise<Issue[]> => {
     if (!projectId) return []
-    const res = await fetch(`/api/issues?projectId=${projectId}`)
-    const data: { issues: Issue[] } = await res.json()
-    const issueList = data.issues || []
+    const issueList = await issueService.getAll(projectId)
 
     // Sort by updatedAt descending
     return [...issueList].sort(
@@ -64,36 +64,42 @@ export function useIssuePolling(options: UseIssuePollingOptions): UseIssuePollin
   const poll = useCallback(async () => {
     if (!projectId) return
     try {
-      const res = await fetch(`/api/issues/poll?projectId=${projectId}`)
-      if (!res.ok) {
-        setConnected(false)
-        return
-      }
+      if (isBrowserMode()) {
+        const summaries = await issueService.getSummaries(projectId)
+        const locksList = await issueService.getLocks(projectId)
+        setConnected(true)
 
-      const data: PollResponse = await res.json()
-      setConnected(true)
+        const lockMap = new Map<string, IssueLockStatus>()
+        for (const lock of locksList) lockMap.set(lock.issueId, lock)
+        setLocks(lockMap)
 
-      // Update lock status (every poll)
-      const lockMap = new Map<string, IssueLockStatus>()
-      for (const lock of data.locks) {
-        lockMap.set(lock.issueId, lock)
-      }
-      setLocks(lockMap)
-
-      // Fingerprint change detection
-      if (data.fingerprint !== fingerprintRef.current) {
-        const prevFingerprint = fingerprintRef.current
-        fingerprintRef.current = data.fingerprint
-
-        // Only increment syncCount if not the initial load
-        if (prevFingerprint !== '') {
-          setSyncCount((c) => c + 1)
+        const newFingerprint = issueService.computeFingerprint(summaries)
+        if (newFingerprint !== fingerprintRef.current) {
+          const prev = fingerprintRef.current
+          fingerprintRef.current = newFingerprint
+          if (prev !== '') setSyncCount((c) => c + 1)
+          const sorted = await fetchFullIssues()
+          setIssues(sorted)
+          setLastSyncAt(new Date())
         }
+      } else {
+        const res = await fetch(`/api/issues/poll?projectId=${projectId}`)
+        if (!res.ok) { setConnected(false); return }
+        const data: PollResponse = await res.json()
+        setConnected(true)
 
-        // Fetch full issue data
-        const sorted = await fetchFullIssues()
-        setIssues(sorted)
-        setLastSyncAt(new Date())
+        const lockMap = new Map<string, IssueLockStatus>()
+        for (const lock of data.locks) lockMap.set(lock.issueId, lock)
+        setLocks(lockMap)
+
+        if (data.fingerprint !== fingerprintRef.current) {
+          const prev = fingerprintRef.current
+          fingerprintRef.current = data.fingerprint
+          if (prev !== '') setSyncCount((c) => c + 1)
+          const sorted = await fetchFullIssues()
+          setIssues(sorted)
+          setLastSyncAt(new Date())
+        }
       }
     } catch {
       setConnected(false)
@@ -125,17 +131,24 @@ export function useIssuePolling(options: UseIssuePollingOptions): UseIssuePollin
         }
 
         // Set initial fingerprint
-        const res = await fetch(`/api/issues/poll?projectId=${projectId}`)
-        if (res.ok && !cancelled) {
-          const data: PollResponse = await res.json()
-          fingerprintRef.current = data.fingerprint
-
-          // Initial lock status
-          const lockMap = new Map<string, IssueLockStatus>()
-          for (const lock of data.locks) {
-            lockMap.set(lock.issueId, lock)
+        if (isBrowserMode()) {
+          const summaries = await issueService.getSummaries(projectId)
+          if (!cancelled) {
+            fingerprintRef.current = issueService.computeFingerprint(summaries)
+            const locksList = await issueService.getLocks(projectId)
+            const lockMap = new Map<string, IssueLockStatus>()
+            for (const lock of locksList) lockMap.set(lock.issueId, lock)
+            setLocks(lockMap)
           }
-          setLocks(lockMap)
+        } else {
+          const res = await fetch(`/api/issues/poll?projectId=${projectId}`)
+          if (res.ok && !cancelled) {
+            const data: PollResponse = await res.json()
+            fingerprintRef.current = data.fingerprint
+            const lockMap = new Map<string, IssueLockStatus>()
+            for (const lock of data.locks) lockMap.set(lock.issueId, lock)
+            setLocks(lockMap)
+          }
         }
       } catch {
         if (!cancelled) setConnected(false)
@@ -167,16 +180,22 @@ export function useIssuePolling(options: UseIssuePollingOptions): UseIssuePollin
       setSyncCount((c) => c + 1)
 
       // Refresh fingerprint too
-      const res = await fetch(`/api/issues/poll?projectId=${projectId}`)
-      if (res.ok) {
-        const data: PollResponse = await res.json()
-        fingerprintRef.current = data.fingerprint
-
+      if (isBrowserMode()) {
+        const summaries = await issueService.getSummaries(projectId)
+        fingerprintRef.current = issueService.computeFingerprint(summaries)
+        const locksList = await issueService.getLocks(projectId)
         const lockMap = new Map<string, IssueLockStatus>()
-        for (const lock of data.locks) {
-          lockMap.set(lock.issueId, lock)
-        }
+        for (const lock of locksList) lockMap.set(lock.issueId, lock)
         setLocks(lockMap)
+      } else {
+        const res = await fetch(`/api/issues/poll?projectId=${projectId}`)
+        if (res.ok) {
+          const data: PollResponse = await res.json()
+          fingerprintRef.current = data.fingerprint
+          const lockMap = new Map<string, IssueLockStatus>()
+          for (const lock of data.locks) lockMap.set(lock.issueId, lock)
+          setLocks(lockMap)
+        }
       }
 
       setConnected(true)
