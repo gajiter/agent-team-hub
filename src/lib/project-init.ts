@@ -17,7 +17,7 @@ export async function initializeProject(projectPath: string): Promise<string[]> 
   }
 
   // 2. Create directories (writeFile creates parent dirs automatically)
-  for (const dir of ['docs', 'issues', 'issues/archive', 'data']) {
+  for (const dir of ['docs', 'issues', 'issues/archive']) {
     const dirPath = path.resolve(projectPath, dir)
     await fs.mkdir(dirPath, { recursive: true })
   }
@@ -53,54 +53,6 @@ export async function initializeProject(projectPath: string): Promise<string[]> 
     )
     await storage.writeFile(projectPath, '.claude/skills/hub.md', skillTemplate)
     created.push('.claude/skills/hub.md')
-  }
-
-  // 7. Create empty data files if not exist
-  const dataFiles: Record<string, object> = {
-    'data/prd.json': {
-      version: '2.0',
-      project: '',
-      updatedAt: '',
-      progress: 0,
-      sections: {
-        vision: { oneLiner: '', goals: [], background: [] },
-        coreValues: [],
-        target: { userTypes: [], personas: [], scenarios: [] },
-        userStories: [],
-        nonFunctionalRequirements: { performance: [], security: [], deployment: [], dataManagement: [] },
-        mvpScope: { included: [], excluded: [] },
-        roadmap: [],
-        kpi: { operationalStability: [], usability: [], business: [] },
-        constraints: [],
-        openIssues: [],
-        properties: { serviceName: '', version: '', status: '', basedOn: '' },
-      },
-    },
-    'data/features.json': {
-      version: '1.0',
-      project: '',
-      requirements: [],
-      features: [],
-      relations: [],
-    },
-    'data/roles.json': {
-      version: '1.0',
-      project: '',
-      roles: [],
-      permissions: [],
-    },
-    'data/userflow.json': {
-      version: '1.0',
-      project: '',
-      sections: [],
-    },
-  }
-
-  for (const [filePath, defaultContent] of Object.entries(dataFiles)) {
-    if (!await storage.exists(projectPath, filePath)) {
-      await storage.writeFile(projectPath, filePath, JSON.stringify(defaultContent, null, 2))
-      created.push(filePath)
-    }
   }
 
   return created
