@@ -18,6 +18,9 @@ import { useProject } from '@/hooks/use-project'
 import ProjectList from '@/components/settings/project-list'
 import AddProjectDialog from '@/components/settings/add-project-dialog'
 import type { Project } from '@/types/project'
+import { settingsService } from '@/lib/services/settings-service'
+import { projectService } from '@/lib/services/project-service'
+import { initService } from '@/lib/services/init-service'
 
 export default function SettingsPage() {
   const { projects, currentProject, setCurrentProject, refreshProjects } = useProject()
@@ -32,8 +35,7 @@ export default function SettingsPage() {
 
   // Load settings
   useEffect(() => {
-    fetch('/api/settings')
-      .then(r => r.json())
+    settingsService.getSettings()
       .then(data => {
         if (data.language) setLanguage(data.language)
         if (data.port) setPort(data.port)
@@ -45,11 +47,7 @@ export default function SettingsPage() {
   // Save settings
   const saveSettings = useCallback(async (updates: Record<string, unknown>) => {
     try {
-      await fetch('/api/settings', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      })
+      await settingsService.updateSettings(updates)
     } catch {
       // ignore
     }
@@ -71,33 +69,22 @@ export default function SettingsPage() {
   }
 
   const handleAddProject = async (data: { name: string; path: string; initialize: boolean }) => {
-    const res = await fetch('/api/projects', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: data.name, path: data.path }),
-    })
+    try {
+      const project = await projectService.addProject(data.name, data.path)
 
-    if (!res.ok) {
-      alert('프로젝트 추가에 실패했습니다.')
-      return
-    }
-
-    const result = await res.json()
-
-    if (data.initialize && result.project) {
-      const initRes = await fetch('/api/init', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId: result.project.id }),
-      })
-
-      if (!initRes.ok) {
-        const err = await initRes.json().catch(() => ({}))
-        alert(`프로젝트는 추가되었으나 초기화에 실패했습니다: ${err.error || '알 수 없는 오류'}`)
+      if (data.initialize && project) {
+        try {
+          await initService.init(project.id)
+        } catch (err: unknown) {
+          const message = err instanceof Error ? err.message : '알 수 없는 오류'
+          alert(`프로젝트는 추가되었으나 초기화에 실패했습니다: ${message}`)
+        }
       }
-    }
 
-    await refreshProjects()
+      await refreshProjects()
+    } catch {
+      alert('프로젝트 추가에 실패했습니다.')
+    }
   }
 
   const handleOpenProject = (project: Project) => {
@@ -106,31 +93,17 @@ export default function SettingsPage() {
 
   const handleInitializeProject = async (project: Project): Promise<boolean> => {
     try {
-      const res = await fetch('/api/init', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId: project.id }),
-      })
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        alert(`초기화 실패: ${err.error || '알 수 없는 오류'}`)
-        return false
-      }
-
+      await initService.init(project.id)
       return true
-    } catch {
-      alert('초기화 중 오류가 발생했습니다.')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : '알 수 없는 오류'
+      alert(`초기화 실패: ${message}`)
       return false
     }
   }
 
   const handleRemoveProject = async (project: Project) => {
-    await fetch('/api/projects', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: project.id }),
-    })
+    await projectService.deleteProject(project.id)
     await refreshProjects()
   }
 

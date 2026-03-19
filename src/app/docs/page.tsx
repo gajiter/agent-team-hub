@@ -9,6 +9,8 @@ import DocList from '@/components/docs/doc-list'
 import DocViewer from '@/components/docs/doc-viewer'
 import DocToc from '@/components/docs/doc-toc'
 import type { DocMeta, Category } from '@/components/docs/doc-list'
+import { docService } from '@/lib/services/doc-service'
+import { fileService } from '@/lib/services/file-service'
 
 const CATEGORY_EMOJI: Record<string, string> = {
   plans: '📋',
@@ -40,11 +42,10 @@ function DocsPageContent() {
       return
     }
     setLoading(true)
-    fetch(`/api/docs?projectId=${projectId}`)
-      .then(r => r.json())
+    docService.getAll(projectId)
       .then(data => {
         setDocs(data.docs ?? [])
-        setCategories(data.categories ?? [])
+        setCategories((data.categories ?? []) as unknown as Category[])
       })
       .catch(() => {})
       .finally(() => setLoading(false))
@@ -57,8 +58,7 @@ function DocsPageContent() {
       return
     }
     setDocLoading(true)
-    fetch(`/api/files?projectId=${projectId}&path=${encodeURIComponent(selectedPath)}`)
-      .then(r => r.json())
+    fileService.readFile(projectId, selectedPath)
       .then(({ content, exists }) => {
         if (exists) setDocContent(content)
         else setDocContent(null)

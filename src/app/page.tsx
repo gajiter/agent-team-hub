@@ -11,6 +11,10 @@ import { useProject } from '@/hooks/use-project'
 import { useAgents } from '@/hooks/use-agents'
 import { FolderOpen, Rocket } from 'lucide-react'
 import type { Issue } from '@/types/issues'
+import { fileService } from '@/lib/services/file-service'
+import { docService } from '@/lib/services/doc-service'
+import { issueService } from '@/lib/services/issue-service'
+import { initService } from '@/lib/services/init-service'
 
 interface DataEntry {
   icon: string
@@ -56,8 +60,7 @@ export default function DashboardPage() {
       setProjectInitialized(null)
       return
     }
-    fetch(`/api/files?projectId=${projectId}&path=${encodeURIComponent('.hub/config.json')}`)
-      .then((r) => r.json())
+    fileService.readFile(projectId, '.hub/config.json')
       .then((data) => {
         setProjectInitialized(data.exists ?? false)
       })
@@ -74,9 +77,8 @@ export default function DashboardPage() {
     setDataLoading(true)
     Promise.all(
       DATA_CANDIDATES.map((entry) =>
-        fetch(`/api/files?path=${encodeURIComponent(entry.path)}&projectId=${projectId}`)
-          .then((r) => r.json())
-          .then((data: { exists: boolean }) => ({ ...entry, exists: data.exists }))
+        fileService.readFile(projectId, entry.path)
+          .then((data) => ({ ...entry, exists: data.exists }))
           .catch(() => ({ ...entry, exists: false }))
       )
     ).then((results) => {
@@ -93,8 +95,7 @@ export default function DashboardPage() {
       return
     }
     setDocsLoading(true)
-    fetch(`/api/docs?projectId=${projectId}`)
-      .then((r) => r.json())
+    docService.getAll(projectId)
       .then((data) => {
         setDocs(data.docs ?? [])
         setDocsLoading(false)
@@ -110,10 +111,9 @@ export default function DashboardPage() {
       return
     }
     setIssuesLoading(true)
-    fetch(`/api/issues?projectId=${projectId}`)
-      .then((r) => r.json())
+    issueService.getAll(projectId)
       .then((data) => {
-        setIssues(data.issues ?? [])
+        setIssues(data ?? [])
         setIssuesLoading(false)
       })
       .catch(() => setIssuesLoading(false))
@@ -152,14 +152,8 @@ export default function DashboardPage() {
     if (!projectId) return
     setInitializing(true)
     try {
-      const res = await fetch('/api/init', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId }),
-      })
-      if (res.ok) {
-        setProjectInitialized(true)
-      }
+      await initService.init(projectId)
+      setProjectInitialized(true)
     } catch {
       // ignore
     } finally {

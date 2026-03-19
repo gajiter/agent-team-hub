@@ -7,6 +7,7 @@ import { useProject } from '@/hooks/use-project'
 import AgentList from '@/components/agents/agent-list'
 import AgentForm from '@/components/agents/agent-form'
 import type { AgentInfo } from '@/types/agents'
+import { agentService } from '@/lib/services/agent-service'
 
 export default function AgentsPage() {
   const { currentProject } = useProject()
@@ -25,9 +26,8 @@ export default function AgentsPage() {
     }
     setLoading(true)
     try {
-      const res = await fetch(`/api/agents?projectId=${projectId}`)
-      const data = await res.json()
-      setAgents(Array.isArray(data.agents) ? data.agents : [])
+      const data = await agentService.getAll(projectId)
+      setAgents(Array.isArray(data) ? data : [])
     } catch {
       setAgents([])
     } finally {
@@ -52,18 +52,11 @@ export default function AgentsPage() {
   const handleSave = async (data: Omit<AgentInfo, 'content' | 'fileName'>) => {
     if (!projectId) return
 
-    const method = editingAgent ? 'PUT' : 'POST'
-    const body = {
-      ...data,
-      projectId,
-      ...(editingAgent ? { fileName: editingAgent.fileName } : {}),
+    if (editingAgent) {
+      await agentService.update(projectId, editingAgent.fileName, data)
+    } else {
+      await agentService.create(projectId, data)
     }
-
-    await fetch('/api/agents', {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    })
 
     await fetchAgents()
   }

@@ -12,6 +12,7 @@ import { useIssuePolling } from '@/hooks/use-issue-polling'
 import { useAgents } from '@/hooks/use-agents'
 import { useProject } from '@/hooks/use-project'
 import type { Issue, IssueStatus, IssueType } from '@/types/issues'
+import { issueService } from '@/lib/services/issue-service'
 
 export default function IssuesPage() {
   const { currentProject } = useProject()
@@ -66,10 +67,9 @@ export default function IssuesPage() {
     if (!projectId) return
     setArchiveLoading(true)
     try {
-      const res = await fetch(`/api/issues/archive?projectId=${projectId}`)
-      const data: { issues: Issue[] } = await res.json()
+      const data = await issueService.getArchived(projectId)
       setArchivedIssues(
-        [...(data.issues || [])].sort(
+        [...(data || [])].sort(
           (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
         )
       )
@@ -161,23 +161,21 @@ export default function IssuesPage() {
     if (selectedIds.size === 0 || !projectId) return
     setSelectedDeleting(true)
     try {
-      const endpoint = archiveMode ? '/api/issues/archive' : '/api/issues'
-      const res = await fetch(endpoint, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: Array.from(selectedIds), projectId }),
-      })
-      if (res.ok) {
-        if (selectedId && selectedIds.has(selectedId)) {
-          setSelectedId(null)
-        }
-        setSelectedIds(new Set())
-        setSelectMode(false)
-        if (archiveMode) {
-          await fetchArchived()
-        } else {
-          await refresh()
-        }
+      const ids = Array.from(selectedIds)
+      if (archiveMode) {
+        await issueService.deleteArchived(projectId, ids)
+      } else {
+        await issueService.deleteMany(projectId, ids)
+      }
+      if (selectedId && selectedIds.has(selectedId)) {
+        setSelectedId(null)
+      }
+      setSelectedIds(new Set())
+      setSelectMode(false)
+      if (archiveMode) {
+        await fetchArchived()
+      } else {
+        await refresh()
       }
     } catch {
       /* ignore */
@@ -192,19 +190,13 @@ export default function IssuesPage() {
     if (selectedIds.size === 0 || !projectId) return
     setSelectedArchiving(true)
     try {
-      const res = await fetch('/api/issues/archive', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: Array.from(selectedIds), action: 'archive', projectId }),
-      })
-      if (res.ok) {
-        if (selectedId && selectedIds.has(selectedId)) {
-          setSelectedId(null)
-        }
-        setSelectedIds(new Set())
-        setSelectMode(false)
-        await refresh()
+      await issueService.archive(projectId, Array.from(selectedIds))
+      if (selectedId && selectedIds.has(selectedId)) {
+        setSelectedId(null)
       }
+      setSelectedIds(new Set())
+      setSelectMode(false)
+      await refresh()
     } catch {
       /* ignore */
     } finally {
@@ -217,15 +209,9 @@ export default function IssuesPage() {
   const handleArchive = async (id: string) => {
     if (!projectId) return
     try {
-      const res = await fetch('/api/issues/archive', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: [id], action: 'archive', projectId }),
-      })
-      if (res.ok) {
-        if (selectedId === id) setSelectedId(null)
-        await refresh()
-      }
+      await issueService.archive(projectId, [id])
+      if (selectedId === id) setSelectedId(null)
+      await refresh()
     } catch {
       /* ignore */
     }
@@ -235,16 +221,10 @@ export default function IssuesPage() {
   const handleUnarchive = async (id: string) => {
     if (!projectId) return
     try {
-      const res = await fetch('/api/issues/archive', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: [id], action: 'unarchive', projectId }),
-      })
-      if (res.ok) {
-        if (selectedId === id) setSelectedId(null)
-        await fetchArchived()
-        await refresh()
-      }
+      await issueService.unarchive(projectId, [id])
+      if (selectedId === id) setSelectedId(null)
+      await fetchArchived()
+      await refresh()
     } catch {
       /* ignore */
     }
@@ -261,17 +241,10 @@ export default function IssuesPage() {
   }) => {
     if (!projectId) return
     try {
-      const res = await fetch('/api/issues', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, projectId }),
-      })
-      if (res.ok) {
-        const newIssue: Issue = await res.json()
-        setSelectedId(newIssue.id)
-        if (archiveMode) setArchiveMode(false)
-        await refresh()
-      }
+      const newIssue = await issueService.create(projectId, data as Partial<Issue>)
+      setSelectedId(newIssue.id)
+      if (archiveMode) setArchiveMode(false)
+      await refresh()
     } catch {
       /* ignore */
     }
@@ -284,14 +257,8 @@ export default function IssuesPage() {
     if (lockInfo?.locked) return
 
     try {
-      const res = await fetch('/api/issues', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: selectedId, ...updates, projectId }),
-      })
-      if (res.ok) {
-        await refresh()
-      }
+      await issueService.update(projectId, selectedId, updates)
+      await refresh()
     } catch {
       /* ignore */
     }
@@ -301,19 +268,16 @@ export default function IssuesPage() {
   const handleDelete = async (id: string) => {
     if (!projectId) return
     try {
-      const endpoint = archiveMode ? '/api/issues/archive' : '/api/issues'
-      const res = await fetch(endpoint, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: [id], projectId }),
-      })
-      if (res.ok) {
-        if (selectedId === id) setSelectedId(null)
-        if (archiveMode) {
-          await fetchArchived()
-        } else {
-          await refresh()
-        }
+      if (archiveMode) {
+        await issueService.deleteArchived(projectId, [id])
+      } else {
+        await issueService.deleteMany(projectId, [id])
+      }
+      if (selectedId === id) setSelectedId(null)
+      if (archiveMode) {
+        await fetchArchived()
+      } else {
+        await refresh()
       }
     } catch {
       /* ignore */
@@ -330,17 +294,11 @@ export default function IssuesPage() {
     if (resolvedIssues.length === 0 || !projectId) return
     setBulkArchiving(true)
     try {
-      const res = await fetch('/api/issues/archive', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: resolvedIssues.map((i) => i.id), action: 'archive', projectId }),
-      })
-      if (res.ok) {
-        if (selectedId && resolvedIssues.some((i) => i.id === selectedId)) {
-          setSelectedId(null)
-        }
-        await refresh()
+      await issueService.archive(projectId, resolvedIssues.map((i) => i.id))
+      if (selectedId && resolvedIssues.some((i) => i.id === selectedId)) {
+        setSelectedId(null)
       }
+      await refresh()
     } catch {
       /* ignore */
     } finally {
@@ -354,17 +312,11 @@ export default function IssuesPage() {
     if (resolvedIssues.length === 0 || !projectId) return
     setBulkDeleting(true)
     try {
-      const res = await fetch('/api/issues', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: resolvedIssues.map((i) => i.id), projectId }),
-      })
-      if (res.ok) {
-        if (selectedId && resolvedIssues.some((i) => i.id === selectedId)) {
-          setSelectedId(null)
-        }
-        await refresh()
+      await issueService.deleteMany(projectId, resolvedIssues.map((i) => i.id))
+      if (selectedId && resolvedIssues.some((i) => i.id === selectedId)) {
+        setSelectedId(null)
       }
+      await refresh()
     } catch {
       /* ignore */
     } finally {
