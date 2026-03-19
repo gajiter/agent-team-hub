@@ -1,7 +1,11 @@
 {
-  "name": "ai-hub",
+  "name": "agent-team-hub",
   "version": "0.1.0",
-  "private": true,
+  "description": "File-based project management tool for AI agent team collaboration",
+  "license": "MIT",
+  "bin": {
+    "agent-team-hub": "./scripts/start.js"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
