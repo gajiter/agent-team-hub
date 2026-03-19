@@ -1,43 +1,8 @@
-# Hub 이슈, 문서, 구조화 데이터 관리 스킬
+# Hub 구조화 데이터 JSON 스키마
 
-이 스킬은 프로젝트의 이슈, 문서, 기획 구조화 데이터를 관리하는 방법을 설명합니다.
+이 문서는 Hub에서 사용하는 모든 JSON 스키마의 상세 정의를 포함합니다.
 
-## 디렉토리 구조
-
-```
-<project-root>/
-├── issues/
-│   ├── _index.json          ← 메타데이터 (nextId 카운터)
-│   ├── ISS-001.json         ← 개별 이슈 파일
-│   ├── ISS-002.json
-│   └── archive/             ← 보관된 이슈
-├── docs/
-│   └── *.md                 ← 문서 파일 (frontmatter 포함)
-├── data/                    ← 구조화 데이터 (에이전트가 생성/관리)
-│   ├── prd.json             ← 제품 요구사항 정의
-│   ├── features.json        ← 기능 명세 및 요구사항
-│   ├── roles.json           ← 역할/권한 매트릭스
-│   └── userflow.json        ← 사용자 흐름 정의
-└── .hub/
-    └── config.json          ← 허브 설정
-```
-
-## 이슈 생성
-
-1. `issues/_index.json` 파일을 읽어 `nextId`를 확인합니다.
-2. `ISS-{nextId를 3자리로 패딩}.json` 파일을 `issues/` 디렉토리에 생성합니다.
-3. `_index.json`의 `nextId`를 +1 증가시켜 다시 저장합니다.
-
-### _index.json 스키마
-
-```json
-{
-  "version": "1.0",
-  "nextId": 1
-}
-```
-
-### 이슈 파일 스키마 (ISS-NNN.json)
+## 이슈 파일 스키마 (ISS-NNN.json)
 
 ```json
 {
@@ -63,70 +28,9 @@
 - **priority**: `low` | `medium` | `high` | `critical`
 - **type**: `task` | `bug` | `feature` | `question` | `decision`
 
-## 이슈 수정
-
-1. `issues/ISS-NNN.json` 파일을 읽습니다.
-2. 필요한 필드를 수정합니다 (status, assignee, assignees 등).
-3. `updatedAt`을 현재 ISO 8601 시간으로 갱신합니다.
-4. 파일 전체를 다시 씁니다 (JSON.stringify, indent 2).
-
-> **주의**: id, title, description, reporter, createdAt 등 원본 필드는 변경하지 마세요.
-
-## 코멘트 추가
-
-이슈의 `comments` 배열에 새 코멘트 객체를 **추가(append)**합니다. 기존 코멘트를 수정/삭제하지 않습니다.
-
-### 코멘트 스키마
-
-```json
-{
-  "id": "c-{Date.now()}",
-  "author": "에이전트명",
-  "content": "코멘트 내용 (평문)",
-  "createdAt": "2026-01-01T12:00:00Z"
-}
-```
-
-## 문서 생성
-
-`docs/` 디렉토리에 `.md` 파일을 생성합니다. 반드시 YAML frontmatter를 포함합니다.
-
-### 문서 형식
-
-```markdown
----
-title: "문서 제목"
-description: "문서 설명"
-author: "작성자 에이전트명"
-emoji: "📄"
-type: "guide"
-createdAt: "2026-01-01T00:00:00Z"
 ---
 
-문서 내용을 여기에 작성합니다.
-```
-
-- **type**: `guide` | `spec` | `note` | `reference` | `decision`
-
----
-
-## 구조화 데이터 관리
-
-`data/` 디렉토리에 프로젝트 기획 구조화 데이터를 JSON으로 생성하고 관리합니다.
-Hub 대시보드가 이 파일들을 읽어 시각화합니다.
-
-**파일이 아직 없으면 에이전트가 직접 생성합니다.** `data/` 디렉토리가 없으면 먼저 만드세요.
-
-### 공통 규칙
-
-- 모든 파일은 JSON (indent 2)
-- `version`과 `project` 필드를 반드시 포함
-- 수정 시 전체 파일을 다시 쓰기 (부분 패치 불가)
-- 스키마를 정확히 준수해야 Hub UI가 올바르게 렌더링됩니다
-
----
-
-### data/prd.json — 제품 요구사항 정의 (PRD)
+## data/prd.json — 제품 요구사항 정의 (PRD)
 
 ```json
 {
@@ -201,7 +105,7 @@ Hub 대시보드가 이 파일들을 읽어 시각화합니다.
 
 ---
 
-### data/features.json — 기능 명세
+## data/features.json — 기능 명세
 
 ```json
 {
@@ -239,7 +143,7 @@ Hub 대시보드가 이 파일들을 읽어 시각화합니다.
 
 ---
 
-### data/roles.json — 역할/권한 매트릭스
+## data/roles.json — 역할/권한 매트릭스
 
 ```json
 {
@@ -271,7 +175,7 @@ Hub 대시보드가 이 파일들을 읽어 시각화합니다.
 
 ---
 
-### data/userflow.json — 사용자 흐름
+## data/userflow.json — 사용자 흐름
 
 ```json
 {
@@ -298,17 +202,3 @@ Hub 대시보드가 이 파일들을 읽어 시각화합니다.
 
 > 노드 type: `start`(시작점), `section`(섹션 그룹), `page`(화면), `action`(사용자 행동).
 > `featureIds`로 features.json의 기능과 연결할 수 있습니다 (선택).
-
----
-
-### 구조화 데이터 생성 가이드
-
-기획 문서(PRD, 기능 명세 등)를 작성하라는 요청을 받으면:
-
-1. `data/` 디렉토리가 없으면 생성
-2. 위 스키마에 맞춰 JSON 파일을 작성
-3. 프로젝트명, 버전, 날짜 등 메타데이터를 채움
-4. ID 체계를 일관되게 유지 (US-01, F-01, REQ-01, NFR-P01 등)
-5. 파일 간 참조를 정확히 연결 (userStories ↔ features ↔ requirements)
-
-구조화 데이터를 수정할 때도 전체 파일을 다시 써야 합니다. 부분 패치는 지원하지 않습니다.

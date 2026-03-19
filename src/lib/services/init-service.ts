@@ -5,6 +5,7 @@ import {
   CLAUDE_MD_SECTION,
   HUB_WORKFLOW_TEMPLATE,
   HUB_SKILL_TEMPLATE,
+  HUB_SKILL_SCHEMAS_TEMPLATE,
 } from '@/lib/templates-bundled'
 
 const START_MARKER = '<!-- agent-team-hub:start -->'
@@ -102,18 +103,32 @@ export const initService = {
         created.push('.claude/rules/hub-workflow.md')
       }
 
-      // 6. .claude/skills/hub.md
+      // 6. .claude/skills/hub/SKILL.md (Claude Code skill spec: subdirectory + SKILL.md)
       const skillExists = await storage.exists(
         projectPath,
-        '.claude/skills/hub.md'
+        '.claude/skills/hub/SKILL.md'
       )
       if (!skillExists) {
         await storage.writeFile(
           projectPath,
-          '.claude/skills/hub.md',
+          '.claude/skills/hub/SKILL.md',
           HUB_SKILL_TEMPLATE
         )
-        created.push('.claude/skills/hub.md')
+        created.push('.claude/skills/hub/SKILL.md')
+      }
+
+      // 7. .claude/skills/hub/references/schemas.md (progressive disclosure)
+      const schemasExists = await storage.exists(
+        projectPath,
+        '.claude/skills/hub/references/schemas.md'
+      )
+      if (!schemasExists) {
+        await storage.writeFile(
+          projectPath,
+          '.claude/skills/hub/references/schemas.md',
+          HUB_SKILL_SCHEMAS_TEMPLATE
+        )
+        created.push('.claude/skills/hub/references/schemas.md')
       }
 
       return created

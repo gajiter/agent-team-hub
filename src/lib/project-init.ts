@@ -45,14 +45,24 @@ export async function initializeProject(projectPath: string): Promise<string[]> 
     created.push('.claude/rules/hub-workflow.md')
   }
 
-  // 6. Create .claude/skills/hub.md from template
-  if (!await storage.exists(projectPath, '.claude/skills/hub.md')) {
+  // 6. Create .claude/skills/hub/SKILL.md from template (Claude Code skill spec)
+  if (!await storage.exists(projectPath, '.claude/skills/hub/SKILL.md')) {
     const skillTemplate = await fs.readFile(
-      path.join(process.cwd(), 'src/templates/hub-skill.md'),
+      path.join(process.cwd(), 'src/templates/hub-skill/SKILL.md'),
       'utf-8'
     )
-    await storage.writeFile(projectPath, '.claude/skills/hub.md', skillTemplate)
-    created.push('.claude/skills/hub.md')
+    await storage.writeFile(projectPath, '.claude/skills/hub/SKILL.md', skillTemplate)
+    created.push('.claude/skills/hub/SKILL.md')
+  }
+
+  // 7. Create .claude/skills/hub/references/schemas.md (progressive disclosure)
+  if (!await storage.exists(projectPath, '.claude/skills/hub/references/schemas.md')) {
+    const schemasTemplate = await fs.readFile(
+      path.join(process.cwd(), 'src/templates/hub-skill/references/schemas.md'),
+      'utf-8'
+    )
+    await storage.writeFile(projectPath, '.claude/skills/hub/references/schemas.md', schemasTemplate)
+    created.push('.claude/skills/hub/references/schemas.md')
   }
 
   return created
