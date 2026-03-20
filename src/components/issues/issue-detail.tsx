@@ -243,9 +243,9 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {ISSUE_TYPES.map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {TYPE_META[t].icon} {TYPE_META[t].label}
+                  {ISSUE_TYPES.map((tp) => (
+                    <SelectItem key={tp} value={tp}>
+                      {TYPE_META[tp].icon} {t(TYPE_META[tp].i18nKey)}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -266,7 +266,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                 <SelectGroup>
                   {ISSUE_STATUSES.map((s) => (
                     <SelectItem key={s} value={s}>
-                      {STATUS_META[s].label}
+                      {t(STATUS_META[s].i18nKey)}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -287,7 +287,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                 <SelectGroup>
                   {ISSUE_PRIORITIES.map((p) => (
                     <SelectItem key={p} value={p}>
-                      {PRIORITY_META[p].label}
+                      {t(PRIORITY_META[p].i18nKey)}
                     </SelectItem>
                   ))}
                 </SelectGroup>

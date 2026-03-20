@@ -6,6 +6,7 @@ import type { Issue } from '@/types/issues'
 import type { IssueLockStatus } from '@/types/issues'
 import type { AgentInfo } from '@/types/agents'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 
 function formatDate(iso: string) {
   const d = new Date(iso)
@@ -28,10 +29,12 @@ interface IssueListProps {
 }
 
 export default function IssueList({ issues, selectedId, onSelect, locks, agents, selectable, selectedIds, onToggleSelect }: IssueListProps) {
+  const { t } = useI18n()
+
   if (issues.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm p-8">
-        No issues found. Create a new issue to get started.
+        {t('issues.noIssuesFound')}
       </div>
     )
   }
@@ -86,7 +89,7 @@ export default function IssueList({ issues, selectedId, onSelect, locks, agents,
                     {isLocked && (
                       <span
                         className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200 animate-pulse"
-                        title={`${lockInfo?.holder} is editing`}
+                        title={t('meta.isEditing', { holder: lockInfo?.holder ?? '' })}
                       >
                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />

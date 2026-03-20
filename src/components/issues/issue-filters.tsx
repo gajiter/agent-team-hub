@@ -83,7 +83,7 @@ export default function IssueFilters({
                 key={s}
                 active={statusFilter === s}
                 onClick={() => onStatusChange(s)}
-                label={`${STATUS_META[s].label} (${counts.byStatus[s] ?? 0})`}
+                label={`${t(STATUS_META[s].i18nKey)} (${counts.byStatus[s] ?? 0})`}
               />
             ))}
           </div>
@@ -100,7 +100,7 @@ export default function IssueFilters({
                 key={tp}
                 active={typeFilter === tp}
                 onClick={() => onTypeChange(tp)}
-                label={`${TYPE_META[tp].icon} ${TYPE_META[tp].label} (${counts.byType[tp] ?? 0})`}
+                label={`${TYPE_META[tp].icon} ${t(TYPE_META[tp].i18nKey)} (${counts.byType[tp] ?? 0})`}
               />
             ))}
           </div>

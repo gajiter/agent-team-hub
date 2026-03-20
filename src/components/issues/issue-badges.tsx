@@ -1,5 +1,8 @@
+'use client'
+
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 import {
   STATUS_META,
   PRIORITY_META,
@@ -12,29 +15,32 @@ import type { AgentInfo } from '@/types/agents'
 import { getAgentColors } from '@/types/agents'
 
 export function IssueStatusBadge({ status }: { status: IssueStatus }) {
+  const { t } = useI18n()
   const meta = STATUS_META[status] ?? STATUS_META.open
   return (
     <Badge variant="outline" className={cn('text-xs font-medium', meta.color)}>
-      {meta.label}
+      {t(meta.i18nKey)}
     </Badge>
   )
 }
 
 export function IssuePriorityBadge({ priority }: { priority: IssuePriority }) {
+  const { t } = useI18n()
   const meta = PRIORITY_META[priority] ?? PRIORITY_META.medium
   return (
     <Badge variant="outline" className={cn('text-xs font-medium', meta.color)}>
-      {meta.label}
+      {t(meta.i18nKey)}
     </Badge>
   )
 }
 
 export function IssueTypeBadge({ type }: { type: IssueType }) {
+  const { t } = useI18n()
   const meta = TYPE_META[type] ?? TYPE_META.task
   return (
     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
       <span>{meta.icon}</span>
-      <span>{meta.label}</span>
+      <span>{t(meta.i18nKey)}</span>
     </span>
   )
 }

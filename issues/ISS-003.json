@@ -1,0 +1,34 @@
+{
+  "id": "ISS-003",
+  "title": "사이드 패널 테마 토글 및 이슈 보드 필드 한국어 번역 누락 수정",
+  "description": "테마 토글(Light/Dark/System)과 이슈 보드의 상태(Open, In Progress 등), 우선순위(Critical, High 등), 유형(Task, Bug 등) 라벨이 i18n을 사용하지 않고 하드코딩된 영어로 표시되는 문제. 이슈 목록 빈 상태 메시지도 영어로 표시됨.",
+  "status": "resolved",
+  "priority": "medium",
+  "type": "bug",
+  "assignee": "claude",
+  "assignees": ["claude"],
+  "reporter": "human",
+  "labels": ["i18n", "localization", "UI"],
+  "relatedFiles": [
+    "src/components/theme-toggle.tsx",
+    "src/types/issues.ts",
+    "src/components/issues/issue-badges.tsx",
+    "src/components/issues/issue-filters.tsx",
+    "src/components/issues/issue-list.tsx",
+    "src/components/issues/issue-detail.tsx",
+    "src/components/issues/issue-create-dialog.tsx",
+    "src/locales/ko.json",
+    "src/locales/en.json"
+  ],
+  "relatedIds": [],
+  "comments": [
+    {
+      "id": "c-1710936000001",
+      "author": "claude",
+      "content": "모든 하드코딩된 영어 라벨을 i18n 키로 교체 완료. STATUS_META/PRIORITY_META/TYPE_META에 i18nKey 필드 추가, 7개 컴포넌트 수정, ko.json/en.json에 meta 섹션 추가. TypeScript 타입 체크 통과.",
+      "createdAt": "2026-03-20T12:05:00.000Z"
+    }
+  ],
+  "createdAt": "2026-03-20T12:00:00.000Z",
+  "updatedAt": "2026-03-20T12:05:00.000Z"
+}

@@ -121,6 +121,7 @@
     "confirmDeleteBtn": "삭제 확인",
     "deleting": "삭제 중...",
     "archiving": "아카이브 중...",
+    "noIssuesFound": "이슈가 없습니다. 새 이슈를 생성해 보세요.",
     "lockedBy": "{holder}이(가) 이 이슈를 편집 중입니다",
     "lockedHint": "수정이 완료될 때까지 편집이 제한됩니다. 업데이트는 자동으로 동기화됩니다.",
     "lockedCommentHint": "{holder}이(가) 편집 중 -- 댓글이 비활성화됨",
@@ -303,6 +304,30 @@
     "minutesAgo": "{n}분 전",
     "hoursAgo": "{n}시간 전",
     "daysAgo": "{n}일 전"
+  },
+  "meta": {
+    "status": {
+      "open": "열림",
+      "inProgress": "진행 중",
+      "resolved": "해결됨",
+      "closed": "닫힘",
+      "archived": "보관됨"
+    },
+    "priority": {
+      "critical": "긴급",
+      "high": "높음",
+      "medium": "보통",
+      "low": "낮음"
+    },
+    "type": {
+      "task": "작업",
+      "bug": "버그",
+      "feature": "기능",
+      "question": "질문",
+      "decision": "결정"
+    },
+    "toggleTheme": "테마 전환",
+    "isEditing": "{holder}이(가) 편집 중"
   },
   "polling": {
     "connected": "연결됨",

@@ -121,6 +121,7 @@
     "confirmDeleteBtn": "Confirm Delete",
     "deleting": "Deleting...",
     "archiving": "Archiving...",
+    "noIssuesFound": "No issues found. Create a new issue to get started.",
     "lockedBy": "{holder} is editing this issue",
     "lockedHint": "Editing is restricted until modifications are complete. Updates will sync automatically.",
     "lockedCommentHint": "{holder} is editing -- comments are disabled",
@@ -303,6 +304,30 @@
     "minutesAgo": "{n}m ago",
     "hoursAgo": "{n}h ago",
     "daysAgo": "{n}d ago"
+  },
+  "meta": {
+    "status": {
+      "open": "Open",
+      "inProgress": "In Progress",
+      "resolved": "Resolved",
+      "closed": "Closed",
+      "archived": "Archived"
+    },
+    "priority": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "type": {
+      "task": "Task",
+      "bug": "Bug",
+      "feature": "Feature",
+      "question": "Question",
+      "decision": "Decision"
+    },
+    "toggleTheme": "Toggle theme",
+    "isEditing": "{holder} is editing"
   },
   "polling": {
     "connected": "Connected",
