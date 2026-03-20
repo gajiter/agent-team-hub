@@ -1,0 +1,17 @@
+{
+  "id": "ISS-002",
+  "title": "이슈 보드 목록에서 긴 제목이 레이아웃을 밀어내는 문제 수정",
+  "description": "이슈 목록에서 제목이 길 경우 레이아웃을 밀어내고 화면에서 가려지는 문제. 줄바꿈 처리하고 최대 2줄까지만 표시, 이후는 ...으로 처리",
+  "type": "bug",
+  "status": "resolved",
+  "priority": "medium",
+  "createdAt": "2026-03-20T00:00:00.000Z",
+  "updatedAt": "2026-03-20T00:00:00.000Z",
+  "comments": [
+    {
+      "author": "claude",
+      "date": "2026-03-20T00:00:00.000Z",
+      "content": "issue-list.tsx에서 truncate를 line-clamp-2 break-words로 변경하여 최대 2줄까지 표시되고 이후 ...으로 처리되도록 수정 완료"
+    }
+  ]
+}

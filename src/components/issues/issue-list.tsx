@@ -96,7 +96,7 @@ export default function IssueList({ issues, selectedId, onSelect, locks, agents,
                       </span>
                     )}
                   </div>
-                  <div className="text-sm font-medium text-foreground truncate mb-1.5">
+                  <div className="text-sm font-medium text-foreground line-clamp-2 break-words mb-1.5">
                     {issue.title}
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
