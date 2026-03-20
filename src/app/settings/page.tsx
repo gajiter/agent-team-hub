@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useTheme } from 'next-themes'
+import { useTheme, type Theme } from '@/components/theme-provider'
 import { Topbar } from '@/components/layout/topbar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
@@ -58,7 +58,7 @@ export default function SettingsPage() {
   }, [])
 
   const handleThemeChange = (newTheme: string) => {
-    setNextTheme(newTheme)
+    setNextTheme(newTheme as Theme)
     saveSettings({ theme: newTheme })
   }
 

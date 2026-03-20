@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="ko" className="dark" style={{ colorScheme: "dark" }} suppressHydrationWarning>
       <head>
         <link
           rel="stylesheet"
@@ -22,12 +22,7 @@ export default function RootLayout({
         />
       </head>
       <body className="flex h-screen overflow-hidden bg-background font-sans antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <ThemeProvider defaultTheme="dark" disableTransitionOnChange>
           <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>

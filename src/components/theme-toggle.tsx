@@ -1,6 +1,6 @@
 'use client'
 
-import { useTheme } from 'next-themes'
+import { useTheme, type Theme } from '@/components/theme-provider'
 import { Moon, Sun, Monitor, Check } from 'lucide-react'
 import {
   DropdownMenu,
@@ -17,9 +17,11 @@ const THEME_OPTIONS = [
 ] as const
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, mounted } = useTheme()
 
-  const current = THEME_OPTIONS.find((o) => o.value === theme) ?? THEME_OPTIONS[2]
+  // Use defaultTheme (dark) icon on server to match SSR, then real theme after mount
+  const displayTheme = mounted ? theme : 'dark'
+  const current = THEME_OPTIONS.find((o) => o.value === displayTheme) ?? THEME_OPTIONS[1]
   const CurrentIcon = current.icon
 
   return (
@@ -32,7 +34,7 @@ export function ThemeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {THEME_OPTIONS.map(({ value, label, icon: Icon }) => (
-          <DropdownMenuItem key={value} onClick={() => setTheme(value)}>
+          <DropdownMenuItem key={value} onClick={() => setTheme(value as Theme)}>
             <Icon className="mr-2 h-4 w-4" />
             {label}
             {theme === value && <Check className="ml-auto h-4 w-4 text-primary" />}
