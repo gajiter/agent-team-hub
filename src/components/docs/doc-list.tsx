@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useI18n } from '@/lib/i18n'
 
 interface DocMeta {
   path: string
@@ -44,7 +45,7 @@ function TokenBadge({ tokens, className = '' }: { tokens: number; className?: st
         isOver ? 'text-red-500 font-medium' : ratio > 0.8 ? 'text-amber-500' : 'text-muted-foreground',
         className,
       ].join(' ')}
-      title={isOver ? `토큰 한도(${CLAUDE_TOKEN_LIMIT.toLocaleString()}) 초과` : `추정 토큰 수 / 한도`}
+      title={isOver ? `Token limit (${CLAUDE_TOKEN_LIMIT.toLocaleString()}) exceeded` : `Estimated tokens / limit`}
     >
       {formatTokenCount(tokens)}/{formatTokenCount(CLAUDE_TOKEN_LIMIT)}
     </span>
@@ -62,6 +63,7 @@ interface DocListProps {
 export type { DocMeta, Category }
 
 export default function DocList({ docs, categories, selectedPath, loading, onSelect }: DocListProps) {
+  const { t } = useI18n()
   const groupedDocs = useMemo(() => {
     const groups: Record<string, DocMeta[]> = {}
     for (const doc of docs) {
@@ -77,11 +79,11 @@ export default function DocList({ docs, categories, selectedPath, loading, onSel
         <div className="p-3">
           {loading ? (
             <div className="text-sm text-muted-foreground text-center py-10">
-              문서 목록 로딩 중...
+              {t('docs.loadingDocs')}
             </div>
           ) : docs.length === 0 ? (
             <div className="text-sm text-muted-foreground text-center py-10">
-              문서가 없습니다
+              {t('docs.noData')}
             </div>
           ) : (
             Object.entries(groupedDocs).map(([category, categoryDocs]) => {

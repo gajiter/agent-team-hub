@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { useI18n } from '@/lib/i18n'
 import { initService } from '@/lib/services/init-service'
 import type { Project } from '@/types/project'
 
@@ -23,6 +24,7 @@ export default function ProjectList({
 }: ProjectListProps) {
   const [initStatus, setInitStatus] = useState<Record<string, boolean | null>>({})
   const [initLoading, setInitLoading] = useState<Record<string, boolean>>({})
+  const { t } = useI18n()
 
   useEffect(() => {
     projects.forEach(async (project) => {
@@ -50,7 +52,7 @@ export default function ProjectList({
   if (projects.length === 0) {
     return (
       <div className="text-sm text-muted-foreground text-center py-8">
-        등록된 프로젝트가 없습니다
+        {t('settings.noProjects')}
       </div>
     )
   }
@@ -60,10 +62,10 @@ export default function ProjectList({
       <table className="w-full text-sm">
         <thead>
           <tr className="bg-muted/50 border-b border-border">
-            <th className="text-left py-3 px-4 font-medium text-muted-foreground">이름</th>
-            <th className="text-left py-3 px-4 font-medium text-muted-foreground">경로</th>
-            <th className="text-left py-3 px-4 font-medium text-muted-foreground">상태</th>
-            <th className="text-right py-3 px-4 font-medium text-muted-foreground">작업</th>
+            <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t('settings.name')}</th>
+            <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t('settings.path')}</th>
+            <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t('settings.statusCol')}</th>
+            <th className="text-right py-3 px-4 font-medium text-muted-foreground">{t('settings.actions')}</th>
           </tr>
         </thead>
         <tbody>
@@ -77,7 +79,7 @@ export default function ProjectList({
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-foreground">{project.name}</span>
                     {isCurrent && (
-                      <Badge variant="default" className="text-[10px]">현재</Badge>
+                      <Badge variant="default" className="text-[10px]">{t('common.current')}</Badge>
                     )}
                   </div>
                 </td>
@@ -86,18 +88,18 @@ export default function ProjectList({
                 </td>
                 <td className="py-3 px-4">
                   {initialized === null || initialized === undefined ? (
-                    <Badge variant="outline" className="text-xs">확인 중...</Badge>
+                    <Badge variant="outline" className="text-xs">{t('common.checking')}</Badge>
                   ) : initialized ? (
-                    <Badge variant="default" className="text-xs bg-emerald-600">초기화됨</Badge>
+                    <Badge variant="default" className="text-xs bg-emerald-600">{t('settings.initialized')}</Badge>
                   ) : (
-                    <Badge variant="outline" className="text-xs">미초기화</Badge>
+                    <Badge variant="outline" className="text-xs">{t('settings.notInitialized')}</Badge>
                   )}
                 </td>
                 <td className="py-3 px-4 text-right">
                   <div className="flex items-center justify-end gap-2">
                     {!isCurrent && (
                       <Button size="sm" variant="outline" onClick={() => onOpen(project)}>
-                        열기
+                        {t('settings.open')}
                       </Button>
                     )}
                     <Button
@@ -106,10 +108,10 @@ export default function ProjectList({
                       onClick={() => handleInitialize(project)}
                       disabled={loading}
                     >
-                      {loading ? '초기화 중...' : initialized ? '재초기화' : '초기화'}
+                      {loading ? t('settings.initializingDots') : initialized ? t('settings.reinitialize') : t('settings.initialize')}
                     </Button>
                     <Button size="sm" variant="destructive" onClick={() => onRemove(project)}>
-                      삭제
+                      {t('common.delete')}
                     </Button>
                   </div>
                 </td>

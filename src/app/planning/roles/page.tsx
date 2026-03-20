@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { useProject } from '@/hooks/use-project'
+import { useI18n } from '@/lib/i18n'
 import { fileService } from '@/lib/services/file-service'
 import type { RolesData, Role, Permission } from '@/types/roles'
 import type { FeaturesData, Requirement } from '@/types/features'
@@ -60,8 +61,10 @@ function GroupedPermissionMatrix({
   featureReqMap: Map<string, string>
   requirements: Requirement[]
 }) {
+  const { t } = useI18n()
+
   if (permissions.length === 0) {
-    return <div className="text-sm text-muted-foreground py-10 text-center">권한 데이터가 아직 없습니다.</div>
+    return <div className="text-sm text-muted-foreground py-10 text-center">{t('planning.roles.noData')}</div>
   }
 
   const grouped = useMemo(() => {
@@ -83,10 +86,10 @@ function GroupedPermissionMatrix({
 
     const sorted = Array.from(groups.values()).sort((a, b) => a.req.order - b.req.order)
     if (ungrouped.length > 0) {
-      sorted.push({ req: { id: 'OTHER', name: '기타', description: '', group: 'tenant', order: 999, priority: 'low', status: 'todo', acceptanceCriteria: [] }, perms: ungrouped })
+      sorted.push({ req: { id: 'OTHER', name: t('planning.prd.other'), description: '', group: 'tenant', order: 999, priority: 'low', status: 'todo', acceptanceCriteria: [] }, perms: ungrouped })
     }
     return sorted
-  }, [permissions, featureReqMap, requirements])
+  }, [permissions, featureReqMap, requirements, t])
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -94,8 +97,8 @@ function GroupedPermissionMatrix({
         <table className="w-full text-sm border-collapse">
           <thead className="sticky top-0 z-10 bg-card">
             <tr className="border-b-2 border-border">
-              <th className="text-left py-3 px-4 font-medium text-muted-foreground w-[100px]">기능 ID</th>
-              <th className="text-left py-3 px-4 font-medium text-muted-foreground">액션</th>
+              <th className="text-left py-3 px-4 font-medium text-muted-foreground w-[100px]">{t('planning.roles.featureId')}</th>
+              <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t('planning.roles.action')}</th>
               {roles.map(role => (
                 <th key={role.id} className="text-center py-3 px-3 font-medium text-muted-foreground whitespace-nowrap">
                   <div className="flex flex-col items-center gap-0.5">
@@ -122,6 +125,7 @@ function GroupedPermissionMatrix({
 }
 
 function GroupSection({ req, perms, roles }: { req: Requirement; perms: Permission[]; roles: Role[] }) {
+  const { t } = useI18n()
   return (
     <>
       <tr className="bg-muted/50 border-t-2 border-border">
@@ -129,7 +133,7 @@ function GroupSection({ req, perms, roles }: { req: Requirement; perms: Permissi
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-muted-foreground">{req.id}</span>
             <span className="font-semibold text-foreground text-sm">{req.name}</span>
-            <span className="text-xs text-muted-foreground ml-auto">{perms.length}개 권한</span>
+            <span className="text-xs text-muted-foreground ml-auto">{perms.length}{t('planning.roles.permissions')}</span>
           </div>
         </td>
       </tr>
@@ -151,6 +155,7 @@ function GroupSection({ req, perms, roles }: { req: Requirement; perms: Permissi
 export default function RolesPage() {
   const { currentProject } = useProject()
   const projectId = currentProject?.id ?? null
+  const { t } = useI18n()
 
   const [data, setData] = useState<RolesData>(FALLBACK)
   const [featuresData, setFeaturesData] = useState<FeaturesData | null>(null)
@@ -199,8 +204,8 @@ export default function RolesPage() {
   if (!projectId) {
     return (
       <>
-        <Topbar title="권한 매트릭스" />
-        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">프로젝트를 선택하세요</div>
+        <Topbar title={t('planning.roles.title')} />
+        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">{t('common.selectProjectShort')}</div>
       </>
     )
   }
@@ -208,11 +213,11 @@ export default function RolesPage() {
   if (!dataExists) {
     return (
       <>
-        <Topbar title="권한 매트릭스" />
+        <Topbar title={t('planning.roles.title')} />
         <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-2">
           <span className="text-3xl">🔐</span>
-          <p className="text-sm">권한 데이터가 아직 없습니다</p>
-          <p className="text-xs">data/roles.json 파일을 프로젝트에 추가하세요</p>
+          <p className="text-sm">{t('planning.roles.noData')}</p>
+          <p className="text-xs">{t('planning.roles.addFile')}</p>
         </div>
       </>
     )
@@ -221,14 +226,14 @@ export default function RolesPage() {
   return (
     <>
       <Topbar
-        title="권한 매트릭스"
+        title={t('planning.roles.title')}
         right={
           <div className="flex items-center gap-2">
             <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2.5 py-1 rounded-full font-medium">
-              {data.roles.length}개 역할
+              {data.roles.length}{t('planning.roles.rolesCount')}
             </span>
             <span className="text-sm bg-muted text-muted-foreground px-2.5 py-1 rounded-full font-medium">
-              {data.permissions.length}개 권한
+              {data.permissions.length}{t('planning.roles.permissions')}
             </span>
           </div>
         }
@@ -238,7 +243,7 @@ export default function RolesPage() {
           {data.scopeHierarchy && data.scopeHierarchy.length > 0 && (
             <div className="mb-4">
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                <span className="font-medium">권한 범위:</span>
+                <span className="font-medium">{t('planning.roles.permissionScope')}:</span>
                 {data.scopeHierarchy.map((s, i) => (
                   <span key={s.scope} className="flex items-center gap-1.5">
                     <span className={`w-2 h-2 rounded-full ${SCOPE_COLORS[s.scope]?.dot ?? 'bg-muted'}`} />
@@ -271,16 +276,16 @@ export default function RolesPage() {
 
           <div className="border border-border rounded-lg bg-card overflow-hidden">
             <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-              <h3 className="text-sm font-medium text-foreground">권한 매트릭스</h3>
+              <h3 className="text-sm font-medium text-foreground">{t('planning.roles.permissionMatrix')}</h3>
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-green-500/20 text-green-600 dark:text-green-400 text-[10px] font-bold">✓</span>허용
+                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-green-500/20 text-green-600 dark:text-green-400 text-[10px] font-bold">✓</span>{t('planning.roles.allowed')}
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold">✓</span>조건부
+                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold">✓</span>{t('planning.roles.conditional')}
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-muted text-muted-foreground text-[10px]">-</span>거부
+                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-muted text-muted-foreground text-[10px]">-</span>{t('planning.roles.denied')}
                 </span>
               </div>
             </div>
@@ -289,7 +294,7 @@ export default function RolesPage() {
 
           {data.scopeNotes && (
             <div className="mt-4 border border-border rounded-lg bg-card p-4">
-              <h4 className="text-xs font-medium text-muted-foreground mb-2">권한 부여 원칙</h4>
+              <h4 className="text-xs font-medium text-muted-foreground mb-2">{t('planning.roles.permissionPrinciples')}</h4>
               <div className="space-y-1.5">
                 {Object.entries(data.scopeNotes).map(([key, value]) => (
                   <p key={key} className="text-xs text-muted-foreground leading-relaxed">

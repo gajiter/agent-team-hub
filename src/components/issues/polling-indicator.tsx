@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 
 interface PollingIndicatorProps {
   connected: boolean
@@ -9,21 +10,23 @@ interface PollingIndicatorProps {
   onRefresh: () => void
 }
 
-function formatTimeAgo(date: Date): string {
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
-  if (seconds < 5) return 'just now'
-  if (seconds < 60) return `${seconds}s ago`
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
-  return '1h+ ago'
-}
-
 export default function PollingIndicator({
   connected,
   lastSyncAt,
   syncCount,
   onRefresh,
 }: PollingIndicatorProps) {
+  const { t } = useI18n()
+
+  function formatTimeAgo(date: Date): string {
+    const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
+    if (seconds < 5) return t('time.justNow')
+    if (seconds < 60) return `${seconds}s ago`
+    const minutes = Math.floor(seconds / 60)
+    if (minutes < 60) return t('time.minutesAgo', { n: minutes })
+    return '1h+ ago'
+  }
+
   return (
     <div className="flex items-center gap-2">
       {/* Connection status */}
@@ -32,8 +35,8 @@ export default function PollingIndicator({
         className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-accent"
         title={
           connected
-            ? `Auto-sync active (3s interval)\nLast sync: ${lastSyncAt ? formatTimeAgo(lastSyncAt) : 'none'}\nSync count: ${syncCount}`
-            : 'Disconnected \u2014 click to retry'
+            ? `Auto-sync active (3s interval)\n${t('polling.lastSync')}: ${lastSyncAt ? formatTimeAgo(lastSyncAt) : 'none'}\nSync count: ${syncCount}`
+            : `${t('polling.disconnected')} \u2014 click to retry`
         }
       >
         {/* Connection dot */}
@@ -45,9 +48,9 @@ export default function PollingIndicator({
         />
         <span className="hidden sm:inline">
           {connected ? (
-            lastSyncAt ? formatTimeAgo(lastSyncAt) : 'Syncing...'
+            lastSyncAt ? formatTimeAgo(lastSyncAt) : t('polling.syncing')
           ) : (
-            'Disconnected'
+            t('polling.disconnected')
           )}
         </span>
         {/* Refresh icon */}

@@ -1,21 +1,22 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
+import { useI18n } from '@/lib/i18n'
 import type { PrdSections } from '@/types/prd'
 
 const SECTIONS = [
-  { id: 'overview', icon: '📊', label: '개요' },
-  { id: 'vision', icon: '📘', label: '제품 비전' },
-  { id: 'coreValues', icon: '★', label: '핵심 가치' },
-  { id: 'target', icon: '👤', label: '타겟 사용자' },
-  { id: 'userStories', icon: '📋', label: '사용자 스토리' },
-  { id: 'nonFunctional', icon: '⚙', label: '비기능 요구사항' },
-  { id: 'mvpScope', icon: '🎯', label: 'MVP 범위' },
-  { id: 'roadmap', icon: '🗓', label: '로드맵' },
-  { id: 'kpi', icon: '◎', label: '성공 지표' },
-  { id: 'constraints', icon: '⚠', label: '제약 조건' },
-  { id: 'openItems', icon: '❓', label: '미결 사항' },
-  { id: 'metadata', icon: '✓', label: '문서 정보' },
+  { id: 'overview', icon: '📊', labelKey: 'planning.prd.overview' },
+  { id: 'vision', icon: '📘', labelKey: 'planning.prd.productVision' },
+  { id: 'coreValues', icon: '★', labelKey: 'planning.prd.coreValues' },
+  { id: 'target', icon: '👤', labelKey: 'planning.prd.targetUsers' },
+  { id: 'userStories', icon: '📋', labelKey: 'planning.prd.userStories' },
+  { id: 'nonFunctional', icon: '⚙', labelKey: 'planning.prd.nfr' },
+  { id: 'mvpScope', icon: '🎯', labelKey: 'planning.prd.mvpScope' },
+  { id: 'roadmap', icon: '🗓', labelKey: 'planning.prd.roadmap' },
+  { id: 'kpi', icon: '◎', labelKey: 'planning.prd.successMetrics' },
+  { id: 'constraints', icon: '⚠', labelKey: 'planning.prd.constraints' },
+  { id: 'openItems', icon: '❓', labelKey: 'planning.prd.openItems' },
+  { id: 'metadata', icon: '✓', labelKey: 'planning.prd.docInfo' },
 ]
 
 function getSectionCount(id: string, sections: PrdSections | null): number | null {
@@ -47,6 +48,8 @@ interface PrdSidebarProps {
 }
 
 export default function PrdSidebar({ activeSection, onSelect, sections = null }: PrdSidebarProps) {
+  const { t } = useI18n()
+
   return (
     <div className="w-52 min-w-52 border-r border-border bg-sidebar flex flex-col py-4 px-3 overflow-y-auto">
       {SECTIONS.map(s => {
@@ -62,7 +65,7 @@ export default function PrdSidebar({ activeSection, onSelect, sections = null }:
             }`}
           >
             <span className="text-base shrink-0">{s.icon}</span>
-            <span className="flex-1 truncate">{s.label}</span>
+            <span className="flex-1 truncate">{t(s.labelKey)}</span>
             {count !== null && count > 0 && (
               <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 shrink-0">
                 {count}

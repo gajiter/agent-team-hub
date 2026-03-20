@@ -11,12 +11,14 @@ import PollingIndicator from '@/components/issues/polling-indicator'
 import { useIssuePolling } from '@/hooks/use-issue-polling'
 import { useAgents } from '@/hooks/use-agents'
 import { useProject } from '@/hooks/use-project'
+import { useI18n } from '@/lib/i18n'
 import type { Issue, IssueStatus, IssueType } from '@/types/issues'
 import { issueService } from '@/lib/services/issue-service'
 
 export default function IssuesPage() {
   const { currentProject } = useProject()
   const projectId = currentProject?.id ?? null
+  const { t } = useI18n()
 
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [showCreate, setShowCreate] = useState(false)
@@ -329,12 +331,12 @@ export default function IssuesPage() {
   if (!currentProject) {
     return (
       <>
-        <Topbar title="Issues" subtitle="AI-Human Communication Channel" />
+        <Topbar title={t('issues.title')} subtitle={t('issues.subtitle')} />
         <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-3">
           <span className="text-4xl">{'\u{1F4CB}'}</span>
-          <p className="text-sm font-medium">No project selected</p>
+          <p className="text-sm font-medium">{t('common.noProjectSelected')}</p>
           <p className="text-xs max-w-sm text-center">
-            Select a project from the sidebar to view and manage issues.
+            {t('common.selectProjectShort')}
           </p>
         </div>
       </>
@@ -350,8 +352,8 @@ export default function IssuesPage() {
   return (
     <>
       <Topbar
-        title="Issues"
-        subtitle={archiveMode ? 'Archive' : 'AI-Human Communication Channel'}
+        title={t('issues.title')}
+        subtitle={archiveMode ? t('issues.archive') : t('issues.subtitle')}
         right={
           <div className="flex items-center gap-3">
             <PollingIndicator
@@ -366,22 +368,22 @@ export default function IssuesPage() {
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                   <path d="M7 11V7a5 5 0 0110 0v4" />
                 </svg>
-                {lockedCount} locked
+                {lockedCount} {t('issues.locked')}
               </span>
             )}
             {!archiveMode && (
               <>
                 <span className="text-sm bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2.5 py-1 rounded-full font-medium">
-                  {openCount} active
+                  {openCount} {t('issues.active2')}
                 </span>
                 <span className="text-sm bg-muted text-muted-foreground px-2.5 py-1 rounded-full font-medium">
-                  {issues.length} total
+                  {issues.length} {t('issues.total')}
                 </span>
               </>
             )}
             {archiveMode && (
               <span className="text-sm bg-slate-100 text-slate-600 dark:bg-slate-800/30 dark:text-slate-400 px-2.5 py-1 rounded-full font-medium">
-                {archivedIssues.length} archived
+                {archivedIssues.length} {t('issues.archived')}
               </span>
             )}
 
@@ -393,13 +395,13 @@ export default function IssuesPage() {
                 className="text-slate-600 border-slate-300 hover:bg-slate-100 dark:text-slate-400 dark:border-slate-600 dark:hover:bg-slate-800"
                 onClick={() => setConfirmBulkArchive(true)}
               >
-                Archive Resolved ({resolvedIssues.length})
+                {t('issues.archiveResolved')} ({resolvedIssues.length})
               </Button>
             )}
             {confirmBulkArchive && (
               <div className="flex items-center gap-1.5">
                 <span className="text-xs text-slate-600 dark:text-slate-400">
-                  Archive {resolvedIssues.length}?
+                  {t('issues.archive')} {resolvedIssues.length}?
                 </span>
                 <Button
                   size="sm"
@@ -407,7 +409,7 @@ export default function IssuesPage() {
                   disabled={bulkArchiving}
                   onClick={handleBulkArchiveResolved}
                 >
-                  {bulkArchiving ? 'Archiving...' : 'Confirm'}
+                  {bulkArchiving ? t('issues.archiving') : t('common.confirm')}
                 </Button>
                 <Button
                   size="sm"
@@ -415,7 +417,7 @@ export default function IssuesPage() {
                   disabled={bulkArchiving}
                   onClick={() => setConfirmBulkArchive(false)}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
               </div>
             )}
@@ -428,13 +430,13 @@ export default function IssuesPage() {
                 className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-950/30"
                 onClick={() => setConfirmBulkDelete(true)}
               >
-                Delete Resolved ({resolvedIssues.length})
+                {t('issues.deleteResolved')} ({resolvedIssues.length})
               </Button>
             )}
             {confirmBulkDelete && (
               <div className="flex items-center gap-1.5">
                 <span className="text-xs text-red-600 dark:text-red-400">
-                  Delete {resolvedIssues.length}?
+                  {t('common.delete')} {resolvedIssues.length}?
                 </span>
                 <Button
                   size="sm"
@@ -442,7 +444,7 @@ export default function IssuesPage() {
                   disabled={bulkDeleting}
                   onClick={handleBulkDeleteResolved}
                 >
-                  {bulkDeleting ? 'Deleting...' : 'Confirm'}
+                  {bulkDeleting ? t('issues.deleting') : t('common.confirm')}
                 </Button>
                 <Button
                   size="sm"
@@ -450,17 +452,17 @@ export default function IssuesPage() {
                   disabled={bulkDeleting}
                   onClick={() => setConfirmBulkDelete(false)}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
               </div>
             )}
 
             <Button size="sm" variant={selectMode ? 'secondary' : 'outline'} onClick={handleToggleSelectMode}>
-              {selectMode ? 'Cancel Select' : 'Select'}
+              {selectMode ? t('issues.cancelSelect') : t('common.select')}
             </Button>
             {!archiveMode && (
               <Button size="sm" onClick={() => setShowCreate(true)}>
-                + New Issue
+                + {t('issues.newIssue')}
               </Button>
             )}
           </div>
@@ -474,10 +476,10 @@ export default function IssuesPage() {
             onClick={handleSelectAll}
             className="text-xs text-primary hover:underline"
           >
-            {allDisplaySelected ? 'Deselect All' : 'Select All'}
+            {allDisplaySelected ? t('issues.deselectAll') : t('issues.selectAll')}
           </button>
           <span className="text-xs text-muted-foreground">
-            {selectedIds.size} selected
+            {selectedIds.size} {t('issues.selected')}
           </span>
           {selectedIds.size > 0 && !archiveMode && !confirmSelectedArchive && !confirmSelectedDelete && (
             <Button
@@ -486,13 +488,13 @@ export default function IssuesPage() {
               className="h-7 text-xs text-slate-600 border-slate-300 hover:bg-slate-100 dark:text-slate-400 dark:border-slate-600 dark:hover:bg-slate-800"
               onClick={() => setConfirmSelectedArchive(true)}
             >
-              Archive Selected ({selectedIds.size})
+              {t('issues.archiveSelected')} ({selectedIds.size})
             </Button>
           )}
           {confirmSelectedArchive && (
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-slate-600 dark:text-slate-400">
-                Archive {selectedIds.size}?
+                {t('issues.archive')} {selectedIds.size}?
               </span>
               <Button
                 size="sm"
@@ -501,7 +503,7 @@ export default function IssuesPage() {
                 disabled={selectedArchiving}
                 onClick={handleArchiveSelected}
               >
-                {selectedArchiving ? 'Archiving...' : 'Confirm'}
+                {selectedArchiving ? t('issues.archiving') : t('common.confirm')}
               </Button>
               <Button
                 size="sm"
@@ -510,7 +512,7 @@ export default function IssuesPage() {
                 disabled={selectedArchiving}
                 onClick={() => setConfirmSelectedArchive(false)}
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
             </div>
           )}
@@ -521,13 +523,13 @@ export default function IssuesPage() {
               className="h-7 text-xs"
               onClick={() => setConfirmSelectedDelete(true)}
             >
-              Delete Selected ({selectedIds.size})
+              {t('issues.deleteSelected')} ({selectedIds.size})
             </Button>
           )}
           {confirmSelectedDelete && (
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-red-600 dark:text-red-400">
-                Delete {selectedIds.size}?
+                {t('common.delete')} {selectedIds.size}?
               </span>
               <Button
                 size="sm"
@@ -536,7 +538,7 @@ export default function IssuesPage() {
                 disabled={selectedDeleting}
                 onClick={handleDeleteSelected}
               >
-                {selectedDeleting ? 'Deleting...' : 'Confirm'}
+                {selectedDeleting ? t('issues.deleting') : t('common.confirm')}
               </Button>
               <Button
                 size="sm"
@@ -545,7 +547,7 @@ export default function IssuesPage() {
                 disabled={selectedDeleting}
                 onClick={() => setConfirmSelectedDelete(false)}
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
             </div>
           )}
@@ -567,7 +569,7 @@ export default function IssuesPage() {
           />
           {(archiveMode ? archiveLoading : loading) ? (
             <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
-              Loading...
+              {t('common.loading')}
             </div>
           ) : (
             <IssueList
@@ -602,27 +604,12 @@ export default function IssuesPage() {
               {archiveMode ? (
                 <>
                   <span className="text-4xl">{'\u{1F4E6}'}</span>
-                  <p className="text-sm">Select an archived issue</p>
-                  <p className="text-xs max-w-sm text-center">
-                    Archived issues are physically separated into the{' '}
-                    <code className="text-xs bg-muted px-1 py-0.5 rounded">issues/archive/</code>{' '}
-                    directory.
-                  </p>
+                  <p className="text-sm">{t('issues.selectArchivedIssue')}</p>
                 </>
               ) : (
                 <>
                   <span className="text-4xl">{'\u{1F4CB}'}</span>
-                  <p className="text-sm">Select an issue or create a new one</p>
-                  <p className="text-xs max-w-sm text-center">
-                    When you create an issue, AI agents read individual files from the{' '}
-                    <code className="text-xs bg-muted px-1 py-0.5 rounded">issues/</code>{' '}
-                    directory and act on them.
-                  </p>
-                  {connected && (
-                    <p className="text-xs text-green-600 dark:text-green-400 mt-2">
-                      Real-time sync active (3s interval)
-                    </p>
-                  )}
+                  <p className="text-sm">{t('issues.selectAnIssue')}</p>
                 </>
               )}
             </div>

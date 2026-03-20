@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { useProject } from '@/hooks/use-project'
 import { useAgents } from '@/hooks/use-agents'
+import { useI18n } from '@/lib/i18n'
 import { FolderOpen, Rocket } from 'lucide-react'
 import type { Issue } from '@/types/issues'
 import { fileService } from '@/lib/services/file-service'
@@ -43,6 +44,7 @@ const DATA_CANDIDATES: DataEntry[] = [
 export default function DashboardPage() {
   const { currentProject, loading: projectLoading } = useProject()
   const projectId = currentProject?.id ?? null
+  const { t } = useI18n()
 
   const [dataEntries, setDataEntries] = useState<DataEntry[]>([])
   const [docs, setDocs] = useState<DocMeta[]>([])
@@ -165,9 +167,9 @@ export default function DashboardPage() {
   if (projectLoading) {
     return (
       <>
-        <Topbar title="Dashboard" />
+        <Topbar title={t('dashboard.title')} />
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       </>
     )
@@ -177,12 +179,12 @@ export default function DashboardPage() {
   if (!currentProject) {
     return (
       <>
-        <Topbar title="Dashboard" />
+        <Topbar title={t('dashboard.title')} />
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
           <FolderOpen className="w-12 h-12 text-muted-foreground" />
-          <p className="text-muted-foreground">Select or add a project in Settings</p>
+          <p className="text-muted-foreground">{t('common.selectProject')}</p>
           <Button asChild variant="outline">
-            <Link href="/settings">Go to Settings</Link>
+            <Link href="/settings">{t('common.goToSettings')}</Link>
           </Button>
         </div>
       </>
@@ -193,12 +195,12 @@ export default function DashboardPage() {
   if (projectInitialized === false) {
     return (
       <>
-        <Topbar title="Dashboard" subtitle={currentProject.name} />
+        <Topbar title={t('dashboard.title')} subtitle={currentProject.name} />
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
           <Rocket className="w-12 h-12 text-muted-foreground" />
-          <p className="text-muted-foreground">Project has not been initialized yet.</p>
+          <p className="text-muted-foreground">{t('dashboard.notInitialized')}</p>
           <Button onClick={handleInitialize} disabled={initializing}>
-            {initializing ? 'Initializing...' : 'Initialize Project'}
+            {initializing ? t('dashboard.initializing') : t('dashboard.initializeProject')}
           </Button>
         </div>
       </>
@@ -207,13 +209,13 @@ export default function DashboardPage() {
 
   return (
     <>
-      <Topbar title="Dashboard" subtitle={currentProject.name} />
+      <Topbar title={t('dashboard.title')} subtitle={currentProject.name} />
       <div className="flex-1 overflow-y-auto p-6 bg-background">
         {/* Header */}
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-foreground">{currentProject.name}</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            프로젝트의 기획 산출물과 이슈를 한눈에 파악합니다.
+            {t('dashboard.subtitle')}
           </p>
         </div>
 
@@ -221,46 +223,46 @@ export default function DashboardPage() {
         <div className="grid grid-cols-4 gap-4 mb-6">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">데이터</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">{t('dashboard.data')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-foreground">
                 {dataLoading ? '-' : dataStats.existing}
                 <span className="text-base font-normal text-muted-foreground">/{dataStats.total}</span>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">구조화 데이터</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('dashboard.structuredData')}</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">문서</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">{t('dashboard.docs')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-foreground">
                 {docsLoading ? '-' : docs.length}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">마크다운 문서</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('dashboard.markdownDocs')}</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">활성 이슈</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">{t('dashboard.activeIssues')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-foreground">
                 {issuesLoading ? '-' : issueStats.active}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                열림 {issueStats.open} + 진행 중 {issueStats.inProgress}
+                {t('dashboard.openAndInProgress', { open: issueStats.open, inProgress: issueStats.inProgress })}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">에이전트</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">{t('dashboard.agents')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-foreground">
@@ -279,11 +281,11 @@ export default function DashboardPage() {
           {/* Planning Data Status */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm font-medium text-muted-foreground">산출물 현황</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">{t('dashboard.deliverables')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-1">
               <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium pb-1">
-                데이터 뷰
+                {t('dashboard.dataViews')}
               </div>
               {dataEntries.map((entry) => (
                 <DataRow key={entry.path} entry={entry} />
@@ -293,16 +295,16 @@ export default function DashboardPage() {
 
               <div className="flex items-center justify-between pb-1">
                 <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                  문서
+                  {t('dashboard.documents')}
                 </span>
                 <Link href="/docs" className="text-xs text-primary hover:underline">
-                  전체 보기
+                  {t('common.viewAll')}
                 </Link>
               </div>
               {docsLoading ? (
-                <div className="text-sm text-muted-foreground py-4 text-center">로딩 중...</div>
+                <div className="text-sm text-muted-foreground py-4 text-center">{t('common.loading')}</div>
               ) : docs.length === 0 ? (
-                <div className="text-sm text-muted-foreground py-4 text-center">문서 없음</div>
+                <div className="text-sm text-muted-foreground py-4 text-center">{t('dashboard.noDocs')}</div>
               ) : (
                 docs.map((doc) => (
                   <Link
@@ -316,14 +318,14 @@ export default function DashboardPage() {
                       <div className="text-xs text-muted-foreground">{doc.author}</div>
                     </div>
                     <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800">
-                      완료
+                      {t('dashboard.completed')}
                     </Badge>
                   </Link>
                 ))
               )}
 
               {dataLoading && (
-                <div className="text-sm text-muted-foreground py-4 text-center">로딩 중...</div>
+                <div className="text-sm text-muted-foreground py-4 text-center">{t('common.loading')}</div>
               )}
             </CardContent>
           </Card>
@@ -331,43 +333,20 @@ export default function DashboardPage() {
           {/* Recent Issues */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium text-muted-foreground">최근 이슈</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">{t('dashboard.recentIssues')}</CardTitle>
               <Link href="/issues" className="text-xs text-primary hover:underline">
-                전체 보기
+                {t('common.viewAll')}
               </Link>
             </CardHeader>
             <CardContent>
               {issuesLoading ? (
-                <div className="text-sm text-muted-foreground py-4 text-center">로딩 중...</div>
+                <div className="text-sm text-muted-foreground py-4 text-center">{t('common.loading')}</div>
               ) : recentIssues.length === 0 ? (
-                <div className="text-sm text-muted-foreground py-6 text-center">이슈 없음</div>
+                <div className="text-sm text-muted-foreground py-6 text-center">{t('dashboard.noIssues')}</div>
               ) : (
                 <div className="space-y-1">
                   {recentIssues.map((issue) => (
-                    <Link
-                      key={issue.id}
-                      href="/issues"
-                      className="flex items-center gap-3 py-2.5 px-2 rounded-md hover:bg-accent/50 transition-colors"
-                    >
-                      <StatusDot status={issue.status} />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-mono text-muted-foreground">{issue.id}</span>
-                          <PriorityIndicator priority={issue.priority} />
-                        </div>
-                        <div className="text-sm text-foreground truncate">{issue.title}</div>
-                      </div>
-                      <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
-                        <span className="text-xs text-muted-foreground">
-                          {formatRelativeTime(issue.updatedAt)}
-                        </span>
-                        {issue.comments.length > 0 && (
-                          <span className="text-xs text-muted-foreground">
-                            {issue.comments.length} comments
-                          </span>
-                        )}
-                      </div>
-                    </Link>
+                    <IssueRow key={issue.id} issue={issue} />
                   ))}
                 </div>
               )}
@@ -378,16 +357,16 @@ export default function DashboardPage() {
         {/* Agent Team Grid */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-medium text-muted-foreground">에이전트 팀</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('dashboard.agentTeam')}</CardTitle>
             <Link href="/agents" className="text-xs text-primary hover:underline">
-              상세 보기
+              {t('common.details')}
             </Link>
           </CardHeader>
           <CardContent>
             {agentsLoading ? (
-              <div className="text-sm text-muted-foreground py-4 text-center">로딩 중...</div>
+              <div className="text-sm text-muted-foreground py-4 text-center">{t('common.loading')}</div>
             ) : agents.length === 0 ? (
-              <div className="text-sm text-muted-foreground py-6 text-center">등록된 에이전트 없음</div>
+              <div className="text-sm text-muted-foreground py-6 text-center">{t('dashboard.noAgents')}</div>
             ) : (
               <div className="grid grid-cols-3 gap-3">
                 {agents.map((agent) => {
@@ -429,6 +408,7 @@ export default function DashboardPage() {
 
 /** Data view row component */
 function DataRow({ entry }: { entry: DataEntry }) {
+  const { t } = useI18n()
   const content = (
     <div className="flex items-center gap-3 py-2 px-2 rounded-md transition-colors hover:bg-accent/50">
       <span className="text-base">{entry.icon}</span>
@@ -438,11 +418,11 @@ function DataRow({ entry }: { entry: DataEntry }) {
       </div>
       {entry.exists ? (
         <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800">
-          완료
+          {t('dashboard.completed')}
         </Badge>
       ) : (
         <Badge variant="outline" className="text-xs bg-muted text-muted-foreground">
-          미생성
+          {t('dashboard.notCreated')}
         </Badge>
       )}
     </div>
@@ -452,6 +432,36 @@ function DataRow({ entry }: { entry: DataEntry }) {
     return <Link href={entry.href}>{content}</Link>
   }
   return content
+}
+
+/** Issue row for recent issues */
+function IssueRow({ issue }: { issue: Issue }) {
+  const { t } = useI18n()
+  return (
+    <Link
+      href="/issues"
+      className="flex items-center gap-3 py-2.5 px-2 rounded-md hover:bg-accent/50 transition-colors"
+    >
+      <StatusDot status={issue.status} />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono text-muted-foreground">{issue.id}</span>
+          <PriorityIndicator priority={issue.priority} />
+        </div>
+        <div className="text-sm text-foreground truncate">{issue.title}</div>
+      </div>
+      <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
+        <span className="text-xs text-muted-foreground">
+          {formatRelativeTime(issue.updatedAt, t)}
+        </span>
+        {issue.comments.length > 0 && (
+          <span className="text-xs text-muted-foreground">
+            {issue.comments.length} {t('common.comments')}
+          </span>
+        )}
+      </div>
+    </Link>
+  )
 }
 
 /** Issue status dot */
@@ -478,14 +488,14 @@ function PriorityIndicator({ priority }: { priority: string }) {
   return <span className={`text-xs font-medium ${m.className}`}>{m.label}</span>
 }
 
-/** Relative time format (Korean) */
-function formatRelativeTime(iso: string) {
+/** Relative time format */
+function formatRelativeTime(iso: string, t: (key: string, params?: Record<string, string | number>) => string) {
   const diff = Date.now() - new Date(iso).getTime()
   const mins = Math.floor(diff / 60000)
-  if (mins < 1) return '방금'
-  if (mins < 60) return `${mins}분 전`
+  if (mins < 1) return t('time.justNow')
+  if (mins < 60) return t('time.minutesAgo', { n: mins })
   const hours = Math.floor(mins / 60)
-  if (hours < 24) return `${hours}시간 전`
+  if (hours < 24) return t('time.hoursAgo', { n: hours })
   const days = Math.floor(hours / 24)
-  return `${days}일 전`
+  return t('time.daysAgo', { n: days })
 }

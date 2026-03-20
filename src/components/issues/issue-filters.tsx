@@ -2,6 +2,7 @@
 
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/lib/i18n'
 import {
   ISSUE_TYPES,
   STATUS_META,
@@ -37,6 +38,8 @@ export default function IssueFilters({
   onToggleArchive,
   archivedCount = 0,
 }: IssueFiltersProps) {
+  const { t } = useI18n()
+
   return (
     <div className="px-4 py-3 border-b border-border space-y-2">
       {/* View mode tabs: Active / Archive */}
@@ -49,7 +52,7 @@ export default function IssueFilters({
               !archiveMode && 'bg-primary text-primary-foreground hover:bg-primary/90'
             )}
           >
-            Active ({counts.total})
+            {t('issues.active')} ({counts.total})
           </Badge>
         </button>
         <button onClick={() => !archiveMode && onToggleArchive?.()}>
@@ -60,7 +63,7 @@ export default function IssueFilters({
               archiveMode && 'bg-slate-600 text-white hover:bg-slate-700 dark:bg-slate-500 dark:hover:bg-slate-600'
             )}
           >
-            Archive ({archivedCount})
+            {t('issues.archive')} ({archivedCount})
           </Badge>
         </button>
       </div>
@@ -69,11 +72,11 @@ export default function IssueFilters({
         <>
           {/* Status filters */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs text-muted-foreground mr-1">Status:</span>
+            <span className="text-xs text-muted-foreground mr-1">{t('issues.status')}:</span>
             <FilterBadge
               active={statusFilter === 'all'}
               onClick={() => onStatusChange('all')}
-              label={`All (${counts.total})`}
+              label={`${t('issues.all')} (${counts.total})`}
             />
             {ACTIVE_STATUSES.map((s) => (
               <FilterBadge
@@ -86,18 +89,18 @@ export default function IssueFilters({
           </div>
           {/* Type filters */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs text-muted-foreground mr-1">Type:</span>
+            <span className="text-xs text-muted-foreground mr-1">{t('issues.type')}:</span>
             <FilterBadge
               active={typeFilter === 'all'}
               onClick={() => onTypeChange('all')}
-              label="All"
+              label={t('issues.all')}
             />
-            {ISSUE_TYPES.map((t) => (
+            {ISSUE_TYPES.map((tp) => (
               <FilterBadge
-                key={t}
-                active={typeFilter === t}
-                onClick={() => onTypeChange(t)}
-                label={`${TYPE_META[t].icon} ${TYPE_META[t].label} (${counts.byType[t] ?? 0})`}
+                key={tp}
+                active={typeFilter === tp}
+                onClick={() => onTypeChange(tp)}
+                label={`${TYPE_META[tp].icon} ${TYPE_META[tp].label} (${counts.byType[tp] ?? 0})`}
               />
             ))}
           </div>

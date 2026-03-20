@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Topbar } from '@/components/layout/topbar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useProject } from '@/hooks/use-project'
+import { useI18n } from '@/lib/i18n'
 import AgentList from '@/components/agents/agent-list'
 import AgentForm from '@/components/agents/agent-form'
 import type { AgentInfo } from '@/types/agents'
@@ -12,6 +13,7 @@ import { agentService } from '@/lib/services/agent-service'
 export default function AgentsPage() {
   const { currentProject } = useProject()
   const projectId = currentProject?.id ?? null
+  const { t } = useI18n()
 
   const [agents, setAgents] = useState<AgentInfo[]>([])
   const [loading, setLoading] = useState(true)
@@ -64,9 +66,9 @@ export default function AgentsPage() {
   if (!projectId) {
     return (
       <>
-        <Topbar title="에이전트" />
+        <Topbar title={t('agents.title')} />
         <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
-          프로젝트를 선택하세요
+          {t('common.selectProjectShort')}
         </div>
       </>
     )
@@ -75,8 +77,8 @@ export default function AgentsPage() {
   return (
     <>
       <Topbar
-        title="에이전트"
-        subtitle={`${agents.length}개`}
+        title={t('agents.title')}
+        subtitle={`${agents.length}`}
       />
       <ScrollArea className="flex-1">
         <AgentList

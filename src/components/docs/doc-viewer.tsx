@@ -3,6 +3,7 @@
 import { useCallback } from 'react'
 import { Badge } from '@/components/ui/badge'
 import MarkdownViewer, { resolveDocLink, getDataRoute } from '@/components/ui/MarkdownViewer'
+import { useI18n } from '@/lib/i18n'
 import type { DocMeta, Category } from './doc-list'
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -18,7 +19,7 @@ function formatTokenCount(tokens: number): string {
 }
 
 /**
- * 문서 본문의 메타데이터 blockquote를 파싱하여 버전을 추출하고 본문에서 제거합니다.
+ * Parse metadata blockquote from document body, extract version and remove from content.
  */
 function extractDocMeta(content: string): { version: string; cleanContent: string } {
   let version = ''
@@ -67,7 +68,9 @@ export default function DocViewer({
   onNavigate,
   scrollRef,
 }: DocViewerProps) {
-  /** 마크다운 본문 내 링크 클릭 핸들러 */
+  const { t } = useI18n()
+
+  /** Handle link clicks within markdown content */
   const handleDocLinkClick = useCallback((href: string) => {
     if (!selectedPath) return
 
@@ -92,10 +95,9 @@ export default function DocViewer({
     return (
       <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-3">
         <span className="text-4xl">📄</span>
-        <p className="text-sm">문서를 선택하세요</p>
+        <p className="text-sm">{t('docs.selectDoc')}</p>
         <p className="text-xs max-w-sm text-center">
-          왼쪽 목록에서 문서를 선택하면 여기에 내용이 표시됩니다.
-          문서는 <code className="text-xs bg-muted px-1 py-0.5 rounded">docs/</code> 디렉토리에서 자동으로 스캔됩니다.
+          {t('docs.selectDocHint')}
         </p>
       </div>
     )
@@ -104,7 +106,7 @@ export default function DocViewer({
   if (docLoading) {
     return (
       <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
-        문서를 불러오는 중...
+        {t('docs.loadingDoc')}
       </div>
     )
   }
@@ -112,7 +114,7 @@ export default function DocViewer({
   if (docContent === null) {
     return (
       <div className="flex-1 flex items-center justify-center text-destructive text-sm">
-        문서를 찾을 수 없습니다.
+        {t('docs.docNotFound')}
       </div>
     )
   }
@@ -157,7 +159,7 @@ export default function DocViewer({
             </div>
             {selectedDoc.references && selectedDoc.references.length > 0 && (
               <div className="mt-3 flex items-start gap-2">
-                <span className="text-xs text-muted-foreground shrink-0 pt-0.5">참조:</span>
+                <span className="text-xs text-muted-foreground shrink-0 pt-0.5">{t('docs.references')}:</span>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedDoc.references.map((ref) => (
                     <Badge

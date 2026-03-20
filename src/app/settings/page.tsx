@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useProject } from '@/hooks/use-project'
+import { useI18n, type Locale } from '@/lib/i18n'
 import ProjectList from '@/components/settings/project-list'
 import AddProjectDialog from '@/components/settings/add-project-dialog'
 import type { Project } from '@/types/project'
@@ -25,11 +26,12 @@ import { initService } from '@/lib/services/init-service'
 export default function SettingsPage() {
   const { projects, currentProject, setCurrentProject, refreshProjects } = useProject()
   const [addDialogOpen, setAddDialogOpen] = useState(false)
+  const { t, locale, setLocale } = useI18n()
 
   const { theme, setTheme: setNextTheme } = useTheme()
 
   // Settings state
-  const [language, setLanguage] = useState('ko')
+  const [language, setLanguage] = useState<string>(locale)
   const [port, setPort] = useState(3000)
   const [settingsLoading, setSettingsLoading] = useState(true)
 
@@ -43,6 +45,11 @@ export default function SettingsPage() {
       .catch(() => {})
       .finally(() => setSettingsLoading(false))
   }, [])
+
+  // Sync language state with locale from i18n
+  useEffect(() => {
+    setLanguage(locale)
+  }, [locale])
 
   // Save settings
   const saveSettings = useCallback(async (updates: Record<string, unknown>) => {
@@ -60,6 +67,7 @@ export default function SettingsPage() {
 
   const handleLanguageChange = (newLang: string) => {
     setLanguage(newLang)
+    setLocale(newLang as Locale)
     saveSettings({ language: newLang })
   }
 
@@ -76,14 +84,14 @@ export default function SettingsPage() {
         try {
           await initService.init(project.id)
         } catch (err: unknown) {
-          const message = err instanceof Error ? err.message : '알 수 없는 오류'
-          alert(`프로젝트는 추가되었으나 초기화에 실패했습니다: ${message}`)
+          const message = err instanceof Error ? err.message : t('settings.unknownError')
+          alert(`${t('settings.addedButInitFailed')}: ${message}`)
         }
       }
 
       await refreshProjects()
     } catch {
-      alert('프로젝트 추가에 실패했습니다.')
+      alert(t('settings.addFailed'))
     }
   }
 
@@ -96,8 +104,8 @@ export default function SettingsPage() {
       await initService.init(project.id)
       return true
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : '알 수 없는 오류'
-      alert(`초기화 실패: ${message}`)
+      const message = err instanceof Error ? err.message : t('settings.unknownError')
+      alert(`${t('settings.initFailed')}: ${message}`)
       return false
     }
   }
@@ -109,16 +117,16 @@ export default function SettingsPage() {
 
   return (
     <>
-      <Topbar title="설정" />
+      <Topbar title={t('settings.title')} />
       <ScrollArea className="flex-1">
         <div className="p-6 max-w-4xl space-y-6">
           {/* Projects section */}
           <Card>
             <CardHeader className="border-b border-border/50">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base">프로젝트 관리</CardTitle>
+                <CardTitle className="text-base">{t('settings.projectManagement')}</CardTitle>
                 <Button size="sm" onClick={() => setAddDialogOpen(true)}>
-                  + 프로젝트 추가
+                  + {t('settings.addProject')}
                 </Button>
               </div>
             </CardHeader>
@@ -136,27 +144,27 @@ export default function SettingsPage() {
           {/* Settings section */}
           <Card>
             <CardHeader className="border-b border-border/50">
-              <CardTitle className="text-base">앱 설정</CardTitle>
+              <CardTitle className="text-base">{t('settings.appSettings')}</CardTitle>
             </CardHeader>
             <CardContent className="pt-4 space-y-6">
               {settingsLoading ? (
-                <div className="text-sm text-muted-foreground py-4 text-center">설정 로딩 중...</div>
+                <div className="text-sm text-muted-foreground py-4 text-center">{t('settings.settingsLoading')}</div>
               ) : (
                 <>
                   {/* Theme */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-foreground">테마</div>
-                      <div className="text-xs text-muted-foreground">다크/라이트/시스템 모드 전환</div>
+                      <div className="text-sm font-medium text-foreground">{t('settings.theme')}</div>
+                      <div className="text-xs text-muted-foreground">{t('settings.themeDescription')}</div>
                     </div>
                     <Select value={theme} onValueChange={handleThemeChange}>
                       <SelectTrigger className="w-32">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="light">라이트</SelectItem>
-                        <SelectItem value="dark">다크</SelectItem>
-                        <SelectItem value="system">시스템</SelectItem>
+                        <SelectItem value="light">{t('settings.light')}</SelectItem>
+                        <SelectItem value="dark">{t('settings.dark')}</SelectItem>
+                        <SelectItem value="system">{t('settings.system')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -164,8 +172,8 @@ export default function SettingsPage() {
                   {/* Language */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-foreground">언어</div>
-                      <div className="text-xs text-muted-foreground">인터페이스 언어 설정</div>
+                      <div className="text-sm font-medium text-foreground">{t('settings.language')}</div>
+                      <div className="text-xs text-muted-foreground">{t('settings.languageDescription')}</div>
                     </div>
                     <Select value={language} onValueChange={handleLanguageChange}>
                       <SelectTrigger className="w-32">
@@ -181,8 +189,8 @@ export default function SettingsPage() {
                   {/* Port */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-foreground">포트</div>
-                      <div className="text-xs text-muted-foreground">개발 서버 포트 (재시작 필요)</div>
+                      <div className="text-sm font-medium text-foreground">{t('settings.port')}</div>
+                      <div className="text-xs text-muted-foreground">{t('settings.portDescription')}</div>
                     </div>
                     <Input
                       type="number"

@@ -6,6 +6,7 @@ import { Topbar } from '@/components/layout/topbar'
 import FeatureTreeView from '@/components/planning/feature-tree-view'
 import FeatureDirectoryView from '@/components/planning/feature-directory-view'
 import { useProject } from '@/hooks/use-project'
+import { useI18n } from '@/lib/i18n'
 import { fileService } from '@/lib/services/file-service'
 import type { Feature, Requirement, Relation, FeaturesData } from '@/types/features'
 
@@ -26,6 +27,7 @@ function FeaturesPageContent() {
   const router = useRouter()
   const { currentProject } = useProject()
   const projectId = currentProject?.id ?? null
+  const { t } = useI18n()
 
   const [features, setFeatures] = useState<Feature[]>(FALLBACK_FEATURES)
   const [requirements, setRequirements] = useState<Requirement[]>(FALLBACK_REQUIREMENTS)
@@ -81,8 +83,8 @@ function FeaturesPageContent() {
   if (!projectId) {
     return (
       <>
-        <Topbar title="기능 명세서" />
-        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">프로젝트를 선택하세요</div>
+        <Topbar title={t('planning.features.title')} />
+        <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">{t('common.selectProjectShort')}</div>
       </>
     )
   }
@@ -90,11 +92,11 @@ function FeaturesPageContent() {
   if (!dataExists) {
     return (
       <>
-        <Topbar title="기능 명세서" />
+        <Topbar title={t('planning.features.title')} />
         <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-2">
           <span className="text-3xl">🧩</span>
-          <p className="text-sm">기능 명세 데이터가 아직 없습니다</p>
-          <p className="text-xs">data/features.json 파일을 프로젝트에 추가하세요</p>
+          <p className="text-sm">{t('planning.features.noData')}</p>
+          <p className="text-xs">{t('planning.features.addFile')}</p>
         </div>
       </>
     )
@@ -103,14 +105,14 @@ function FeaturesPageContent() {
   return (
     <>
       <Topbar
-        title="기능 명세서"
+        title={t('planning.features.title')}
         right={
           <div className="flex items-center gap-3">
             <span className="text-sm bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium">
-              {requirements.length}개 요구사항
+              {requirements.length}{t('planning.features.requirements')}
             </span>
             <span className="text-sm bg-green-100 text-green-700 px-2.5 py-1 rounded-full font-medium">
-              {features.length}개 기능
+              {features.length}{t('planning.features.featuresCount')}
             </span>
             <div className="flex items-center bg-muted rounded-lg p-0.5">
               <button
@@ -119,7 +121,7 @@ function FeaturesPageContent() {
                   viewMode === 'tree' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                트리 뷰
+                {t('planning.features.treeView')}
               </button>
               <button
                 onClick={() => handleSetViewMode('directory')}
@@ -127,7 +129,7 @@ function FeaturesPageContent() {
                   viewMode === 'directory' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                디렉토리 뷰
+                {t('planning.features.directoryView')}
               </button>
             </div>
           </div>
@@ -145,8 +147,9 @@ function FeaturesPageContent() {
 }
 
 export default function FeaturesPage() {
+  const { t } = useI18n()
   return (
-    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-muted-foreground">로딩 중...</div>}>
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-muted-foreground">{t('common.loading')}</div>}>
       <FeaturesPageContent />
     </Suspense>
   )

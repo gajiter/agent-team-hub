@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useI18n } from '@/lib/i18n'
 import type { AgentInfo } from '@/types/agents'
 
 const COLOR_OPTIONS = [
@@ -59,6 +60,7 @@ export default function AgentForm({ open, onOpenChange, agent, onSave }: AgentFo
   const [role, setRole] = useState('')
   const [responsibilities, setResponsibilities] = useState('')
   const [saving, setSaving] = useState(false)
+  const { t } = useI18n()
 
   useEffect(() => {
     if (agent) {
@@ -104,30 +106,30 @@ export default function AgentForm({ open, onOpenChange, agent, onSave }: AgentFo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{agent ? '에이전트 수정' : '새 에이전트 추가'}</DialogTitle>
+          <DialogTitle>{agent ? t('agents.editAgent') : t('agents.createAgent')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}
           <div>
-            <label className="text-sm font-medium text-foreground mb-1.5 block">이름</label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="에이전트 이름" required />
+            <label className="text-sm font-medium text-foreground mb-1.5 block">{t('agents.name')}</label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('agents.agentNamePlaceholder')} required />
           </div>
 
           {/* Description */}
           <div>
-            <label className="text-sm font-medium text-foreground mb-1.5 block">설명</label>
-            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="에이전트 역할 설명" rows={2} />
+            <label className="text-sm font-medium text-foreground mb-1.5 block">{t('agents.description')}</label>
+            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('agents.agentDescPlaceholder')} rows={2} />
           </div>
 
           {/* Role */}
           <div>
-            <label className="text-sm font-medium text-foreground mb-1.5 block">역할</label>
-            <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder="예: backend, frontend, devops" />
+            <label className="text-sm font-medium text-foreground mb-1.5 block">{t('agents.role')}</label>
+            <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder={t('agents.agentRolePlaceholder')} />
           </div>
 
           {/* Model */}
           <div>
-            <label className="text-sm font-medium text-foreground mb-1.5 block">모델</label>
+            <label className="text-sm font-medium text-foreground mb-1.5 block">{t('agents.model')}</label>
             <Select value={model} onValueChange={setModel}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -140,7 +142,7 @@ export default function AgentForm({ open, onOpenChange, agent, onSave }: AgentFo
 
           {/* Emoji */}
           <div>
-            <label className="text-sm font-medium text-foreground mb-1.5 block">이모지</label>
+            <label className="text-sm font-medium text-foreground mb-1.5 block">{t('agents.emoji')}</label>
             <div className="flex flex-wrap gap-2">
               {EMOJI_OPTIONS.map(e => (
                 <button
@@ -159,7 +161,7 @@ export default function AgentForm({ open, onOpenChange, agent, onSave }: AgentFo
 
           {/* Color */}
           <div>
-            <label className="text-sm font-medium text-foreground mb-1.5 block">색상</label>
+            <label className="text-sm font-medium text-foreground mb-1.5 block">{t('agents.color')}</label>
             <div className="flex flex-wrap gap-2">
               {COLOR_OPTIONS.map(c => (
                 <button
@@ -177,14 +179,14 @@ export default function AgentForm({ open, onOpenChange, agent, onSave }: AgentFo
 
           {/* Responsibilities */}
           <div>
-            <label className="text-sm font-medium text-foreground mb-1.5 block">담당 업무 (줄바꿈으로 구분)</label>
-            <Textarea value={responsibilities} onChange={(e) => setResponsibilities(e.target.value)} placeholder="하나씩 입력..." rows={3} />
+            <label className="text-sm font-medium text-foreground mb-1.5 block">{t('agents.responsibilities')} ({t('agents.responsibilitiesHint')})</label>
+            <Textarea value={responsibilities} onChange={(e) => setResponsibilities(e.target.value)} placeholder="..." rows={3} />
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>취소</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
             <Button type="submit" disabled={saving || !name.trim()}>
-              {saving ? '저장 중...' : agent ? '수정' : '추가'}
+              {saving ? t('agents.saving') : agent ? t('common.save') : t('common.add')}
             </Button>
           </DialogFooter>
         </form>

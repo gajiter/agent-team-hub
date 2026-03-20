@@ -14,6 +14,7 @@ import {
 } from '@/types/issues'
 import type { AgentInfo } from '@/types/agents'
 import AssigneeMultiSelect from './assignee-multi-select'
+import { useI18n } from '@/lib/i18n'
 
 interface IssueCreateDialogProps {
   open: boolean
@@ -37,6 +38,7 @@ export default function IssueCreateDialog({ open, onClose, onCreate, agentNames 
   const [type, setType] = useState<IssueType>('task')
   const [assignees, setAssignees] = useState<string[]>(['human'])
   const [labelsText, setLabelsText] = useState('')
+  const { t } = useI18n()
 
   if (!open) return null
 
@@ -61,17 +63,17 @@ export default function IssueCreateDialog({ open, onClose, onCreate, agentNames 
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
       <Card className="w-full max-w-lg mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold">Create New Issue</CardTitle>
+          <CardTitle className="text-lg font-semibold">{t('issues.createTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Title */}
           <div>
-            <label className="text-sm font-medium text-foreground mb-1 block">Title *</label>
+            <label className="text-sm font-medium text-foreground mb-1 block">{t('issues.titleField')} *</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter issue title"
+              placeholder={t('issues.titleField')}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               autoFocus
             />
@@ -79,11 +81,11 @@ export default function IssueCreateDialog({ open, onClose, onCreate, agentNames 
 
           {/* Description */}
           <div>
-            <label className="text-sm font-medium text-foreground mb-1 block">Description</label>
+            <label className="text-sm font-medium text-foreground mb-1 block">{t('issues.descriptionField')}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Issue details (supports markdown; AI agents will read this content)"
+              placeholder={t('issues.descriptionField')}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
               rows={4}
             />
@@ -92,7 +94,7 @@ export default function IssueCreateDialog({ open, onClose, onCreate, agentNames 
           {/* Type + Priority + Assignee */}
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Type</label>
+              <label className="text-xs text-muted-foreground mb-1 block">{t('issues.typeField')}</label>
               <Select value={type} onValueChange={(val) => val && setType(val as IssueType)}>
                 <SelectTrigger className="h-9 text-sm">
                   <SelectValue />
@@ -109,7 +111,7 @@ export default function IssueCreateDialog({ open, onClose, onCreate, agentNames 
               </Select>
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Priority</label>
+              <label className="text-xs text-muted-foreground mb-1 block">{t('issues.priorityField')}</label>
               <Select value={priority} onValueChange={(val) => val && setPriority(val as IssuePriority)}>
                 <SelectTrigger className="h-9 text-sm">
                   <SelectValue />
@@ -126,7 +128,7 @@ export default function IssueCreateDialog({ open, onClose, onCreate, agentNames 
               </Select>
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Assignee</label>
+              <label className="text-xs text-muted-foreground mb-1 block">{t('issues.assigneeField')}</label>
               <AssigneeMultiSelect
                 assignees={assignees}
                 agentNames={agentNames}
@@ -140,7 +142,7 @@ export default function IssueCreateDialog({ open, onClose, onCreate, agentNames 
           {/* Labels */}
           <div>
             <label className="text-sm font-medium text-foreground mb-1 block">
-              Labels <span className="text-xs text-muted-foreground font-normal">(comma-separated)</span>
+              {t('issues.labelsField')} <span className="text-xs text-muted-foreground font-normal">({t('issues.labelsHint')})</span>
             </label>
             <input
               type="text"
@@ -154,10 +156,10 @@ export default function IssueCreateDialog({ open, onClose, onCreate, agentNames 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={onClose}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button onClick={handleSubmit} disabled={!title.trim()}>
-              Create Issue
+              {t('issues.createButton')}
             </Button>
           </div>
         </CardContent>

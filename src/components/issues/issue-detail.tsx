@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils'
 import MarkdownViewer from '@/components/ui/MarkdownViewer'
 import { IssueStatusBadge, IssuePriorityBadge, IssueTypeBadge, AssigneesBadges, AgentNameLabel } from './issue-badges'
 import AssigneeMultiSelect from './assignee-multi-select'
+import { useI18n } from '@/lib/i18n'
 import type { Issue, IssueStatus, IssuePriority, IssueType } from '@/types/issues'
 import type { IssueLockStatus } from '@/types/issues'
 import { ISSUE_STATUSES, ISSUE_PRIORITIES, ISSUE_TYPES, STATUS_META, PRIORITY_META, TYPE_META } from '@/types/issues'
@@ -43,6 +44,7 @@ interface IssueDetailProps {
 export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUnarchive, lockStatus, agentNames = [], agents = [], isArchived = false }: IssueDetailProps) {
   const [newComment, setNewComment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { t } = useI18n()
 
   // Inline edit states
   const [editingTitle, setEditingTitle] = useState(false)
@@ -151,10 +153,10 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
             </svg>
             <div className="flex-1">
               <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                <span className="font-semibold">{lockStatus?.holder}</span> is editing this issue
+                {t('issues.lockedBy', { holder: lockStatus?.holder ?? '' })}
               </p>
               <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
-                Editing is restricted until modifications are complete. Updates will sync automatically.
+                {t('issues.lockedHint')}
               </p>
             </div>
           </div>
@@ -193,10 +195,10 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                     setEditingTitle(false)
                   }}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button size="sm" onClick={handleTitleSave}>
-                  Save
+                  {t('common.save')}
                 </Button>
               </div>
             </div>
@@ -212,7 +214,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                   className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground shrink-0"
                   onClick={() => setEditingTitle(true)}
                 >
-                  Edit
+                  {t('common.edit')}
                 </Button>
               )}
             </div>
@@ -230,7 +232,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
         {/* Quick Actions */}
         <div className="grid grid-cols-4 gap-3">
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">Type</label>
+            <label className="text-xs text-muted-foreground mb-1 block">{t('issues.typeField')}</label>
             <Select
               value={issue.type}
               onValueChange={(val) => val && onUpdate({ type: val as IssueType })}
@@ -251,7 +253,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
             </Select>
           </div>
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">Status</label>
+            <label className="text-xs text-muted-foreground mb-1 block">{t('issues.status')}</label>
             <Select
               value={issue.status}
               onValueChange={(val) => val && onUpdate({ status: val as IssueStatus })}
@@ -272,7 +274,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
             </Select>
           </div>
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">Priority</label>
+            <label className="text-xs text-muted-foreground mb-1 block">{t('issues.priorityField')}</label>
             <Select
               value={issue.priority}
               onValueChange={(val) => val && onUpdate({ priority: val as IssuePriority })}
@@ -293,7 +295,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
             </Select>
           </div>
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">Assignee</label>
+            <label className="text-xs text-muted-foreground mb-1 block">{t('issues.assigneeField')}</label>
             <AssigneeMultiSelect
               assignees={issue.assignees}
               agentNames={agentNames}
@@ -309,7 +311,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
         {/* Description -- Editable */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold text-foreground">Description</h3>
+            <h3 className="text-sm font-semibold text-foreground">{t('issues.descriptionField')}</h3>
             {!editingDesc && !isLocked && (
               <Button
                 variant="ghost"
@@ -317,7 +319,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                 className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
                 onClick={() => setEditingDesc(true)}
               >
-                Edit
+                {t('common.edit')}
               </Button>
             )}
           </div>
@@ -329,7 +331,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                 onChange={(e) => setEditDesc(e.target.value)}
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
                 rows={5}
-                placeholder="Enter issue description... (supports markdown)"
+                placeholder={t('issues.descriptionField')}
               />
               <div className="flex justify-end gap-2">
                 <Button
@@ -340,10 +342,10 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                     setEditingDesc(false)
                   }}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button size="sm" onClick={handleDescSave}>
-                  Save
+                  {t('common.save')}
                 </Button>
               </div>
             </div>
@@ -353,17 +355,17 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
             </div>
           ) : (
             <div className="text-sm text-muted-foreground italic py-4 text-center bg-muted/20 rounded-lg">
-              No description
+              {t('issues.noDescription')}
             </div>
           )}
         </div>
 
         {/* Labels -- Editable */}
         <div>
-          <h3 className="text-sm font-semibold text-foreground mb-2">Labels</h3>
+          <h3 className="text-sm font-semibold text-foreground mb-2">{t('issues.labelsField')}</h3>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {issue.labels.length === 0 && (
-              <span className="text-xs text-muted-foreground italic">No labels</span>
+              <span className="text-xs text-muted-foreground italic">{t('issues.noLabels')}</span>
             )}
             {issue.labels.map((label) => (
               <Badge key={label} variant="secondary" className="text-xs gap-1 pr-1">
@@ -392,7 +394,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                     handleAddLabel()
                   }
                 }}
-                placeholder="Add label..."
+                placeholder={t('issues.labelsField')}
                 className="flex-1 rounded-md border border-border bg-background px-2.5 py-1 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
               <Button
@@ -402,7 +404,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                 onClick={handleAddLabel}
                 disabled={!labelInput.trim()}
               >
-                Add
+                {t('common.add')}
               </Button>
             </div>
           )}
@@ -411,7 +413,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
         {/* Related */}
         {(issue.relatedFiles.length > 0 || issue.relatedIds.length > 0) && (
           <div>
-            <h3 className="text-sm font-semibold text-foreground mb-2">Related Items</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-2">{t('issues.relatedItems')}</h3>
             <div className="space-y-1.5">
               {issue.relatedIds.map((rid) => (
                 <Badge key={rid} variant="outline" className="text-xs mr-1.5">
@@ -430,14 +432,14 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
         {/* Meta */}
         <div className="flex gap-6 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
-            <span className="font-medium">Reporter:</span>{' '}
+            <span className="font-medium">{t('issues.reporter')}:</span>{' '}
             <AgentNameLabel name={issue.reporter} agents={agents} />
           </div>
           <div>
-            <span className="font-medium">Created:</span> {formatDateTime(issue.createdAt)}
+            <span className="font-medium">{t('issues.created')}:</span> {formatDateTime(issue.createdAt)}
           </div>
           <div>
-            <span className="font-medium">Updated:</span> {formatDateTime(issue.updatedAt)}
+            <span className="font-medium">{t('issues.updated')}:</span> {formatDateTime(issue.updatedAt)}
           </div>
         </div>
 
@@ -446,12 +448,12 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
         {/* Comments */}
         <div>
           <h3 className="text-sm font-semibold text-foreground mb-3">
-            Comments ({issue.comments.length})
+            {t('issues.comments')} ({issue.comments.length})
           </h3>
           <div className="space-y-3 mb-4">
             {issue.comments.length === 0 && (
               <div className="text-sm text-muted-foreground italic py-4 text-center">
-                No comments yet.
+                {t('issues.noComments')}
               </div>
             )}
             {issue.comments.map((c) => {
@@ -488,8 +490,8 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
               onChange={(e) => setNewComment(e.target.value)}
               placeholder={
                 isLocked
-                  ? `${lockStatus?.holder} is editing -- comments are disabled`
-                  : 'Add a comment... (supports markdown; AI agents can read this)'
+                  ? t('issues.lockedCommentHint', { holder: lockStatus?.holder ?? '' })
+                  : t('issues.addComment')
               }
               disabled={isLocked}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none disabled:opacity-50 disabled:cursor-not-allowed"
@@ -501,7 +503,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                 onClick={handleAddComment}
                 disabled={!newComment.trim() || isSubmitting || isLocked}
               >
-                Add Comment
+                {t('issues.addComment')}
               </Button>
             </div>
           </div>
@@ -514,15 +516,15 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Archived Issue</h3>
-                <p className="text-xs text-muted-foreground">This issue is archived. Restoring it will move it back to the active issues list.</p>
+                <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('issues.archivedIssue')}</h3>
+                <p className="text-xs text-muted-foreground">{t('issues.restoreHint')}</p>
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => onUnarchive?.(issue.id)}
               >
-                Restore
+                {t('issues.restore')}
               </Button>
             </div>
           </div>
@@ -530,8 +532,8 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Archive</h3>
-                <p className="text-xs text-muted-foreground">Move resolved issue to archive. Archived issues are excluded from the active list.</p>
+                <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('issues.archiveSection')}</h3>
+                <p className="text-xs text-muted-foreground">{t('issues.moveToArchive')}</p>
               </div>
               <Button
                 variant="outline"
@@ -540,7 +542,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                 onClick={() => onArchive(issue.id)}
                 disabled={isLocked}
               >
-                Archive
+                {t('issues.archive')}
               </Button>
             </div>
           </div>
@@ -549,10 +551,10 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
         {/* Danger Zone -- Delete */}
         {onDelete && (
           <div className="rounded-lg border border-red-200 dark:border-red-800/50 p-4">
-            <h3 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-2">Danger Zone</h3>
+            <h3 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-2">{t('issues.dangerZone')}</h3>
             {!confirmDelete ? (
               <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">Permanently delete this issue. This action cannot be undone.</p>
+                <p className="text-xs text-muted-foreground">{t('issues.permanentDelete')}</p>
                 <Button
                   variant="outline"
                   size="sm"
@@ -560,13 +562,13 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                   onClick={() => setConfirmDelete(true)}
                   disabled={isLocked}
                 >
-                  Delete Issue
+                  {t('issues.deleteIssue')}
                 </Button>
               </div>
             ) : (
               <div className="flex items-center justify-between">
                 <p className="text-xs text-red-600 dark:text-red-400 font-medium">
-                  Are you sure you want to delete {issue.id}?
+                  {t('issues.confirmDelete', { id: issue.id })}
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -575,7 +577,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                     onClick={() => setConfirmDelete(false)}
                     disabled={deleting}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     variant="destructive"
@@ -583,7 +585,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                     onClick={handleDelete}
                     disabled={deleting}
                   >
-                    {deleting ? 'Deleting...' : 'Confirm Delete'}
+                    {deleting ? t('issues.deleting') : t('issues.confirmDeleteBtn')}
                   </Button>
                 </div>
               </div>

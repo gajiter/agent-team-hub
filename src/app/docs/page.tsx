@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { Topbar } from '@/components/layout/topbar'
 import { Badge } from '@/components/ui/badge'
 import { useProject } from '@/hooks/use-project'
+import { useI18n } from '@/lib/i18n'
 import DocList from '@/components/docs/doc-list'
 import DocViewer from '@/components/docs/doc-viewer'
 import DocToc from '@/components/docs/doc-toc'
@@ -23,6 +24,7 @@ function DocsPageContent() {
   const router = useRouter()
   const { currentProject } = useProject()
   const projectId = currentProject?.id ?? null
+  const { t } = useI18n()
 
   const [docs, setDocs] = useState<DocMeta[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -79,9 +81,9 @@ function DocsPageContent() {
   if (!projectId) {
     return (
       <>
-        <Topbar title="문서" />
+        <Topbar title={t('docs.title')} />
         <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
-          프로젝트를 선택하세요
+          {t('common.selectProjectShort')}
         </div>
       </>
     )
@@ -90,8 +92,8 @@ function DocsPageContent() {
   return (
     <>
       <Topbar
-        title="문서"
-        subtitle={selectedDoc ? selectedDoc.title : `${docs.length}개 문서`}
+        title={t('docs.title')}
+        subtitle={selectedDoc ? selectedDoc.title : t('docs.docsCount', { count: docs.length })}
         right={
           <div className="flex items-center gap-2">
             {categories.map(cat => (
@@ -126,7 +128,6 @@ function DocsPageContent() {
             />
           </div>
 
-          {/* TOC: 문서가 선택되고 로딩이 완료되면 표시 */}
           {selectedPath ? (
             docContent && !docLoading ? (
               <DocToc
@@ -144,10 +145,11 @@ function DocsPageContent() {
 }
 
 export default function DocsPage() {
+  const { t } = useI18n()
   return (
     <Suspense fallback={
       <div className="flex-1 flex items-center justify-center text-muted-foreground">
-        로딩 중...
+        {t('common.loading')}
       </div>
     }>
       <DocsPageContent />

@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
+import { useI18n } from '@/lib/i18n'
 import FolderBrowserDialog from './folder-browser-dialog'
 
 interface AddProjectDialogProps {
@@ -25,6 +26,7 @@ export default function AddProjectDialog({ open, onOpenChange, onSubmit }: AddPr
   const [initialize, setInitialize] = useState(true)
   const [saving, setSaving] = useState(false)
   const [folderBrowserOpen, setFolderBrowserOpen] = useState(false)
+  const { t } = useI18n()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,11 +48,11 @@ export default function AddProjectDialog({ open, onOpenChange, onSubmit }: AddPr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>프로젝트 추가</DialogTitle>
+          <DialogTitle>{t('settings.addProject')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-foreground mb-1.5 block">프로젝트 이름</label>
+            <label className="text-sm font-medium text-foreground mb-1.5 block">{t('settings.projectName')}</label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -59,7 +61,7 @@ export default function AddProjectDialog({ open, onOpenChange, onSubmit }: AddPr
             />
           </div>
           <div>
-            <label className="text-sm font-medium text-foreground mb-1.5 block">프로젝트 경로</label>
+            <label className="text-sm font-medium text-foreground mb-1.5 block">{t('settings.projectPath')}</label>
             <div className="flex gap-2">
               <Input
                 value={path}
@@ -74,10 +76,10 @@ export default function AddProjectDialog({ open, onOpenChange, onSubmit }: AddPr
                 onClick={() => setFolderBrowserOpen(true)}
                 className="shrink-0"
               >
-                찾아보기
+                {t('common.browse')}
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">프로젝트 루트 디렉토리의 절대 경로</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('settings.projectPathHint')}</p>
           </div>
           <div className="flex items-center gap-2">
             <Checkbox
@@ -86,14 +88,14 @@ export default function AddProjectDialog({ open, onOpenChange, onSubmit }: AddPr
               onCheckedChange={(checked) => setInitialize(checked === true)}
             />
             <label htmlFor="initialize" className="text-sm text-foreground cursor-pointer">
-              프로젝트 초기화 (.ai-hub 디렉토리 생성)
+              {t('settings.initializeOnAdd')}
             </label>
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>취소</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
             <Button type="submit" disabled={saving || !name.trim() || !path.trim()}>
-              {saving ? '추가 중...' : '추가'}
+              {saving ? t('settings.adding') : t('common.add')}
             </Button>
           </DialogFooter>
         </form>

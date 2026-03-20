@@ -17,39 +17,41 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { ProjectSelector } from '@/components/layout/project-selector'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { useI18n } from '@/lib/i18n'
 
 interface NavItemDef {
   href: string
   icon: LucideIcon
-  label: string
+  labelKey: string
 }
 
 const OVERVIEW: NavItemDef[] = [
-  { href: '/', icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/', icon: LayoutDashboard, labelKey: 'nav.dashboard' },
 ]
 
 const PLANNING: NavItemDef[] = [
-  { href: '/planning/prd', icon: FileText, label: 'PRD' },
-  { href: '/planning/features', icon: BookOpen, label: 'Features' },
-  { href: '/planning/roles', icon: Users, label: 'Roles' },
-  { href: '/planning/userflow', icon: GitBranch, label: 'User Flow' },
+  { href: '/planning/prd', icon: FileText, labelKey: 'nav.prd' },
+  { href: '/planning/features', icon: BookOpen, labelKey: 'nav.features' },
+  { href: '/planning/roles', icon: Users, labelKey: 'nav.roles' },
+  { href: '/planning/userflow', icon: GitBranch, labelKey: 'nav.userflow' },
 ]
 
 const DOCS: NavItemDef[] = [
-  { href: '/docs', icon: Target, label: 'Documents' },
+  { href: '/docs', icon: Target, labelKey: 'nav.documents' },
 ]
 
 const ISSUES: NavItemDef[] = [
-  { href: '/issues', icon: Bug, label: 'Issue Board' },
+  { href: '/issues', icon: Bug, labelKey: 'nav.issueBoard' },
 ]
 
 const MANAGE: NavItemDef[] = [
-  { href: '/agents', icon: Bot, label: 'Agents' },
-  { href: '/settings', icon: Settings, label: 'Settings' },
+  { href: '/agents', icon: Bot, labelKey: 'nav.agents' },
+  { href: '/settings', icon: Settings, labelKey: 'nav.settings' },
 ]
 
-function NavItem({ href, icon: Icon, label }: NavItemDef) {
+function NavItem({ href, icon: Icon, labelKey }: NavItemDef) {
   const pathname = usePathname()
+  const { t } = useI18n()
   const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href)
   return (
     <Link
@@ -62,7 +64,7 @@ function NavItem({ href, icon: Icon, label }: NavItemDef) {
       ].join(' ')}
     >
       <Icon className="w-4 h-4" />
-      <span>{label}</span>
+      <span>{t(labelKey)}</span>
     </Link>
   )
 }
@@ -76,6 +78,8 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 export function LNB() {
+  const { t } = useI18n()
+
   return (
     <aside className="w-[220px] min-w-[220px] bg-sidebar border-r border-sidebar-border flex flex-col">
       {/* Logo */}
@@ -88,7 +92,7 @@ export function LNB() {
 
       {/* Overview */}
       <div className="px-3 pt-2 pb-2">
-        <SectionLabel>Overview</SectionLabel>
+        <SectionLabel>{t('nav.overview')}</SectionLabel>
         {OVERVIEW.map((item) => (
           <NavItem key={item.href} {...item} />
         ))}
@@ -100,7 +104,7 @@ export function LNB() {
 
       {/* Planning */}
       <div className="px-3 pt-2 pb-2">
-        <SectionLabel>기획 Planning</SectionLabel>
+        <SectionLabel>{t('nav.planning')}</SectionLabel>
         {PLANNING.map((item) => (
           <NavItem key={item.href} {...item} />
         ))}
@@ -112,7 +116,7 @@ export function LNB() {
 
       {/* Docs */}
       <div className="px-3 pt-2 pb-2">
-        <SectionLabel>문서 Docs</SectionLabel>
+        <SectionLabel>{t('nav.docs')}</SectionLabel>
         {DOCS.map((item) => (
           <NavItem key={item.href} {...item} />
         ))}
@@ -124,7 +128,7 @@ export function LNB() {
 
       {/* Issues */}
       <div className="px-3 pt-2 pb-2">
-        <SectionLabel>이슈 Issues</SectionLabel>
+        <SectionLabel>{t('nav.issues')}</SectionLabel>
         {ISSUES.map((item) => (
           <NavItem key={item.href} {...item} />
         ))}
@@ -136,7 +140,7 @@ export function LNB() {
 
       {/* Manage */}
       <div className="px-3 pt-2 pb-2">
-        <SectionLabel>관리 Manage</SectionLabel>
+        <SectionLabel>{t('nav.manage')}</SectionLabel>
         {MANAGE.map((item) => (
           <NavItem key={item.href} {...item} />
         ))}
@@ -145,12 +149,12 @@ export function LNB() {
       {/* Bottom: Theme Toggle + Project Status */}
       <div className="mt-auto p-4 space-y-2">
         <div className="flex items-center justify-between px-3 py-1">
-          <span className="text-xs text-muted-foreground">Theme</span>
+          <span className="text-xs text-muted-foreground">{t('nav.theme')}</span>
           <ThemeToggle />
         </div>
         <div className="flex items-center gap-2 px-3 py-2.5 bg-card border border-border rounded-lg text-sm text-muted-foreground">
           <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
-          Project Active
+          {t('nav.projectActive')}
         </div>
       </div>
     </aside>
