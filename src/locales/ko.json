@@ -275,8 +275,6 @@
     "system": "시스템",
     "language": "언어",
     "languageDescription": "인터페이스 언어 설정",
-    "port": "포트",
-    "portDescription": "개발 서버 포트 (재시작 필요)",
     "projectName": "프로젝트 이름",
     "projectPath": "프로젝트 경로",
     "projectPathHint": "프로젝트 루트 디렉토리의 절대 경로",

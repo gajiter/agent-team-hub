@@ -6,7 +6,6 @@ import { Topbar } from '@/components/layout/topbar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -32,7 +31,6 @@ export default function SettingsPage() {
 
   // Settings state
   const [language, setLanguage] = useState<string>(locale)
-  const [port, setPort] = useState(3000)
   const [settingsLoading, setSettingsLoading] = useState(true)
 
   // Load settings
@@ -40,7 +38,6 @@ export default function SettingsPage() {
     settingsService.getSettings()
       .then(data => {
         if (data.language) setLanguage(data.language)
-        if (data.port) setPort(data.port)
       })
       .catch(() => {})
       .finally(() => setSettingsLoading(false))
@@ -69,11 +66,6 @@ export default function SettingsPage() {
     setLanguage(newLang)
     setLocale(newLang as Locale)
     saveSettings({ language: newLang })
-  }
-
-  const handlePortChange = (newPort: number) => {
-    setPort(newPort)
-    saveSettings({ port: newPort })
   }
 
   const handleAddProject = async (data: { name: string; path: string; initialize: boolean }) => {
@@ -186,21 +178,6 @@ export default function SettingsPage() {
                     </Select>
                   </div>
 
-                  {/* Port */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-foreground">{t('settings.port')}</div>
-                      <div className="text-xs text-muted-foreground">{t('settings.portDescription')}</div>
-                    </div>
-                    <Input
-                      type="number"
-                      value={port}
-                      onChange={(e) => handlePortChange(parseInt(e.target.value) || 3000)}
-                      className="w-32"
-                      min={1024}
-                      max={65535}
-                    />
-                  </div>
                 </>
               )}
             </CardContent>

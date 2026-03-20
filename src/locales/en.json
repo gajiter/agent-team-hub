@@ -275,8 +275,6 @@
     "system": "System",
     "language": "Language",
     "languageDescription": "Interface language setting",
-    "port": "Port",
-    "portDescription": "Dev server port (restart required)",
     "projectName": "Project Name",
     "projectPath": "Project Path",
     "projectPathHint": "Absolute path to the project root directory",
