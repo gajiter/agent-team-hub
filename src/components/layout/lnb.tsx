@@ -70,8 +70,9 @@ function NavItem({ href, icon: Icon, labelKey }: NavItemDef) {
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
+  const { locale } = useI18n()
   return (
-    <div className="px-3 pb-2 text-xs text-muted-foreground uppercase tracking-widest font-medium">
+    <div className={`px-3 pb-2 text-xs text-muted-foreground font-medium ${locale === 'en' ? 'uppercase tracking-widest' : 'tracking-wide'}`}>
       {children}
     </div>
   )

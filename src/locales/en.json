@@ -36,7 +36,9 @@
     "agents": "Agents",
     "settings": "Settings",
     "projectActive": "Project Active",
-    "theme": "Theme"
+    "theme": "Theme",
+    "selectProject": "Select Project",
+    "addProject": "Add Project"
   },
   "dashboard": {
     "title": "Dashboard",

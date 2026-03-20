@@ -10,16 +10,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useProject } from '@/hooks/use-project'
+import { useI18n } from '@/lib/i18n'
 
 export function ProjectSelector() {
   const { currentProject, projects, setCurrentProject, loading } = useProject()
+  const { t } = useI18n()
 
   if (loading) {
     return (
       <div className="px-3 py-2">
         <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-accent/50 text-sm text-muted-foreground">
           <FolderOpen className="w-4 h-4" />
-          <span>Loading...</span>
+          <span>{t('common.loading')}</span>
         </div>
       </div>
     )
@@ -32,7 +34,7 @@ export function ProjectSelector() {
           <button className="flex items-center gap-2 w-full px-3 py-2 rounded-md bg-accent/50 hover:bg-accent text-sm text-foreground transition-colors text-left">
             <FolderOpen className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
             <span className="flex-1 truncate">
-              {currentProject?.name ?? 'Select Project'}
+              {currentProject?.name ?? t('nav.selectProject')}
             </span>
             <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" />
           </button>
@@ -56,7 +58,7 @@ export function ProjectSelector() {
           <DropdownMenuItem asChild>
             <Link href="/settings" className="flex items-center">
               <Plus className="w-4 h-4 mr-2" />
-              Add Project
+              {t('nav.addProject')}
             </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
