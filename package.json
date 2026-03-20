@@ -7,9 +7,9 @@
     "agent-team-hub": "./scripts/start.js"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 3100",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --port 3100",
     "lint": "eslint"
   },
   "dependencies": {

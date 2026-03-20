@@ -7,7 +7,7 @@ const CONFIG_KEY = 'global'
 
 const DEFAULT_CONFIG: GlobalConfig = {
   projects: [],
-  settings: { theme: 'dark', language: 'ko', port: 3000 }
+  settings: { theme: 'dark', language: 'ko', port: 3100 }
 }
 
 function openDB(): Promise<IDBDatabase> {
