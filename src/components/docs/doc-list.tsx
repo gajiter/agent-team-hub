@@ -23,12 +23,6 @@ interface Category {
   count: number
 }
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  plans: '📋',
-  develop: '🛠️',
-  research: '🔬',
-}
-
 const CLAUDE_TOKEN_LIMIT = 25000
 
 function formatTokenCount(tokens: number): string {
@@ -91,7 +85,7 @@ export default function DocList({ docs, categories, selectedPath, loading, onSel
               return (
                 <div key={category} className="mb-4">
                   <div className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                    <span>{CATEGORY_EMOJI[category] || '📄'}</span>
+                    <span>📁</span>
                     <span>{cat?.label || category}</span>
                   </div>
                   {categoryDocs.map(doc => {
@@ -110,7 +104,7 @@ export default function DocList({ docs, categories, selectedPath, loading, onSel
                         <div className="flex items-start gap-2">
                           <span className="text-base mt-0.5">{doc.emoji}</span>
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium truncate">{doc.title}</div>
+                            <div className="font-medium line-clamp-2">{doc.title}</div>
                             <div className="text-xs text-muted-foreground truncate">
                               {doc.author && `by ${doc.author}`}
                               {doc.author && doc.createdAt && ' · '}

@@ -13,12 +13,6 @@ import type { DocMeta, Category } from '@/components/docs/doc-list'
 import { docService } from '@/lib/services/doc-service'
 import { fileService } from '@/lib/services/file-service'
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  plans: '📋',
-  develop: '🛠️',
-  research: '🔬',
-}
-
 function DocsPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -98,7 +92,7 @@ function DocsPageContent() {
           <div className="flex items-center gap-2">
             {categories.map(cat => (
               <Badge key={cat.id} variant="outline" className="text-xs">
-                {CATEGORY_EMOJI[cat.id] || '📄'} {cat.label} ({cat.count})
+                📁 {cat.label} ({cat.count})
               </Badge>
             ))}
           </div>

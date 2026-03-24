@@ -1,0 +1,18 @@
+{
+  "id": "ISS-007",
+  "title": "docs 기능: 하드코딩된 카테고리 제거하고 모든 하위 폴더를 동적으로 인식",
+  "description": "현재 docs/ 하위 1단계 디렉토리만 스캔하고, CATEGORY_EMOJI가 plans/develop/research로 하드코딩되어 있어 docs/superpowers/plans 같은 중첩 경로를 표현할 수 없음. 모든 하위 폴더를 재귀적으로 탐색하고, 하드코딩된 이모지 매핑을 제거하여 동적으로 모든 폴더를 인식하도록 수정",
+  "status": "resolved",
+  "priority": "high",
+  "labels": ["enhancement", "docs"],
+  "assignee": "claude",
+  "createdAt": "2026-03-24",
+  "updatedAt": "2026-03-24",
+  "comments": [
+    {
+      "author": "claude",
+      "date": "2026-03-24",
+      "body": "완료. API route, browser mode doc-service, 프론트엔드 3곳 수정. 재귀 디렉토리 탐색으로 docs/ 하위 모든 깊이의 폴더와 파일 인식 가능. CATEGORY_EMOJI 하드코딩 제거, 📁 폴더 아이콘으로 통일."
+    }
+  ]
+}

@@ -55,6 +55,41 @@ function buildDocMeta(
   }
 }
 
+/**
+ * Recursively scan a directory in browser storage for .md files.
+ * `relDir` is relative to docs/ (e.g. "", "plans", "superpowers/plans").
+ */
+async function scanBrowserDirRecursive(
+  storage: ReturnType<typeof getBrowserStorage>,
+  projectPath: string,
+  relDir: string,
+  docs: DocMeta[],
+  categorySet: Set<string>
+): Promise<void> {
+  const dirPath = relDir ? `docs/${relDir}` : 'docs'
+  try {
+    const entries = await storage.listDirectory(projectPath, dirPath)
+    for (const entry of entries) {
+      if (entry.isDirectory) {
+        const childRelDir = relDir ? `${relDir}/${entry.name}` : entry.name
+        await scanBrowserDirRecursive(storage, projectPath, childRelDir, docs, categorySet)
+      } else if (entry.name.endsWith('.md')) {
+        try {
+          const filePath = `${dirPath}/${entry.name}`
+          const content = await storage.readFile(projectPath, filePath)
+          const category = relDir || 'general'
+          categorySet.add(category)
+          docs.push(buildDocMeta(filePath, content, category))
+        } catch {
+          // Skip unreadable files
+        }
+      }
+    }
+  } catch {
+    // Skip unreadable directories
+  }
+}
+
 export const docService = {
   async getAll(
     projectId: string
@@ -66,47 +101,7 @@ export const docService = {
       const categorySet = new Set<string>()
 
       try {
-        // List subdirectories under docs/
-        const subDirs = await storage.listSubDirectories(projectPath, 'docs')
-
-        // Also check root docs/ for files directly in it
-        const rootEntries = await storage.listDirectory(projectPath, 'docs')
-        for (const entry of rootEntries) {
-          if (!entry.isDirectory && entry.name.endsWith('.md')) {
-            try {
-              const content = await storage.readFile(projectPath, `docs/${entry.name}`)
-              const category = 'general'
-              categorySet.add(category)
-              docs.push(buildDocMeta(`docs/${entry.name}`, content, category))
-            } catch {
-              // Skip unreadable files
-            }
-          }
-        }
-
-        // Process each subdirectory
-        for (const subDir of subDirs) {
-          const dirPath = `docs/${subDir}`
-          try {
-            const entries = await storage.listDirectory(projectPath, dirPath)
-            const mdFiles = entries.filter(
-              (e) => !e.isDirectory && e.name.endsWith('.md')
-            )
-            for (const file of mdFiles) {
-              try {
-                const filePath = `${dirPath}/${file.name}`
-                const content = await storage.readFile(projectPath, filePath)
-                categorySet.add(subDir)
-                docs.push(buildDocMeta(filePath, content, subDir))
-              } catch {
-                // Skip unreadable files
-              }
-            }
-          } catch {
-            // Skip unreadable directories
-          }
-        }
-
+        await scanBrowserDirRecursive(storage, projectPath, '', docs, categorySet)
         return { docs, categories: Array.from(categorySet).sort() }
       } catch {
         return { docs: [], categories: [] }

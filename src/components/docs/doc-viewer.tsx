@@ -6,12 +6,6 @@ import MarkdownViewer, { resolveDocLink, getDataRoute } from '@/components/ui/Ma
 import { useI18n } from '@/lib/i18n'
 import type { DocMeta, Category } from './doc-list'
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  plans: '📋',
-  develop: '🛠️',
-  research: '🔬',
-}
-
 const CLAUDE_TOKEN_LIMIT = 25000
 
 function formatTokenCount(tokens: number): string {
@@ -146,7 +140,7 @@ export default function DocViewer({
                 <Badge variant="outline" className="text-xs font-mono">{version}</Badge>
               )}
               <Badge variant="secondary" className="text-xs">
-                {CATEGORY_EMOJI[selectedDoc.category] || '📄'} {categories.find(c => c.id === selectedDoc.category)?.label || selectedDoc.category}
+                📁 {categories.find(c => c.id === selectedDoc.category)?.label || selectedDoc.category}
               </Badge>
               {selectedDoc.tokens > 0 && (
                 <Badge
