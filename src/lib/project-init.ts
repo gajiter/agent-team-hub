@@ -55,7 +55,17 @@ export async function initializeProject(projectPath: string): Promise<string[]> 
     created.push('.claude/skills/hub/SKILL.md')
   }
 
-  // 7. Create .claude/skills/hub/references/schemas.md (progressive disclosure)
+  // 7. Create .claude/skills/hub/scripts/issue-cli.js (issue management CLI)
+  if (!await storage.exists(projectPath, '.claude/skills/hub/scripts/issue-cli.js')) {
+    const cliTemplate = await fs.readFile(
+      path.join(process.cwd(), 'src/templates/hub-skill/scripts/issue-cli.js'),
+      'utf-8'
+    )
+    await storage.writeFile(projectPath, '.claude/skills/hub/scripts/issue-cli.js', cliTemplate)
+    created.push('.claude/skills/hub/scripts/issue-cli.js')
+  }
+
+  // 8. Create .claude/skills/hub/references/schemas.md (progressive disclosure)
   if (!await storage.exists(projectPath, '.claude/skills/hub/references/schemas.md')) {
     const schemasTemplate = await fs.readFile(
       path.join(process.cwd(), 'src/templates/hub-skill/references/schemas.md'),

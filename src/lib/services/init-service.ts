@@ -6,6 +6,7 @@ import {
   HUB_WORKFLOW_TEMPLATE,
   HUB_SKILL_TEMPLATE,
   HUB_SKILL_SCHEMAS_TEMPLATE,
+  HUB_ISSUE_CLI_TEMPLATE,
 } from '@/lib/templates-bundled'
 
 const START_MARKER = '<!-- agent-team-hub:start -->'
@@ -117,7 +118,21 @@ export const initService = {
         created.push('.claude/skills/hub/SKILL.md')
       }
 
-      // 7. .claude/skills/hub/references/schemas.md (progressive disclosure)
+      // 7. .claude/skills/hub/scripts/issue-cli.js (issue management CLI)
+      const cliExists = await storage.exists(
+        projectPath,
+        '.claude/skills/hub/scripts/issue-cli.js'
+      )
+      if (!cliExists) {
+        await storage.writeFile(
+          projectPath,
+          '.claude/skills/hub/scripts/issue-cli.js',
+          HUB_ISSUE_CLI_TEMPLATE
+        )
+        created.push('.claude/skills/hub/scripts/issue-cli.js')
+      }
+
+      // 8. .claude/skills/hub/references/schemas.md (progressive disclosure)
       const schemasExists = await storage.exists(
         projectPath,
         '.claude/skills/hub/references/schemas.md'
