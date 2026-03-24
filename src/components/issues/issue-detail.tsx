@@ -364,10 +364,10 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
         <div>
           <h3 className="text-sm font-semibold text-foreground mb-2">{t('issues.labelsField')}</h3>
           <div className="flex flex-wrap gap-1.5 mb-2">
-            {issue.labels.length === 0 && (
+            {(!issue.labels || issue.labels.length === 0) && (
               <span className="text-xs text-muted-foreground italic">{t('issues.noLabels')}</span>
             )}
-            {issue.labels.map((label) => (
+            {(issue.labels ?? []).map((label) => (
               <Badge key={label} variant="secondary" className="text-xs gap-1 pr-1">
                 {label}
                 {!isLocked && (
