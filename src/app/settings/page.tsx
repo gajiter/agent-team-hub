@@ -33,14 +33,18 @@ export default function SettingsPage() {
   const [language, setLanguage] = useState<string>(locale)
   const [settingsLoading, setSettingsLoading] = useState(true)
 
-  // Load settings
+  // Load settings and sync language to i18n context
   useEffect(() => {
     settingsService.getSettings()
       .then(data => {
-        if (data.language) setLanguage(data.language)
+        if (data.language) {
+          setLanguage(data.language)
+          setLocale(data.language as Locale)
+        }
       })
       .catch(() => {})
       .finally(() => setSettingsLoading(false))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Sync language state with locale from i18n

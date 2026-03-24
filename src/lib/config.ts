@@ -9,7 +9,7 @@ const CONFIG_PATH = path.join(CONFIG_DIR, 'config.json')
 
 const DEFAULT_CONFIG: GlobalConfig = {
   projects: [],
-  settings: { theme: 'dark', language: 'ko', port: 3100 }
+  settings: { theme: 'dark', language: 'en', port: 3100 }
 }
 
 export async function readGlobalConfig(): Promise<GlobalConfig> {

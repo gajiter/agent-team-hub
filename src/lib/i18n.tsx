@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import en from '@/locales/en.json'
 import ko from '@/locales/ko.json'
+import { settingsService } from '@/lib/services/settings-service'
 
 type Messages = typeof en
 type Locale = 'en' | 'ko'
@@ -35,7 +36,20 @@ export function I18nProvider({ children, initialLocale = 'en' }: { children: Rea
 
   useEffect(() => {
     const saved = localStorage.getItem('agent-team-hub:locale') as Locale
-    if (saved && locales[saved]) setLocaleState(saved)
+    if (saved && locales[saved]) {
+      setLocaleState(saved)
+      return
+    }
+    // Fallback: load from settings service (canonical source)
+    settingsService.getSettings()
+      .then(data => {
+        if (data.language && locales[data.language as Locale]) {
+          const lang = data.language as Locale
+          setLocaleState(lang)
+          localStorage.setItem('agent-team-hub:locale', lang)
+        }
+      })
+      .catch(() => {})
   }, [])
 
   const setLocale = useCallback((newLocale: Locale) => {
