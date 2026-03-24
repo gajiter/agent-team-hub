@@ -1,0 +1,11 @@
+{
+  "id": "ISS-006",
+  "title": "MDX/Markdown CJK Bold 렌더링 깨짐 수정",
+  "description": "CommonMark 스펙에서 **텍스트**입니다처럼 ** 바로 뒤에 한글(CJK 문자)이 붙으면 Bold가 렌더링되지 않는 문제. remark-cjk-friendly 플러그인으로 해결.",
+  "status": "resolved",
+  "priority": "high",
+  "assignee": "claude",
+  "createdAt": "2026-03-24",
+  "updatedAt": "2026-03-24",
+  "comments": ["remark-cjk-friendly 2.0.1 설치 및 MarkdownViewer.tsx remarkPlugins에 추가 완료. tsc 타입체크 통과."]
+}

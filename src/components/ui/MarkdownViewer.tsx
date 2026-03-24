@@ -3,6 +3,7 @@
 import { useState, useCallback, useMemo, type ReactNode, type ReactElement, type HTMLAttributes } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import remarkCjkFriendly from 'remark-cjk-friendly'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import type { Components, ExtraProps } from 'react-markdown'
@@ -260,7 +261,7 @@ export default function MarkdownViewer({ content, className = '', onLinkClick }:
       ].join(' ')}
     >
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkCjkFriendly]}
         components={components}
       >
         {stripped}
