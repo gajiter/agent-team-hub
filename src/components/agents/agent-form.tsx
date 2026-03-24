@@ -11,13 +11,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { useI18n } from '@/lib/i18n'
 import type { AgentInfo } from '@/types/agents'
 
@@ -33,14 +26,7 @@ const COLOR_OPTIONS = [
   { value: 'pink', label: 'Pink', class: 'bg-pink-500' },
 ]
 
-const MODEL_OPTIONS = [
-  'claude-sonnet-4-20250514',
-  'claude-opus-4-20250514',
-  'gpt-4o',
-  'gpt-4o-mini',
-  'gemini-2.0-flash',
-  'gemini-2.5-pro',
-]
+const DEFAULT_MODEL = 'claude-sonnet-4-20250514'
 
 const EMOJI_OPTIONS = ['🤖', '🧠', '🔧', '📝', '🎨', '🔍', '📊', '🛡️', '🚀', '💡', '⚙️', '🏗️']
 
@@ -54,7 +40,7 @@ interface AgentFormProps {
 export default function AgentForm({ open, onOpenChange, agent, onSave }: AgentFormProps) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [model, setModel] = useState(MODEL_OPTIONS[0])
+  const [model, setModel] = useState(DEFAULT_MODEL)
   const [color, setColor] = useState('blue')
   const [emoji, setEmoji] = useState('🤖')
   const [role, setRole] = useState('')
@@ -74,7 +60,7 @@ export default function AgentForm({ open, onOpenChange, agent, onSave }: AgentFo
     } else {
       setName('')
       setDescription('')
-      setModel(MODEL_OPTIONS[0])
+      setModel(DEFAULT_MODEL)
       setColor('blue')
       setEmoji('🤖')
       setRole('')
@@ -130,14 +116,7 @@ export default function AgentForm({ open, onOpenChange, agent, onSave }: AgentFo
           {/* Model */}
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">{t('agents.model')}</label>
-            <Select value={model} onValueChange={setModel}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {MODEL_OPTIONS.map(m => (
-                  <SelectItem key={m} value={m}>{m}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Input value={model} onChange={(e) => setModel(e.target.value)} placeholder="claude-sonnet-4-20250514" />
           </div>
 
           {/* Emoji */}

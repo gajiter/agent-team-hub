@@ -411,16 +411,16 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
         </div>
 
         {/* Related */}
-        {(issue.relatedFiles.length > 0 || issue.relatedIds.length > 0) && (
+        {((issue.relatedFiles?.length ?? 0) > 0 || (issue.relatedIds?.length ?? 0) > 0) && (
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-2">{t('issues.relatedItems')}</h3>
             <div className="space-y-1.5">
-              {issue.relatedIds.map((rid) => (
+              {issue.relatedIds?.map((rid) => (
                 <Badge key={rid} variant="outline" className="text-xs mr-1.5">
                   {rid}
                 </Badge>
               ))}
-              {issue.relatedFiles.map((f) => (
+              {issue.relatedFiles?.map((f) => (
                 <div key={f} className="text-xs text-muted-foreground font-mono">
                   {f}
                 </div>
