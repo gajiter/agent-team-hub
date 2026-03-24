@@ -63,10 +63,6 @@ function GroupedPermissionMatrix({
 }) {
   const { t } = useI18n()
 
-  if (permissions.length === 0) {
-    return <div className="text-sm text-muted-foreground py-10 text-center">{t('planning.roles.noData')}</div>
-  }
-
   const grouped = useMemo(() => {
     const reqMap = new Map<string, Requirement>()
     requirements.forEach(r => reqMap.set(r.id, r))
@@ -90,6 +86,10 @@ function GroupedPermissionMatrix({
     }
     return sorted
   }, [permissions, featureReqMap, requirements, t])
+
+  if (permissions.length === 0) {
+    return <div className="text-sm text-muted-foreground py-10 text-center">{t('planning.roles.noData')}</div>
+  }
 
   return (
     <TooltipProvider delayDuration={200}>
