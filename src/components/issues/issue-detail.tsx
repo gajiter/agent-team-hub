@@ -238,7 +238,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
               onValueChange={(val) => val && onUpdate({ type: val as IssueType })}
               disabled={isLocked}
             >
-              <SelectTrigger className="h-8 text-xs">
+              <SelectTrigger className="h-8 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -259,7 +259,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
               onValueChange={(val) => val && onUpdate({ status: val as IssueStatus })}
               disabled={isLocked}
             >
-              <SelectTrigger className="h-8 text-xs">
+              <SelectTrigger className="h-8 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -280,7 +280,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
               onValueChange={(val) => val && onUpdate({ priority: val as IssuePriority })}
               disabled={isLocked}
             >
-              <SelectTrigger className="h-8 text-xs">
+              <SelectTrigger className="h-8 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
