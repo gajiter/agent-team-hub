@@ -11,6 +11,7 @@ import { MermaidDiagram } from './mermaid-diagram'
 
 /** YAML frontmatter 블록을 제거 */
 function stripFrontmatter(content: string): string {
+  if (!content) return ''
   return content.replace(/^---\s*\n[\s\S]*?\n---\s*\n?/, '')
 }
 

@@ -456,13 +456,13 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
                 {t('issues.noComments')}
               </div>
             )}
-            {issue.comments.map((c) => {
+            {issue.comments.map((c, idx) => {
               const commentAgent = c.author !== 'human' ? agents.find((a) => a.name === c.author) : undefined
               const commentColors = commentAgent ? getAgentColors(commentAgent) : undefined
 
               return (
                 <Card
-                  key={c.id}
+                  key={c.id || `comment-${idx}`}
                   className={cn(
                     'border-border/60',
                     commentAgent && 'border-l-2',
