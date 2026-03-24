@@ -78,10 +78,18 @@ export default function AssigneeMultiSelect({
           const checked = assignees.includes(name)
 
           return (
-            <button
+            <div
               key={name}
-              type="button"
+              role="option"
+              aria-selected={checked}
               onClick={() => toggleAssignee(name)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  toggleAssignee(name)
+                }
+              }}
+              tabIndex={0}
               className={cn(
                 'flex items-center gap-2 w-full rounded-sm px-2 py-1.5 text-xs cursor-pointer transition-colors',
                 'hover:bg-accent hover:text-accent-foreground',
@@ -97,7 +105,7 @@ export default function AssigneeMultiSelect({
                 <span>{isHuman ? '\u{1F464}' : agent?.emoji ?? '\u{1F916}'}</span>
                 <span>{name}</span>
               </span>
-            </button>
+            </div>
           )
         })}
       </PopoverContent>
