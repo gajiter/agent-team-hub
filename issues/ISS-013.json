@@ -1,0 +1,24 @@
+{
+  "id": "ISS-013",
+  "title": "Task 4: hub-docs SKILL.md + schemas.md 작성",
+  "description": "",
+  "status": "resolved",
+  "priority": "medium",
+  "type": "task",
+  "assignee": "claude",
+  "assignees": [],
+  "reporter": "user",
+  "labels": [],
+  "relatedFiles": [],
+  "relatedIds": [],
+  "comments": [
+    {
+      "id": "c-1774601817777",
+      "author": "claude",
+      "content": "hub-docs 스킬 파일 2개 생성 완료: SKILL.md (문서/구조화 데이터 생성 가이드), references/schemas.md (PRD/features/roles/userflow 스키마, 이슈 스키마 제외). 커밋: 41443b0",
+      "createdAt": "2026-03-27T08:56:57.776Z"
+    }
+  ],
+  "createdAt": "2026-03-27T08:53:02.969Z",
+  "updatedAt": "2026-03-27T08:56:57.776Z"
+}

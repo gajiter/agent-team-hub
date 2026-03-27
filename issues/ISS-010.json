@@ -1,0 +1,24 @@
+{
+  "id": "ISS-010",
+  "title": "hub-issue-tracker SKILL.md 작성",
+  "description": "agent-hub 플러그인 구조 재편 7단계 계획의 Task 1: .claude/plugins/agent-hub/skills/hub-issue-tracker/SKILL.md 파일 생성",
+  "status": "resolved",
+  "priority": "medium",
+  "type": "task",
+  "assignee": "claude",
+  "assignees": [],
+  "reporter": "user",
+  "labels": [],
+  "relatedFiles": [],
+  "relatedIds": [],
+  "comments": [
+    {
+      "id": "c-1774600672844",
+      "author": "claude",
+      "content": ".claude/plugins/agent-hub/skills/hub-issue-tracker/ 디렉토리 생성 및 SKILL.md 파일 작성 완료. scripts/, references/ 하위 디렉토리도 함께 생성. 커밋: feat: add hub-issue-tracker skill with guardrail pattern",
+      "createdAt": "2026-03-27T08:37:52.844Z"
+    }
+  ],
+  "createdAt": "2026-03-27T08:35:37.188Z",
+  "updatedAt": "2026-03-27T08:37:52.844Z"
+}

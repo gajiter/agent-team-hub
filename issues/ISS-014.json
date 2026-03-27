@@ -1,0 +1,17 @@
+{
+  "id": "ISS-014",
+  "title": "통합 검증 테스트",
+  "description": "",
+  "status": "open",
+  "priority": "medium",
+  "type": "task",
+  "assignee": "test",
+  "assignees": [],
+  "reporter": "test",
+  "labels": [],
+  "relatedFiles": [],
+  "relatedIds": [],
+  "comments": [],
+  "createdAt": "2026-03-27T09:00:16.329Z",
+  "updatedAt": "2026-03-27T09:00:16.329Z"
+}

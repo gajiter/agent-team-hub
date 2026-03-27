@@ -1,0 +1,24 @@
+{
+  "id": "ISS-011",
+  "title": "issue-cli.js 이동 및 경로 수정",
+  "description": "",
+  "status": "resolved",
+  "priority": "medium",
+  "type": "task",
+  "assignee": "claude",
+  "assignees": [],
+  "reporter": "user",
+  "labels": [],
+  "relatedFiles": [],
+  "relatedIds": [],
+  "comments": [
+    {
+      "id": "c-1774601402968",
+      "author": "claude",
+      "content": "issue-cli.js를 .claude/plugins/agent-hub/skills/hub-issue-tracker/scripts/에 복사하고 PROJECT_ROOT 경로를 6 levels up으로 수정 완료. node list 명령어로 정상 동작 확인. 커밋 완료.",
+      "createdAt": "2026-03-27T08:50:02.968Z"
+    }
+  ],
+  "createdAt": "2026-03-27T08:38:50.741Z",
+  "updatedAt": "2026-03-27T08:50:02.968Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "ISS-012",
+  "title": "issue-schema.md 작성",
+  "description": "",
+  "status": "resolved",
+  "priority": "medium",
+  "type": "task",
+  "assignee": "claude",
+  "assignees": [],
+  "reporter": "user",
+  "labels": [],
+  "relatedFiles": [],
+  "relatedIds": [],
+  "comments": [
+    {
+      "id": "c-1774601535650",
+      "author": "claude",
+      "content": "issue-schema.md 파일을 .claude/plugins/agent-hub/skills/hub-issue-tracker/references/ 에 생성하고 커밋 완료. 커밋: feat: add issue schema reference for hub-issue-tracker",
+      "createdAt": "2026-03-27T08:52:15.650Z"
+    }
+  ],
+  "createdAt": "2026-03-27T08:51:34.383Z",
+  "updatedAt": "2026-03-27T08:52:15.650Z"
+}
