@@ -26,7 +26,6 @@
     "planning": "기획",
     "prd": "PRD",
     "features": "기능 명세",
-    "roles": "역할/권한",
     "userflow": "유저 플로우",
     "docs": "문서",
     "documents": "문서",
@@ -182,10 +181,7 @@
       "version": "버전",
       "status": "상태",
       "basedOn": "기반 문서",
-      "tbd": "미정",
-      "permissions": "개 권한",
-      "permissionScope": "권한 범위",
-      "permissionPrinciples": "권한 부여 원칙"
+      "tbd": "미정"
     },
     "features": {
       "title": "기능 명세서",
@@ -195,21 +191,6 @@
       "featuresCount": "개 기능",
       "treeView": "트리 뷰",
       "directoryView": "디렉토리 뷰"
-    },
-    "roles": {
-      "title": "권한 매트릭스",
-      "noData": "권한 데이터가 아직 없습니다",
-      "addFile": "data/roles.json 파일을 프로젝트에 추가하세요",
-      "featureId": "기능 ID",
-      "action": "액션",
-      "permissions": "개 권한",
-      "permissionScope": "권한 범위",
-      "rolesCount": "개 역할",
-      "permissionMatrix": "권한 매트릭스",
-      "allowed": "허용",
-      "conditional": "조건부",
-      "denied": "거부",
-      "permissionPrinciples": "권한 부여 원칙"
     },
     "userflow": {
       "title": "유저 플로우",

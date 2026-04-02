@@ -4,7 +4,7 @@ import { LocalStorageProvider } from '@/lib/storage/local'
 
 const storage = new LocalStorageProvider()
 
-const VALID_TYPES = ['prd', 'features', 'roles', 'userflow'] as const
+const VALID_TYPES = ['prd', 'features', 'userflow'] as const
 type PlanningType = typeof VALID_TYPES[number]
 
 function isValidType(type: string): type is PlanningType {

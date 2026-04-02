@@ -104,7 +104,6 @@ function isInternalDocLink(href: string): boolean {
 const DATA_ROUTE_MAP: Record<string, string> = {
   'data/prd.json': '/prd',
   'data/features.json': '/features',
-  'data/roles.json': '/roles',
   'data/userflow.json': '/userflow',
 }
 

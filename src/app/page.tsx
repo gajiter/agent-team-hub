@@ -37,7 +37,6 @@ interface DocMeta {
 const DATA_CANDIDATES: DataEntry[] = [
   { icon: '📘', name: 'PRD', path: 'data/prd.json', href: '/planning/prd', author: 'planner' },
   { icon: '⚙️', name: 'Features', path: 'data/features.json', href: '/planning/features', author: 'planner' },
-  { icon: '🔐', name: 'Roles', path: 'data/roles.json', href: '/planning/roles', author: 'planner' },
   { icon: '🔀', name: 'User Flow', path: 'data/userflow.json', href: '/planning/userflow', author: 'planner' },
 ]
 

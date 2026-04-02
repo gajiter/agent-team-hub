@@ -26,7 +26,6 @@
     "planning": "Planning",
     "prd": "PRD",
     "features": "Features",
-    "roles": "Roles",
     "userflow": "User Flow",
     "docs": "Docs",
     "documents": "Documents",
@@ -182,10 +181,7 @@
       "version": "Version",
       "status": "Status",
       "basedOn": "Based On",
-      "tbd": "TBD",
-      "permissions": "permissions",
-      "permissionScope": "Permission Scope",
-      "permissionPrinciples": "Permission Principles"
+      "tbd": "TBD"
     },
     "features": {
       "title": "Features",
@@ -195,21 +191,6 @@
       "featuresCount": "features",
       "treeView": "Tree View",
       "directoryView": "Directory View"
-    },
-    "roles": {
-      "title": "Roles & Permissions",
-      "noData": "No roles data yet",
-      "addFile": "Add a data/roles.json file to your project",
-      "featureId": "Feature ID",
-      "action": "Action",
-      "permissions": "permissions",
-      "permissionScope": "Permission Scope",
-      "rolesCount": "roles",
-      "permissionMatrix": "Permission Matrix",
-      "allowed": "Allowed",
-      "conditional": "Conditional",
-      "denied": "Denied",
-      "permissionPrinciples": "Permission Principles"
     },
     "userflow": {
       "title": "User Flow",

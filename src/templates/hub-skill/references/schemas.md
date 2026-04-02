@@ -143,38 +143,6 @@
 
 ---
 
-## data/roles.json — 역할/권한 매트릭스
-
-```json
-{
-  "version": "1.0",
-  "project": "프로젝트명",
-  "scopeHierarchy": [
-    { "scope": "global", "name": "전역", "description": "전체 시스템" },
-    { "scope": "workspace", "name": "워크스페이스", "description": "워크스페이스 단위" },
-    { "scope": "site", "name": "사이트", "description": "사이트 단위" }
-  ],
-  "roles": [
-    { "id": "owner", "name": "소유자", "scope": "global", "description": "설명", "level": 1 }
-  ],
-  "permissions": [
-    {
-      "action": "행동 설명",
-      "featureId": "F-01",
-      "roles": { "owner": true, "admin": true, "member": false },
-      "note": "조건부 허용인 경우 설명"
-    }
-  ],
-  "scopeNotes": {
-    "원칙명": "설명"
-  }
-}
-```
-
-> `scopeHierarchy`와 `scopeNotes`는 선택적 필드입니다. `roles`의 `level`이 낮을수록 상위 권한입니다.
-
----
-
 ## data/userflow.json — 사용자 흐름
 
 ```json

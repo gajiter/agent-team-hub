@@ -7,7 +7,6 @@ import {
   FileText,
   BookOpen,
   Target,
-  Users,
   GitBranch,
   Bug,
   Bot,
@@ -32,7 +31,6 @@ const OVERVIEW: NavItemDef[] = [
 const PLANNING: NavItemDef[] = [
   { href: '/planning/prd', icon: FileText, labelKey: 'nav.prd' },
   { href: '/planning/features', icon: BookOpen, labelKey: 'nav.features' },
-  { href: '/planning/roles', icon: Users, labelKey: 'nav.roles' },
   { href: '/planning/userflow', icon: GitBranch, labelKey: 'nav.userflow' },
 ]
 

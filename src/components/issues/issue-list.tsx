@@ -110,7 +110,7 @@ export default function IssueList({ issues, selectedId, onSelect, locks, agents,
                 </div>
                 <div className="flex flex-col items-end gap-1 flex-shrink-0">
                   <span className="text-xs text-muted-foreground">{formatDate(issue.updatedAt)}</span>
-                  {issue.comments.length > 0 && (
+                  {issue.comments?.length > 0 && (
                     <span className="text-xs text-muted-foreground flex items-center gap-0.5">
                       {'\u{1F4AC}'} {issue.comments.length}
                     </span>

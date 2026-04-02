@@ -2,7 +2,7 @@ import { isBrowserMode } from './mode'
 import { getBrowserStorage } from '@/lib/storage/browser'
 import { projectService } from './project-service'
 
-type PlanningType = 'prd' | 'features' | 'roles' | 'userflow'
+type PlanningType = 'prd' | 'features' | 'userflow'
 
 export const planningService = {
   async get(
