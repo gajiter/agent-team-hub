@@ -453,7 +453,7 @@ function IssueRow({ issue }: { issue: Issue }) {
         <span className="text-xs text-muted-foreground">
           {formatRelativeTime(issue.updatedAt, t)}
         </span>
-        {issue.comments.length > 0 && (
+        {issue.comments?.length > 0 && (
           <span className="text-xs text-muted-foreground">
             {issue.comments.length} {t('common.comments')}
           </span>
