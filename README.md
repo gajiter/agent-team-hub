@@ -1,148 +1,61 @@
 # Agent Team Hub
 
-AI 에이전트 팀과 사람이 함께 협업하기 위한 **파일 기반 프로젝트 관리 도구**입니다.
+**사람과 AI 에이전트가 함께 일하기 위한 로컬 프로젝트 관리 도구**
 
 ![기능 명세 관리](public/screenshots/features-plan.png)
 ![이슈 트래킹](public/screenshots/issues.png)
 
-Jira와 유사한 이슈 트래킹, PRD/기능 명세/유저 플로우 등 기획 문서 관리, 에이전트 팀 관리 기능을 제공하며, 모든 데이터를 프로젝트 디렉토리 내 JSON/Markdown 파일로 저장합니다. Claude Code 등 AI 에이전트가 파일을 직접 읽고 쓸 수 있어 **사람과 AI 간의 원활한 협업**이 가능합니다.
+## 왜 만들었는가
 
-## 주요 특징
+Claude Code로 프로덕트를 만들다 보면 한 가지 근본적인 한계에 부딪힙니다. **Context Window**입니다. 기획, 설계, 개발을 하나의 세션에서 처리하려 하면 맥락이 희석되고 산출물의 품질이 떨어집니다.
 
-- **파일 기반 저장** — 모든 데이터가 JSON/Markdown 파일로 저장되어 Git 친화적이고 AI 에이전트가 직접 접근 가능
-- **이슈 트래킹** — 생성, 수정, 삭제, 아카이브, 댓글, 멀티 담당자, 실시간 폴링 지원
-- **기획 문서 관리** — PRD, 기능 명세, 유저 플로우 다이어그램을 구조화된 형태로 관리
-- **문서 브라우저** — Markdown 문서 자동 인덱싱, 카테고리 분류, 코드 하이라이팅
-- **에이전트 팀 관리** — Claude Code 에이전트 정의 및 이슈 할당 관리
-- **듀얼 모드** — 로컬 서버 모드(Node.js)와 브라우저 모드(File System Access API) 지원
-- **다국어 지원** — 한국어/영어 인터페이스
+사람 조직에서 PM, 설계자, 개발자가 역할을 나누듯, AI 에이전트도 전문화된 분업이 필요합니다. 그런데 에이전트끼리는 대화할 수 없습니다. 그래서 **파일**이 공용어가 됩니다. 기획 문서, 기능 명세, 이슈 — 모두 프로젝트 디렉토리 안의 JSON과 Markdown 파일로 존재하고, 어떤 에이전트든 읽고 쓸 수 있습니다.
 
-## 빠른 시작
+Agent Team Hub는 이 파일들을 **사람이 시각적으로 확인하고 검수할 수 있도록** 만든 도구입니다.
 
-### 설치
+## 설계 철학
+
+### Claude Code와 경쟁하지 않는다
+
+Agent Team Hub는 에이전트를 직접 호출하거나 코드를 생성하지 않습니다. Claude Code가 하는 일을 대체하려는 도구가 아닙니다. 오히려 Claude Code를 더 잘 쓰기 위한 **보조 도구**입니다.
+
+에이전트가 만들어낸 기획 문서, 기능 명세, 이슈를 사람이 눈으로 확인하고, 방향을 잡아주고, 다시 에이전트에게 작업을 맡기는 — 그 사이클의 **시각화 계층**을 담당합니다.
+
+### 파일이 곧 인터페이스
+
+모든 데이터는 프로젝트 디렉토리 안의 파일로 저장됩니다. 별도의 API 서버도, 클라우드 동기화도 없습니다. 이 구조가 가져오는 이점:
+
+- **토큰 비용 없음** — 에이전트는 외부 API를 호출할 필요 없이 로컬 파일을 직접 읽고 씁니다
+- **보안** — 프로젝트 데이터가 로컬을 벗어나지 않습니다. SaaS에 기획 문서를 올리지 않아도 됩니다
+- **Git 친화적** — 모든 변경이 파일 단위로 추적됩니다. 에이전트의 작업도 diff로 리뷰할 수 있습니다
+- **AI 최적화** — JSON 기반의 구조화된 데이터는 AI가 정확하게 파싱하고 수정할 수 있는 형태입니다
+
+### 사람이 설계하고, AI가 만들고, 사람이 검수한다
+
+AI가 코드를 작성하는 시대에 개발자의 역할은 "만드는 사람"에서 **"설계하고 검수하는 사람"**으로 변하고 있습니다. Agent Team Hub는 이 워크플로우를 지원합니다. 사람은 PRD와 기능 명세를 검토하고, 에이전트의 산출물을 리뷰하며, 프로젝트의 방향을 결정합니다.
+
+## 주요 기능
+
+- **이슈 트래킹** — 상태, 우선순위, 유형별 관리. 댓글, 멀티 담당자, 일괄 작업 지원
+- **기획 문서** — PRD, 기능 명세, 유저 플로우를 구조화된 형태로 관리하고 시각화
+- **문서 브라우저** — 프로젝트 내 Markdown 문서를 자동 인덱싱하고 카테고리별로 탐색
+- **에이전트 팀 관리** — 에이전트 정의, 역할 설정, 이슈 할당 현황 확인
+- **대시보드** — 프로젝트 전체 현황을 한눈에 파악
+- **Claude Code 연동** — 프로젝트 초기화 시 에이전트용 스킬과 CLI가 자동 설치
+
+## 시작하기
 
 ```bash
-# 저장소 클론
-git clone https://github.com/your-org/agent-team-hub.git
+# 설치
+git clone https://github.com/calvinsnax/agent-team-hub.git
 cd agent-team-hub
-
-# 의존성 설치
 npm install
-```
 
-### 실행
-
-```bash
-# 개발 모드
+# 실행
 npm run dev
-
-# 또는 CLI로 실행
-npx agent-team-hub
 ```
 
-브라우저에서 http://localhost:3100 으로 접속합니다.
-
-### 프로젝트 설정
-
-1. Settings 페이지에서 프로젝트 폴더를 추가합니다
-2. "Initialize Project"를 체크하면 필요한 디렉토리 구조가 자동 생성됩니다
-3. 대시보드에서 프로젝트 현황을 확인할 수 있습니다
-
-## 프로젝트 디렉토리 구조
-
-프로젝트를 초기화하면 다음 구조가 생성됩니다:
-
-```
-my-project/
-├── issues/                  # 이슈 트래킹
-│   ├── _index.json          # 메타데이터 (ID 카운터)
-│   ├── ISS-001.json         # 개별 이슈
-│   └── archive/             # 아카이브된 이슈
-├── docs/                    # Markdown 문서
-├── data/                    # 구조화 데이터
-│   ├── prd.json             # 제품 요구사항 정의서
-│   ├── features.json        # 기능 명세
-│   └── userflow.json        # 유저 플로우
-├── .hub/
-│   └── config.json          # Hub 설정
-└── .claude/
-    ├── agents/              # 에이전트 정의 파일
-    └── skills/hub/          # Claude Code 연동 스킬
-        ├── SKILL.md
-        └── scripts/issue-cli.js
-```
-
-## 기능 상세
-
-### 대시보드
-
-프로젝트 전체 현황을 한눈에 파악할 수 있습니다. 기획 데이터 상태, 문서 수, 활성 이슈 수, 에이전트 팀 구성을 카드 형태로 보여주며, 최근 이슈와 에이전트별 이슈 현황을 확인할 수 있습니다.
-
-### 이슈 트래킹
-
-| 기능 | 설명 |
-|------|------|
-| 상태 관리 | Open, In Progress, Resolved, Closed, Archived |
-| 우선순위 | Critical, High, Medium, Low |
-| 유형 | Task, Bug, Feature, Question, Decision |
-| 필터링 | 상태, 유형, 텍스트 검색 |
-| 일괄 작업 | 다중 선택 후 아카이브/삭제 |
-| 실시간 동기화 | 3초 간격 폴링으로 변경 감지 |
-| 댓글 | 이슈별 토론 스레드 |
-
-### 기획 문서
-
-- **PRD** — 비전, 핵심 가치, 타겟 사용자, 유저 스토리, 비기능 요구사항, MVP 범위, 로드맵, KPI
-- **기능 명세** — 요구사항 그룹화, 기능 계층 구조, 의존성 추적, 수락 기준
-- **유저 플로우** — 노드 기반 플로우 에디터, Mermaid 다이어그램 시각화
-
-### 문서 브라우저
-
-`docs/` 디렉토리의 Markdown 파일을 자동으로 인덱싱합니다. Frontmatter에서 제목, 카테고리, 작성자 정보를 추출하고, 디렉토리 구조를 기반으로 카테고리를 분류합니다.
-
-### 에이전트 관리
-
-`.claude/agents/` 디렉토리의 Markdown 파일로 에이전트를 정의합니다. 이름, 역할, 모델, 담당 업무 등을 설정하고, 이슈 할당 현황을 추적합니다.
-
-## Claude Code 연동
-
-프로젝트 초기화 시 Claude Code와의 연동을 위한 스킬과 CLI가 자동 설치됩니다.
-
-에이전트는 CLI를 통해 이슈를 관리할 수 있습니다:
-
-```bash
-# 이슈 목록 조회
-node .claude/skills/hub/scripts/issue-cli.js list
-
-# 이슈 생성
-node .claude/skills/hub/scripts/issue-cli.js create --title "버그 수정" --type bug --priority high
-
-# 이슈 상태 변경
-node .claude/skills/hub/scripts/issue-cli.js update ISS-001 --status in-progress
-
-# 댓글 추가
-node .claude/skills/hub/scripts/issue-cli.js comment ISS-001 "작업을 시작합니다"
-```
-
-## 기술 스택
-
-| 영역 | 기술 |
-|------|------|
-| 프레임워크 | Next.js 16, React 19 |
-| 언어 | TypeScript 5 |
-| 스타일링 | Tailwind CSS 4, shadcn/ui (Radix UI) |
-| 아이콘 | Lucide React |
-| 다이어그램 | Mermaid |
-| Markdown | react-markdown, remark-gfm |
-
-## 스크립트
-
-```bash
-npm run dev      # 개발 서버 (port 3100)
-npm run build    # 프로덕션 빌드
-npm start        # 프로덕션 서버
-npm run lint     # ESLint 실행
-```
+http://localhost:3100 에서 접속한 뒤, Settings에서 프로젝트 폴더를 추가하면 됩니다. "Initialize Project"를 체크하면 필요한 디렉토리와 설정이 자동으로 생성됩니다.
 
 ## 라이선스
 
