@@ -2,6 +2,9 @@
 
 AI 에이전트 팀과 사람이 함께 협업하기 위한 **파일 기반 프로젝트 관리 도구**입니다.
 
+![기능 명세 관리](public/screenshots/features-plan.png)
+![이슈 트래킹](public/screenshots/issues.png)
+
 Jira와 유사한 이슈 트래킹, PRD/기능 명세/유저 플로우 등 기획 문서 관리, 에이전트 팀 관리 기능을 제공하며, 모든 데이터를 프로젝트 디렉토리 내 JSON/Markdown 파일로 저장합니다. Claude Code 등 AI 에이전트가 파일을 직접 읽고 쓸 수 있어 **사람과 AI 간의 원활한 협업**이 가능합니다.
 
 ## 주요 특징
