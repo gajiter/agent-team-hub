@@ -448,15 +448,15 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
         {/* Comments */}
         <div>
           <h3 className="text-sm font-semibold text-foreground mb-3">
-            {t('issues.comments')} ({issue.comments.length})
+            {t('issues.comments')} ({issue.comments?.length ?? 0})
           </h3>
           <div className="space-y-3 mb-4">
-            {issue.comments.length === 0 && (
+            {(issue.comments?.length ?? 0) === 0 && (
               <div className="text-sm text-muted-foreground italic py-4 text-center">
                 {t('issues.noComments')}
               </div>
             )}
-            {issue.comments.map((c, idx) => {
+            {issue.comments?.map((c, idx) => {
               const commentAgent = c.author !== 'human' ? agents.find((a) => a.name === c.author) : undefined
               const commentColors = commentAgent ? getAgentColors(commentAgent) : undefined
 
