@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { readdir, readFile, writeFile, unlink, mkdir, stat } from 'fs/promises'
-import { join, resolve } from 'path'
 import { resolveProjectPath } from '@/lib/api-utils'
 import { parseFrontmatter } from '@/lib/parsers'
+import { getServerStorage } from '@/lib/storage'
 
 const AGENTS_DIR = '.claude/agents'
-
-function agentsDir(projectPath: string): string {
-  return join(projectPath, AGENTS_DIR)
-}
 
 function buildAgentContent(meta: {
   name: string
@@ -38,7 +33,6 @@ function buildAgentContent(meta: {
   if (body) {
     lines.push(body)
   } else {
-    // Default agent template with workflow binding section
     lines.push(`# ${meta.name}`)
     lines.push('')
     if (meta.description) {
@@ -71,26 +65,27 @@ export async function GET(req: NextRequest) {
     }
 
     const projectPath = await resolveProjectPath(projectId)
-    const dir = agentsDir(projectPath)
+    const storage = getServerStorage()
 
-    let files: string[] = []
+    let entries: { name: string; isDirectory: boolean; path: string }[] = []
     try {
-      files = (await readdir(dir)).filter((f) => f.endsWith('.md')).sort()
+      entries = await storage.listDirectory(projectPath, AGENTS_DIR)
     } catch {
-      // Directory doesn't exist yet — return empty list
       return NextResponse.json({ agents: [] })
     }
 
+    const mdFiles = entries.filter((e) => !e.isDirectory && e.name.endsWith('.md')).sort((a, b) => a.name.localeCompare(b.name))
+
     const agents = await Promise.all(
-      files.map(async (filename) => {
-        const filePath = join(dir, filename)
-        const content = await readFile(filePath, 'utf-8')
+      mdFiles.map(async (entry) => {
+        const filePath = `${AGENTS_DIR}/${entry.name}`
+        const content = await storage.readFile(projectPath, filePath)
         const fm = parseFrontmatter(content)
         const meta = fm.metadata
-        const name = (meta.name as string) || filename.replace(/\.md$/, '')
+        const name = (meta.name as string) || entry.name.replace(/\.md$/, '')
 
         return {
-          fileName: filename,
+          fileName: entry.name,
           name,
           description: (meta.description as string) || '',
           model: (meta.model as string) || '',
@@ -114,7 +109,6 @@ export async function GET(req: NextRequest) {
 /**
  * POST /api/agents
  * Create a new agent .md file.
- * body: { projectId, name, description?, model?, color?, emoji?, role?, responsibilities? }
  */
 export async function POST(req: NextRequest) {
   try {
@@ -129,27 +123,23 @@ export async function POST(req: NextRequest) {
     }
 
     const projectPath = await resolveProjectPath(projectId)
-    const dir = agentsDir(projectPath)
-    await mkdir(dir, { recursive: true })
+    const storage = getServerStorage()
 
-    // Generate filename from name (kebab-case)
     const fileName = name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '') + '.md'
 
-    const filePath = join(dir, fileName)
+    const filePath = `${AGENTS_DIR}/${fileName}`
 
     // Check if file already exists
-    try {
-      await stat(filePath)
+    const exists = await storage.exists(projectPath, filePath)
+    if (exists) {
       return NextResponse.json({ error: 'Agent with this name already exists' }, { status: 409 })
-    } catch {
-      // File doesn't exist — proceed
     }
 
     const content = buildAgentContent({ name, description, model, color, emoji, role, responsibilities })
-    await writeFile(filePath, content, 'utf-8')
+    await storage.writeFile(projectPath, filePath, content)
 
     return NextResponse.json({
       fileName,
@@ -172,7 +162,6 @@ export async function POST(req: NextRequest) {
 /**
  * PUT /api/agents
  * Update an existing agent .md file.
- * body: { projectId, fileName, name?, description?, model?, color?, emoji?, role?, responsibilities?, body? }
  */
 export async function PUT(req: NextRequest) {
   try {
@@ -186,20 +175,19 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'fileName is required' }, { status: 400 })
     }
 
-    const projectPath = await resolveProjectPath(projectId)
-    const dir = agentsDir(projectPath)
-    const filePath = join(dir, fileName)
-
     // Validate path (prevent traversal)
-    const resolved = resolve(filePath)
-    if (!resolved.startsWith(resolve(dir))) {
+    if (fileName.includes('/') || fileName.includes('\\') || fileName.includes('..')) {
       return NextResponse.json({ error: 'Invalid path' }, { status: 403 })
     }
+
+    const projectPath = await resolveProjectPath(projectId)
+    const storage = getServerStorage()
+    const filePath = `${AGENTS_DIR}/${fileName}`
 
     // Read existing file
     let existingContent: string
     try {
-      existingContent = await readFile(filePath, 'utf-8')
+      existingContent = await storage.readFile(projectPath, filePath)
     } catch {
       return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
     }
@@ -218,7 +206,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const newContent = buildAgentContent(mergedMeta, agentBody ?? existing.body)
-    await writeFile(filePath, newContent, 'utf-8')
+    await storage.writeFile(projectPath, filePath, newContent)
 
     return NextResponse.json({
       fileName,
@@ -235,7 +223,6 @@ export async function PUT(req: NextRequest) {
 /**
  * DELETE /api/agents
  * Delete an agent .md file.
- * body: { projectId, fileName }
  */
 export async function DELETE(req: NextRequest) {
   try {
@@ -249,18 +236,17 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'fileName is required' }, { status: 400 })
     }
 
-    const projectPath = await resolveProjectPath(projectId)
-    const dir = agentsDir(projectPath)
-    const filePath = join(dir, fileName)
-
     // Validate path (prevent traversal)
-    const resolved = resolve(filePath)
-    if (!resolved.startsWith(resolve(dir))) {
+    if (fileName.includes('/') || fileName.includes('\\') || fileName.includes('..')) {
       return NextResponse.json({ error: 'Invalid path' }, { status: 403 })
     }
 
+    const projectPath = await resolveProjectPath(projectId)
+    const storage = getServerStorage()
+    const filePath = `${AGENTS_DIR}/${fileName}`
+
     try {
-      await unlink(filePath)
+      await storage.deleteFile(projectPath, filePath)
       return NextResponse.json({ success: true })
     } catch {
       return NextResponse.json({ error: 'Agent not found' }, { status: 404 })

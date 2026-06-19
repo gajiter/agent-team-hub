@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { resolveProjectPath } from '@/lib/api-utils'
-import { LocalStorageProvider } from '@/lib/storage/local'
-
-const storage = new LocalStorageProvider()
+import { getServerStorage } from '@/lib/storage'
 
 const VALID_TYPES = ['prd', 'features', 'userflow'] as const
 type PlanningType = typeof VALID_TYPES[number]
@@ -33,6 +31,7 @@ export async function GET(req: NextRequest) {
     const projectPath = await resolveProjectPath(projectId)
     const filePath = `data/${type}.json`
 
+    const storage = getServerStorage()
     const exists = await storage.exists(projectPath, filePath)
     if (!exists) {
       return NextResponse.json({ data: null, exists: false })
@@ -79,6 +78,7 @@ export async function PUT(req: NextRequest) {
     const filePath = `data/${type}.json`
     const content = JSON.stringify(data, null, 2)
 
+    const storage = getServerStorage()
     await storage.writeFile(projectPath, filePath, content)
     return NextResponse.json({ success: true })
   } catch (e) {

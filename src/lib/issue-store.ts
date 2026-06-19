@@ -1,16 +1,18 @@
 /**
- * Issue Store — file-based issue storage with .lock file concurrency control
+ * Issue Store — storage-backed issue management with optimistic locking
  *
  * Structure:
  *   issues/_index.json   — metadata + nextId counter
  *   issues/ISS-001.json  — individual issue data
- *   issues/ISS-001.json.lock — lock file (TTL-based)
+ *
+ * Uses StorageProvider abstraction: LocalStorageProvider (fs) or GitHubStorageProvider.
+ * Lock files are only used in local mode — GitHub mode uses optimistic concurrency via SHA.
  */
 
-import { readFile, writeFile, readdir, mkdir, unlink, stat } from 'fs/promises'
-import { join, dirname } from 'path'
 import type { Issue, IssueLockStatus, IssueSummary, RawIssue } from '../types/issues'
 import { normalizeIssue } from '../types/issues'
+import { getServerStorage, isGitHubStorageMode } from './storage'
+import type { StorageProvider } from '@/types/storage'
 
 // ─── Path constants ────────────────────────────────────────
 
@@ -34,62 +36,65 @@ interface LockInfo {
 
 // ─── Path utilities ────────────────────────────────────────
 
-function issuesDir(projectPath: string): string {
-  return join(projectPath, ISSUES_DIR)
-}
-
-function archiveDir(projectPath: string): string {
-  return join(projectPath, ARCHIVE_DIR)
-}
-
-function issueFilePath(projectPath: string, issueId: string): string {
+function issueRelPath(issueId: string): string {
   if (!/^ISS-\d{3,}$/.test(issueId)) throw new Error(`Invalid issue ID: ${issueId}`)
-  return join(issuesDir(projectPath), `${issueId}.json`)
+  return `${ISSUES_DIR}/${issueId}.json`
 }
 
-function lockFilePath(targetPath: string): string {
-  return `${targetPath}.lock`
+function archiveRelPath(issueId: string): string {
+  if (!/^ISS-\d{3,}$/.test(issueId)) throw new Error(`Invalid issue ID: ${issueId}`)
+  return `${ARCHIVE_DIR}/${issueId}.json`
 }
 
-// ─── Lock mechanism ────────────────────────────────────────
+function indexRelPath(): string {
+  return `${ISSUES_DIR}/${INDEX_FILE}`
+}
 
-async function isLockStale(lockPath: string): Promise<boolean> {
+function lockRelPath(relPath: string): string {
+  return `${relPath}.lock`
+}
+
+// ─── Lock mechanism (local fs only) ────────────────────────
+
+function getStorage(): StorageProvider {
+  return getServerStorage()
+}
+
+async function isLockStale(storage: StorageProvider, projectPath: string, lockPath: string): Promise<boolean> {
   try {
-    const content = await readFile(lockPath, 'utf-8')
+    const content = await storage.readFile(projectPath, lockPath)
     const lock: LockInfo = JSON.parse(content)
     return new Date(lock.expiresAt).getTime() < Date.now()
   } catch {
-    return true // read failure = invalid lock
+    return true
   }
 }
 
 async function acquireLock(
-  targetPath: string,
+  storage: StorageProvider,
+  projectPath: string,
+  targetRelPath: string,
   holder: string = 'hub-api',
   maxRetries: number = 5,
   retryDelayMs: number = 100
 ): Promise<void> {
-  const lp = lockFilePath(targetPath)
+  // Skip locking in GitHub mode — GitHub API handles concurrency via SHA
+  if (isGitHubStorageMode()) return
+
+  const lp = lockRelPath(targetRelPath)
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      // Check existing lock
-      await stat(lp)
+    const lockExists = await storage.exists(projectPath, lp)
 
-      // Lock file exists — check if stale
-      if (await isLockStale(lp)) {
-        // Expired lock — remove and retry
-        await unlink(lp).catch(() => {})
+    if (lockExists) {
+      if (await isLockStale(storage, projectPath, lp)) {
+        try { await storage.deleteFile(projectPath, lp) } catch { /* ignore */ }
       } else {
-        // Valid lock — wait and retry (exponential backoff)
         await new Promise((r) => setTimeout(r, retryDelayMs * (attempt + 1)))
         continue
       }
-    } catch {
-      // No lock file — proceed
     }
 
-    // Create lock file (wx flag for O_EXCL semantics)
     const lockData: LockInfo = {
       holder,
       acquiredAt: new Date().toISOString(),
@@ -97,57 +102,61 @@ async function acquireLock(
     }
 
     try {
-      await mkdir(dirname(lp), { recursive: true })
-      await writeFile(lp, JSON.stringify(lockData), { flag: 'wx' })
-      return // Lock acquired
-    } catch (e: unknown) {
-      if ((e as NodeJS.ErrnoException).code === 'EEXIST') {
-        // Another process acquired first — retry
-        await new Promise((r) => setTimeout(r, retryDelayMs * (attempt + 1)))
-        continue
-      }
-      throw e
+      await storage.writeFile(projectPath, lp, JSON.stringify(lockData))
+      return
+    } catch {
+      await new Promise((r) => setTimeout(r, retryDelayMs * (attempt + 1)))
+      continue
     }
   }
 
-  throw new Error(`Failed to acquire lock for ${targetPath} after ${maxRetries} retries`)
+  throw new Error(`Failed to acquire lock for ${targetRelPath} after ${maxRetries} retries`)
 }
 
-async function releaseLock(targetPath: string): Promise<void> {
-  const lp = lockFilePath(targetPath)
+async function releaseLock(
+  storage: StorageProvider,
+  projectPath: string,
+  targetRelPath: string
+): Promise<void> {
+  if (isGitHubStorageMode()) return
   try {
-    await unlink(lp)
-  } catch {
-    // Lock file already gone — ignore
-  }
+    await storage.deleteFile(projectPath, lockRelPath(targetRelPath))
+  } catch { /* ignore */ }
 }
 
-/** Acquire lock -> perform work -> release lock (guarantees release even on error) */
-async function withLock<T>(targetPath: string, fn: () => Promise<T>, holder?: string): Promise<T> {
-  await acquireLock(targetPath, holder)
+async function withLock<T>(
+  storage: StorageProvider,
+  projectPath: string,
+  targetRelPath: string,
+  fn: () => Promise<T>,
+  holder?: string
+): Promise<T> {
+  await acquireLock(storage, projectPath, targetRelPath, holder)
   try {
     return await fn()
   } finally {
-    await releaseLock(targetPath)
+    await releaseLock(storage, projectPath, targetRelPath)
   }
 }
 
 // ─── Lock status queries (read-only) ────────────────────────────
 
-/** Read lock status for a specific issue */
 async function readLockStatus(projectPath: string, issueId: string): Promise<IssueLockStatus> {
-  const filePath = issueFilePath(projectPath, issueId)
-  const lp = lockFilePath(filePath)
+  // In GitHub mode, no lock files exist
+  if (isGitHubStorageMode()) return { issueId, locked: false }
+
+  const storage = getStorage()
+  const lp = lockRelPath(issueRelPath(issueId))
 
   try {
-    await stat(lp)
-    const content = await readFile(lp, 'utf-8')
+    const exists = await storage.exists(projectPath, lp)
+    if (!exists) return { issueId, locked: false }
+
+    const content = await storage.readFile(projectPath, lp)
     const lock: LockInfo = JSON.parse(content)
     const isStale = new Date(lock.expiresAt).getTime() < Date.now()
 
-    if (isStale) {
-      return { issueId, locked: false }
-    }
+    if (isStale) return { issueId, locked: false }
 
     return {
       issueId,
@@ -161,39 +170,40 @@ async function readLockStatus(projectPath: string, issueId: string): Promise<Iss
   }
 }
 
-/** Read lock statuses for all issues */
 export async function readAllLockStatuses(projectPath: string): Promise<IssueLockStatus[]> {
-  const dir = issuesDir(projectPath)
+  if (isGitHubStorageMode()) return []
+
+  const storage = getStorage()
   try {
-    const files = await readdir(dir)
-    const lockFiles = files.filter((f) => /^ISS-\d{3,}\.json\.lock$/.test(f))
+    const entries = await storage.listDirectory(projectPath, ISSUES_DIR)
+    const lockEntries = entries.filter((e) => !e.isDirectory && /^ISS-\d{3,}\.json\.lock$/.test(e.name))
 
     const statuses = await Promise.all(
-      lockFiles.map(async (file) => {
-        const issueId = file.replace('.json.lock', '')
+      lockEntries.map(async (entry) => {
+        const issueId = entry.name.replace('.json.lock', '')
         return readLockStatus(projectPath, issueId)
       })
     )
 
-    // Return only active locks
     return statuses.filter((s) => s.locked)
   } catch {
     return []
   }
 }
 
-/** Lightweight polling: return issue summaries only (id, updatedAt, status, commentsCount) */
+/** Lightweight polling: return issue summaries only */
 export async function readIssueSummaries(projectPath: string): Promise<IssueSummary[]> {
-  const dir = issuesDir(projectPath)
+  const storage = getStorage()
   try {
-    await mkdir(dir, { recursive: true })
-    const files = await readdir(dir)
-    const issueFiles = files.filter((f) => /^ISS-\d{3,}\.json$/.test(f) && !f.endsWith('.lock'))
+    const entries = await storage.listDirectory(projectPath, ISSUES_DIR).catch(() => [])
+    const issueEntries = entries.filter(
+      (e) => !e.isDirectory && /^ISS-\d{3,}\.json$/.test(e.name) && !e.name.endsWith('.lock')
+    )
 
     const summaries = await Promise.all(
-      issueFiles.map(async (file) => {
+      issueEntries.map(async (entry) => {
         try {
-          const content = await readFile(join(dir, file), 'utf-8')
+          const content = await storage.readFile(projectPath, `${ISSUES_DIR}/${entry.name}`)
           const issue = JSON.parse(content) as Issue
           return {
             id: issue.id,
@@ -239,28 +249,26 @@ const DEFAULT_INDEX: IndexData = {
   nextId: 1,
 }
 
-async function readIndex(projectPath: string): Promise<IndexData> {
-  const indexPath = join(issuesDir(projectPath), INDEX_FILE)
+async function readIndex(storage: StorageProvider, projectPath: string): Promise<IndexData> {
   try {
-    const content = await readFile(indexPath, 'utf-8')
+    const content = await storage.readFile(projectPath, indexRelPath())
     return JSON.parse(content)
   } catch {
     return { ...DEFAULT_INDEX }
   }
 }
 
-async function writeIndex(projectPath: string, data: IndexData): Promise<void> {
-  const indexPath = join(issuesDir(projectPath), INDEX_FILE)
-  await mkdir(dirname(indexPath), { recursive: true })
-  await writeFile(indexPath, JSON.stringify(data, null, 2), 'utf-8')
+async function writeIndex(storage: StorageProvider, projectPath: string, data: IndexData): Promise<void> {
+  await storage.writeFile(projectPath, indexRelPath(), JSON.stringify(data, null, 2))
 }
 
 // ─── Issue CRUD ────────────────────────────────────────
 
-/** Read individual issue file (includes assignees normalization) */
+/** Read individual issue file */
 export async function readIssue(projectPath: string, issueId: string): Promise<Issue | null> {
+  const storage = getStorage()
   try {
-    const content = await readFile(issueFilePath(projectPath, issueId), 'utf-8')
+    const content = await storage.readFile(projectPath, issueRelPath(issueId))
     const raw = JSON.parse(content) as RawIssue
     return normalizeIssue(raw)
   } catch {
@@ -268,18 +276,19 @@ export async function readIssue(projectPath: string, issueId: string): Promise<I
   }
 }
 
-/** Read all issues (parallel load from individual files) */
+/** Read all issues */
 export async function readAllIssues(projectPath: string): Promise<Issue[]> {
-  const dir = issuesDir(projectPath)
+  const storage = getStorage()
   try {
-    await mkdir(dir, { recursive: true })
-    const files = await readdir(dir)
-    const issueFiles = files.filter((f) => /^ISS-\d{3,}\.json$/.test(f) && !f.endsWith('.lock'))
+    const entries = await storage.listDirectory(projectPath, ISSUES_DIR).catch(() => [])
+    const issueEntries = entries.filter(
+      (e) => !e.isDirectory && /^ISS-\d{3,}\.json$/.test(e.name) && !e.name.endsWith('.lock')
+    )
 
     const issues = await Promise.all(
-      issueFiles.map(async (file) => {
+      issueEntries.map(async (entry) => {
         try {
-          const content = await readFile(join(dir, file), 'utf-8')
+          const content = await storage.readFile(projectPath, `${ISSUES_DIR}/${entry.name}`)
           const raw = JSON.parse(content) as RawIssue
           return normalizeIssue(raw)
         } catch {
@@ -294,15 +303,16 @@ export async function readAllIssues(projectPath: string): Promise<Issue[]> {
   }
 }
 
-/** Create issue (uses index lock) */
+/** Create issue */
 export async function createIssue(
   projectPath: string,
   data: Partial<Issue>
 ): Promise<Issue> {
-  const indexPath = join(issuesDir(projectPath), INDEX_FILE)
+  const storage = getStorage()
+  const idxPath = indexRelPath()
 
-  return withLock(indexPath, async () => {
-    const index = await readIndex(projectPath)
+  return withLock(storage, projectPath, idxPath, async () => {
+    const index = await readIndex(storage, projectPath)
     const newId = `ISS-${String(index.nextId).padStart(3, '0')}`
     const now = new Date().toISOString()
 
@@ -329,57 +339,52 @@ export async function createIssue(
       updatedAt: now,
     }
 
-    // Write issue file
-    const filePath = issueFilePath(projectPath, newId)
-    await mkdir(dirname(filePath), { recursive: true })
-    await writeFile(filePath, JSON.stringify(newIssue, null, 2), 'utf-8')
+    await storage.writeFile(projectPath, issueRelPath(newId), JSON.stringify(newIssue, null, 2))
 
-    // Increment nextId in index
     index.nextId = index.nextId + 1
-    await writeIndex(projectPath, index)
+    await writeIndex(storage, projectPath, index)
 
     return newIssue
   })
 }
 
-/** Update issue (uses individual issue lock) */
+/** Update issue */
 export async function updateIssue(
   projectPath: string,
   issueId: string,
   updates: Partial<Issue>
 ): Promise<Issue | null> {
-  const filePath = issueFilePath(projectPath, issueId)
+  const storage = getStorage()
+  const relPath = issueRelPath(issueId)
 
-  return withLock(filePath, async () => {
+  return withLock(storage, projectPath, relPath, async () => {
     const existing = await readIssue(projectPath, issueId)
     if (!existing) return null
 
     const now = new Date().toISOString()
     const merged = { ...existing, ...updates, id: issueId, updatedAt: now }
 
-    // assignees <-> assignee sync
     if (updates.assignees && updates.assignees.length > 0) {
       merged.assignee = updates.assignees[0]
       merged.assignees = updates.assignees
     } else if (updates.assignee && !updates.assignees) {
-      // Single assignee update (backward compat) — also update assignees
       merged.assignees = [updates.assignee]
     }
 
     const updated: Issue = merged
-
-    await writeFile(filePath, JSON.stringify(updated, null, 2), 'utf-8')
+    await storage.writeFile(projectPath, relPath, JSON.stringify(updated, null, 2))
     return updated
   })
 }
 
-/** Delete issue (uses individual issue lock) */
+/** Delete issue */
 export async function deleteIssue(projectPath: string, issueId: string): Promise<boolean> {
-  const filePath = issueFilePath(projectPath, issueId)
+  const storage = getStorage()
+  const relPath = issueRelPath(issueId)
 
-  return withLock(filePath, async () => {
+  return withLock(storage, projectPath, relPath, async () => {
     try {
-      await unlink(filePath)
+      await storage.deleteFile(projectPath, relPath)
       return true
     } catch {
       return false
@@ -389,11 +394,12 @@ export async function deleteIssue(projectPath: string, issueId: string): Promise
 
 // ─── Archive ────────────────────────────────────────
 
-/** Archive issue (move from issues/ to issues/archive/ + set status to archived) */
+/** Archive issue */
 export async function archiveIssue(projectPath: string, issueId: string): Promise<Issue | null> {
-  const srcPath = issueFilePath(projectPath, issueId)
+  const storage = getStorage()
+  const srcPath = issueRelPath(issueId)
 
-  return withLock(srcPath, async () => {
+  return withLock(storage, projectPath, srcPath, async () => {
     const existing = await readIssue(projectPath, issueId)
     if (!existing) return null
 
@@ -404,45 +410,36 @@ export async function archiveIssue(projectPath: string, issueId: string): Promis
       updatedAt: now,
     }
 
-    // Create archive directory
-    const destDir = archiveDir(projectPath)
-    await mkdir(destDir, { recursive: true })
-
-    const destPath = join(destDir, `${issueId}.json`)
-
-    // Write to archive directory
-    await writeFile(destPath, JSON.stringify(archived, null, 2), 'utf-8')
+    // Write to archive
+    await storage.writeFile(projectPath, archiveRelPath(issueId), JSON.stringify(archived, null, 2))
 
     // Delete original
-    await unlink(srcPath).catch(() => {})
+    try { await storage.deleteFile(projectPath, srcPath) } catch { /* ignore */ }
 
     return archived
   })
 }
 
-/** Unarchive issue (move from issues/archive/ to issues/ + set status to resolved) */
+/** Unarchive issue */
 export async function unarchiveIssue(projectPath: string, issueId: string): Promise<Issue | null> {
-  if (!/^ISS-\d{3,}$/.test(issueId)) throw new Error(`Invalid issue ID: ${issueId}`)
-
-  const srcPath = join(archiveDir(projectPath), `${issueId}.json`)
+  const storage = getStorage()
 
   try {
-    const content = await readFile(srcPath, 'utf-8')
+    const content = await storage.readFile(projectPath, archiveRelPath(issueId))
     const raw = JSON.parse(content) as RawIssue
     const issue = normalizeIssue(raw)
 
     const now = new Date().toISOString()
     const restored: Issue = {
       ...issue,
-      status: 'resolved', // restored as resolved
+      status: 'resolved',
       updatedAt: now,
     }
 
-    const destPath = issueFilePath(projectPath, issueId)
-    await writeFile(destPath, JSON.stringify(restored, null, 2), 'utf-8')
+    await storage.writeFile(projectPath, issueRelPath(issueId), JSON.stringify(restored, null, 2))
 
     // Remove from archive
-    await unlink(srcPath).catch(() => {})
+    try { await storage.deleteFile(projectPath, archiveRelPath(issueId)) } catch { /* ignore */ }
 
     return restored
   } catch {
@@ -452,16 +449,17 @@ export async function unarchiveIssue(projectPath: string, issueId: string): Prom
 
 /** Read all archived issues */
 export async function readArchivedIssues(projectPath: string): Promise<Issue[]> {
-  const dir = archiveDir(projectPath)
+  const storage = getStorage()
   try {
-    await mkdir(dir, { recursive: true })
-    const files = await readdir(dir)
-    const issueFiles = files.filter((f) => /^ISS-\d{3,}\.json$/.test(f))
+    const entries = await storage.listDirectory(projectPath, ARCHIVE_DIR).catch(() => [])
+    const issueEntries = entries.filter(
+      (e) => !e.isDirectory && /^ISS-\d{3,}\.json$/.test(e.name)
+    )
 
     const issues = await Promise.all(
-      issueFiles.map(async (file) => {
+      issueEntries.map(async (entry) => {
         try {
-          const content = await readFile(join(dir, file), 'utf-8')
+          const content = await storage.readFile(projectPath, `${ARCHIVE_DIR}/${entry.name}`)
           const raw = JSON.parse(content) as RawIssue
           return normalizeIssue(raw)
         } catch {
@@ -478,10 +476,9 @@ export async function readArchivedIssues(projectPath: string): Promise<Issue[]> 
 
 /** Permanently delete an archived issue */
 export async function deleteArchivedIssue(projectPath: string, issueId: string): Promise<boolean> {
-  if (!/^ISS-\d{3,}$/.test(issueId)) throw new Error(`Invalid issue ID: ${issueId}`)
-  const filePath = join(archiveDir(projectPath), `${issueId}.json`)
+  const storage = getStorage()
   try {
-    await unlink(filePath)
+    await storage.deleteFile(projectPath, archiveRelPath(issueId))
     return true
   } catch {
     return false

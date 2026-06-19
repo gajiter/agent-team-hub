@@ -2,9 +2,21 @@ import { NextRequest, NextResponse } from 'next/server'
 import { readdir, stat } from 'fs/promises'
 import { join } from 'path'
 import { homedir } from 'os'
+import { isGitHubStorageMode } from '@/lib/storage'
 
 export async function GET(request: NextRequest) {
   try {
+    // In GitHub mode, directory browsing is not applicable
+    // Return a fixed response pointing to the repo root
+    if (isGitHubStorageMode()) {
+      return NextResponse.json({
+        current: '/',
+        parent: '/',
+        directories: [],
+        isProject: true,
+      })
+    }
+
     const searchParams = request.nextUrl.searchParams
     const targetPath = searchParams.get('path') || homedir()
 

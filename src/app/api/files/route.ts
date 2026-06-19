@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { resolveProjectPath } from '@/lib/api-utils'
-import { LocalStorageProvider } from '@/lib/storage/local'
-
-const storage = new LocalStorageProvider()
+import { getServerStorage } from '@/lib/storage'
 
 /**
  * GET /api/files?projectId=xxx&path=data/prd.json
@@ -23,6 +21,7 @@ export async function GET(req: NextRequest) {
 
     const projectPath = await resolveProjectPath(projectId)
 
+    const storage = getServerStorage()
     const exists = await storage.exists(projectPath, filePath)
     if (!exists) {
       return NextResponse.json({ content: '', exists: false })
