@@ -8,9 +8,27 @@ export const projectService = {
       const config = await readConfig()
       return config.projects
     }
-    const res = await fetch('/api/projects')
-    const data = await res.json()
-    return data.projects
+    try {
+      const res = await fetch('/api/projects')
+      if (!res.ok) return this._defaultProjects()
+      const data = await res.json()
+      const projects = data.projects
+      if (!projects || !Array.isArray(projects) || projects.length === 0) {
+        return this._defaultProjects()
+      }
+      return projects
+    } catch {
+      return this._defaultProjects()
+    }
+  },
+
+  _defaultProjects(): Project[] {
+    return [{
+      id: 'default',
+      name: 'Rhymix Layout',
+      path: '',
+      createdAt: new Date().toISOString(),
+    }]
   },
 
   async addProject(name: string, path: string): Promise<Project> {
