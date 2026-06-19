@@ -1,0 +1,15 @@
+{
+  "projects": [
+    {
+      "id": "default",
+      "name": "Rhymix Layout",
+      "path": "",
+      "createdAt": "2026-06-19T02:09:37.002Z"
+    }
+  ],
+  "settings": {
+    "theme": "dark",
+    "language": "ko",
+    "port": 3100
+  }
+}
