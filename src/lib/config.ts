@@ -15,10 +15,26 @@ const DEFAULT_CONFIG: GlobalConfig = {
 export async function readGlobalConfig(): Promise<GlobalConfig> {
   try {
     const content = await fs.readFile(CONFIG_PATH, 'utf-8')
-    return JSON.parse(content)
+    const config = JSON.parse(content) as GlobalConfig
+    if (config.projects.length === 0) {
+      return ensureDefaultProject(config)
+    }
+    return config
   } catch {
-    return DEFAULT_CONFIG
+    return ensureDefaultProject(DEFAULT_CONFIG)
   }
+}
+
+async function ensureDefaultProject(config: GlobalConfig): Promise<GlobalConfig> {
+  const cwd = process.cwd()
+  const defaultProject: Project = {
+    id: 'default',
+    name: 'Rhymix Layout',
+    path: cwd,
+    createdAt: new Date().toISOString()
+  }
+  config.projects = [defaultProject]
+  return config
 }
 
 export async function writeGlobalConfig(config: GlobalConfig): Promise<void> {
