@@ -39,9 +39,11 @@ interface IssueDetailProps {
   agents?: AgentInfo[]
   /** Whether viewing in archive mode */
   isArchived?: boolean
+  /** Whether in read-only mode (online/Vercel) */
+  readonly?: boolean
 }
 
-export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUnarchive, lockStatus, agentNames = [], agents = [], isArchived = false }: IssueDetailProps) {
+export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUnarchive, lockStatus, agentNames = [], agents = [], isArchived = false, readonly = false }: IssueDetailProps) {
   const [newComment, setNewComment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { t } = useI18n()
@@ -60,7 +62,7 @@ export default function IssueDetail({ issue, onUpdate, onDelete, onArchive, onUn
   const titleInputRef = useRef<HTMLInputElement>(null)
   const descTextareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const isLocked = lockStatus?.locked ?? false
+  const isLocked = readonly || (lockStatus?.locked ?? false)
 
   // Sync edit values when issue changes externally
   useEffect(() => {

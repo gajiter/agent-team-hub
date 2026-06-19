@@ -14,6 +14,9 @@ import { useProject } from '@/hooks/use-project'
 import { useI18n } from '@/lib/i18n'
 import type { Issue, IssueStatus, IssueType } from '@/types/issues'
 import { issueService } from '@/lib/services/issue-service'
+import { isReadonly } from '@/lib/readonly'
+
+const readonly = isReadonly()
 
 export default function IssuesPage() {
   const { currentProject } = useProject()
@@ -388,7 +391,7 @@ export default function IssuesPage() {
             )}
 
             {/* Bulk archive resolved (active mode only) */}
-            {!archiveMode && resolvedIssues.length > 0 && !confirmBulkArchive && !confirmBulkDelete && !selectMode && (
+            {!readonly && !archiveMode && resolvedIssues.length > 0 && !confirmBulkArchive && !confirmBulkDelete && !selectMode && (
               <Button
                 size="sm"
                 variant="outline"
@@ -423,7 +426,7 @@ export default function IssuesPage() {
             )}
 
             {/* Bulk delete resolved (active mode only) */}
-            {!archiveMode && resolvedIssues.length > 0 && !confirmBulkArchive && !confirmBulkDelete && !selectMode && (
+            {!readonly && !archiveMode && resolvedIssues.length > 0 && !confirmBulkArchive && !confirmBulkDelete && !selectMode && (
               <Button
                 size="sm"
                 variant="outline"
@@ -457,10 +460,12 @@ export default function IssuesPage() {
               </div>
             )}
 
-            <Button size="sm" variant={selectMode ? 'secondary' : 'outline'} onClick={handleToggleSelectMode}>
-              {selectMode ? t('issues.cancelSelect') : t('common.select')}
-            </Button>
-            {!archiveMode && (
+            {!readonly && (
+              <Button size="sm" variant={selectMode ? 'secondary' : 'outline'} onClick={handleToggleSelectMode}>
+                {selectMode ? t('issues.cancelSelect') : t('common.select')}
+              </Button>
+            )}
+            {!readonly && !archiveMode && (
               <Button size="sm" onClick={() => setShowCreate(true)}>
                 + {t('issues.newIssue')}
               </Button>
@@ -590,14 +595,15 @@ export default function IssuesPage() {
           {selectedIssue ? (
             <IssueDetail
               issue={selectedIssue}
-              onUpdate={archiveMode ? () => {} : handleUpdate}
-              onDelete={handleDelete}
-              onArchive={archiveMode ? undefined : handleArchive}
-              onUnarchive={archiveMode ? handleUnarchive : undefined}
+              onUpdate={archiveMode || readonly ? () => {} : handleUpdate}
+              onDelete={readonly ? undefined : handleDelete}
+              onArchive={archiveMode || readonly ? undefined : handleArchive}
+              onUnarchive={archiveMode && !readonly ? handleUnarchive : undefined}
               lockStatus={archiveMode ? null : selectedLock}
               agentNames={agentNames}
               agents={agents}
               isArchived={archiveMode}
+              readonly={readonly}
             />
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-3">

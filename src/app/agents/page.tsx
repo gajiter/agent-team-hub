@@ -9,6 +9,9 @@ import AgentList from '@/components/agents/agent-list'
 import AgentForm from '@/components/agents/agent-form'
 import type { AgentInfo } from '@/types/agents'
 import { agentService } from '@/lib/services/agent-service'
+import { isReadonly } from '@/lib/readonly'
+
+const readonly = isReadonly()
 
 export default function AgentsPage() {
   const { currentProject } = useProject()
@@ -86,15 +89,18 @@ export default function AgentsPage() {
           loading={loading}
           onAddClick={handleAddClick}
           onEditClick={handleEditClick}
+          readonly={readonly}
         />
       </ScrollArea>
 
-      <AgentForm
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        agent={editingAgent}
-        onSave={handleSave}
-      />
+      {!readonly && (
+        <AgentForm
+          open={formOpen}
+          onOpenChange={setFormOpen}
+          agent={editingAgent}
+          onSave={handleSave}
+        />
+      )}
     </>
   )
 }

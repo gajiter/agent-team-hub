@@ -16,6 +16,9 @@ import { fileService } from '@/lib/services/file-service'
 import { docService } from '@/lib/services/doc-service'
 import { issueService } from '@/lib/services/issue-service'
 import { initService } from '@/lib/services/init-service'
+import { isReadonly } from '@/lib/readonly'
+
+const readonly = isReadonly()
 
 interface DataEntry {
   icon: string
@@ -198,9 +201,11 @@ export default function DashboardPage() {
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
           <Rocket className="w-12 h-12 text-muted-foreground" />
           <p className="text-muted-foreground">{t('dashboard.notInitialized')}</p>
-          <Button onClick={handleInitialize} disabled={initializing}>
-            {initializing ? t('dashboard.initializing') : t('dashboard.initializeProject')}
-          </Button>
+          {!readonly && (
+            <Button onClick={handleInitialize} disabled={initializing}>
+              {initializing ? t('dashboard.initializing') : t('dashboard.initializeProject')}
+            </Button>
+          )}
         </div>
       </>
     )
@@ -210,6 +215,13 @@ export default function DashboardPage() {
     <>
       <Topbar title={t('dashboard.title')} subtitle={currentProject.name} />
       <div className="flex-1 overflow-y-auto p-6 bg-background">
+        {/* Readonly Banner */}
+        {readonly && (
+          <div className="mb-4 px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950/30 dark:border-amber-800 text-sm text-amber-800 dark:text-amber-200">
+            읽기 전용 모드 — 데이터 수정은 로컬에서 진행하세요
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-foreground">{currentProject.name}</h2>

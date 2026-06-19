@@ -10,9 +10,10 @@ interface AgentListProps {
   loading: boolean
   onAddClick: () => void
   onEditClick: (agent: AgentInfo) => void
+  readonly?: boolean
 }
 
-export default function AgentList({ agents, loading, onAddClick, onEditClick }: AgentListProps) {
+export default function AgentList({ agents, loading, onAddClick, onEditClick, readonly = false }: AgentListProps) {
   const { t } = useI18n()
 
   if (loading) {
@@ -31,9 +32,11 @@ export default function AgentList({ agents, loading, onAddClick, onEditClick }: 
             {t('agents.agentsRegistered', { count: agents.length })}
           </h2>
         </div>
-        <Button onClick={onAddClick} size="sm">
-          + {t('agents.addAgent')}
-        </Button>
+        {!readonly && (
+          <Button onClick={onAddClick} size="sm">
+            + {t('agents.addAgent')}
+          </Button>
+        )}
       </div>
 
       {agents.length === 0 ? (
@@ -41,9 +44,11 @@ export default function AgentList({ agents, loading, onAddClick, onEditClick }: 
           <span className="text-4xl">🤖</span>
           <p className="text-sm">{t('agents.noAgents')}</p>
           <p className="text-xs">{t('agents.noAgentsHint')}</p>
-          <Button onClick={onAddClick} size="sm" className="mt-2">
-            {t('agents.addFirstAgent')}
-          </Button>
+          {!readonly && (
+            <Button onClick={onAddClick} size="sm" className="mt-2">
+              {t('agents.addFirstAgent')}
+            </Button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -51,7 +56,7 @@ export default function AgentList({ agents, loading, onAddClick, onEditClick }: 
             <AgentCard
               key={agent.name}
               agent={agent}
-              onClick={() => onEditClick(agent)}
+              onClick={readonly ? undefined : () => onEditClick(agent)}
             />
           ))}
         </div>

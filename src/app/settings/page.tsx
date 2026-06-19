@@ -21,6 +21,9 @@ import type { Project } from '@/types/project'
 import { settingsService } from '@/lib/services/settings-service'
 import { projectService } from '@/lib/services/project-service'
 import { initService } from '@/lib/services/init-service'
+import { isReadonly } from '@/lib/readonly'
+
+const readonly = isReadonly()
 
 export default function SettingsPage() {
   const { projects, currentProject, setCurrentProject, refreshProjects } = useProject()
@@ -121,9 +124,11 @@ export default function SettingsPage() {
             <CardHeader className="border-b border-border/50">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base">{t('settings.projectManagement')}</CardTitle>
-                <Button size="sm" onClick={() => setAddDialogOpen(true)}>
-                  + {t('settings.addProject')}
-                </Button>
+                {!readonly && (
+                  <Button size="sm" onClick={() => setAddDialogOpen(true)}>
+                    + {t('settings.addProject')}
+                  </Button>
+                )}
               </div>
             </CardHeader>
             <CardContent className="pt-4">
@@ -133,6 +138,7 @@ export default function SettingsPage() {
                 onOpen={handleOpenProject}
                 onInitialize={handleInitializeProject}
                 onRemove={handleRemoveProject}
+                readonly={readonly}
               />
             </CardContent>
           </Card>

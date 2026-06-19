@@ -13,6 +13,7 @@ interface ProjectListProps {
   onOpen: (project: Project) => void
   onInitialize: (project: Project) => Promise<boolean>
   onRemove: (project: Project) => void
+  readonly?: boolean
 }
 
 export default function ProjectList({
@@ -21,6 +22,7 @@ export default function ProjectList({
   onOpen,
   onInitialize,
   onRemove,
+  readonly = false,
 }: ProjectListProps) {
   const [initStatus, setInitStatus] = useState<Record<string, boolean | null>>({})
   const [initLoading, setInitLoading] = useState<Record<string, boolean>>({})
@@ -102,17 +104,21 @@ export default function ProjectList({
                         {t('settings.open')}
                       </Button>
                     )}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleInitialize(project)}
-                      disabled={loading}
-                    >
-                      {loading ? t('settings.initializingDots') : initialized ? t('settings.reinitialize') : t('settings.initialize')}
-                    </Button>
-                    <Button size="sm" variant="destructive" onClick={() => onRemove(project)}>
-                      {t('common.delete')}
-                    </Button>
+                    {!readonly && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleInitialize(project)}
+                        disabled={loading}
+                      >
+                        {loading ? t('settings.initializingDots') : initialized ? t('settings.reinitialize') : t('settings.initialize')}
+                      </Button>
+                    )}
+                    {!readonly && (
+                      <Button size="sm" variant="destructive" onClick={() => onRemove(project)}>
+                        {t('common.delete')}
+                      </Button>
+                    )}
                   </div>
                 </td>
               </tr>
