@@ -78,7 +78,8 @@ export class GitHubStorageProvider implements StorageProvider {
     shaCache.set(cacheKey(repo, relativePath), data.sha)
 
     if (data.content && data.encoding === 'base64') {
-      return Buffer.from(data.content, 'base64').toString('utf-8')
+      const cleaned = data.content.replace(/\n/g, '')
+      return Buffer.from(cleaned, 'base64').toString('utf-8')
     }
 
     throw new Error(`Unexpected encoding for ${relativePath}: ${data.encoding}`)
