@@ -2,10 +2,11 @@ import { getProject } from '@/lib/config'
 
 /**
  * Resolve a projectId to the project's filesystem path.
- * Throws if the project is not found in global config.
+ * Falls back to process.cwd() (repo root) when project is not found in config,
+ * which allows Vercel deployments to read data from the repo itself.
  */
 export async function resolveProjectPath(projectId: string): Promise<string> {
   const project = await getProject(projectId)
-  if (!project) throw new Error('Project not found')
-  return project.path
+  if (project) return project.path
+  return process.cwd()
 }
