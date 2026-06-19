@@ -26,10 +26,19 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
 
   const refreshProjects = useCallback(async () => {
     try {
-      const projects = await projectService.getProjects()
-      setProjects(projects)
+      const fetched = await projectService.getProjects()
+      if (fetched.length > 0) {
+        setProjects(fetched)
+      } else {
+        const fallback: Project = { id: 'default', name: 'Rhymix Layout', path: '', createdAt: new Date().toISOString() }
+        setProjects([fallback])
+        setCurrentProjectState(fallback)
+      }
     } catch (err) {
       console.error('Failed to fetch projects:', err)
+      const fallback: Project = { id: 'default', name: 'Rhymix Layout', path: '', createdAt: new Date().toISOString() }
+      setProjects([fallback])
+      setCurrentProjectState(fallback)
     }
   }, [])
 
