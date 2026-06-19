@@ -37,7 +37,26 @@
     "projectActive": "프로젝트 활성",
     "theme": "테마",
     "selectProject": "프로젝트 선택",
-    "addProject": "프로젝트 추가"
+    "addProject": "프로젝트 추가",
+    "office": "사무실"
+  },
+  "office": {
+    "title": "사무실",
+    "subtitle": "에이전트 빌딩 뷰",
+    "floor": "층",
+    "lobby": "로비",
+    "pmRoom": "PM실",
+    "planningRoom": "기획실",
+    "devRoom": "개발실",
+    "reviewRoom": "검증실",
+    "projectSummary": "프로젝트 현황",
+    "working": "작업 중",
+    "waiting": "대기 중",
+    "resting": "휴식 중",
+    "noIssues": "이슈 없음",
+    "openIssues": "열림",
+    "inProgressIssues": "진행 중",
+    "totalIssues": "전체 이슈"
   },
   "dashboard": {
     "title": "대시보드",

@@ -11,6 +11,7 @@ import {
   Bug,
   Bot,
   Settings,
+  Building2,
   type LucideIcon,
 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
@@ -26,6 +27,7 @@ interface NavItemDef {
 
 const OVERVIEW: NavItemDef[] = [
   { href: '/', icon: LayoutDashboard, labelKey: 'nav.dashboard' },
+  { href: '/office', icon: Building2, labelKey: 'nav.office' },
 ]
 
 const PLANNING: NavItemDef[] = [

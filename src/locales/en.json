@@ -37,7 +37,26 @@
     "projectActive": "Project Active",
     "theme": "Theme",
     "selectProject": "Select Project",
-    "addProject": "Add Project"
+    "addProject": "Add Project",
+    "office": "Office"
+  },
+  "office": {
+    "title": "Office",
+    "subtitle": "Agent Building View",
+    "floor": "F",
+    "lobby": "Lobby",
+    "pmRoom": "PM Room",
+    "planningRoom": "Planning Room",
+    "devRoom": "Dev Room",
+    "reviewRoom": "Review Room",
+    "projectSummary": "Project Summary",
+    "working": "Working",
+    "waiting": "Waiting",
+    "resting": "Resting",
+    "noIssues": "No issues",
+    "openIssues": "Open",
+    "inProgressIssues": "In Progress",
+    "totalIssues": "Total Issues"
   },
   "dashboard": {
     "title": "Dashboard",

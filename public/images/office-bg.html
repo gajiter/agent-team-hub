@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>Office Building Background</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1200px; height: 1800px; overflow: hidden; background: #e8e8e8; font-family: -apple-system, sans-serif; }
+
+  .building { position: relative; width: 1200px; height: 1800px; }
+
+  /* ========== LEFT WALL (30%) ========== */
+  .wall-left {
+    position: absolute; left: 0; top: 0;
+    width: 360px; height: 1800px;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent, transparent 48px,
+        rgba(0,0,0,0.08) 48px, rgba(0,0,0,0.08) 50px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent, transparent 98px,
+        rgba(0,0,0,0.06) 98px, rgba(0,0,0,0.06) 100px
+      ),
+      linear-gradient(180deg, #b8a99a 0%, #a89888 50%, #9a8a7a 100%);
+    z-index: 2;
+  }
+  /* Brick offset every other row */
+  .wall-left::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0px, transparent 48px,
+        transparent 48px, transparent 50px,
+        transparent 50px, transparent 98px,
+        transparent 98px, transparent 100px
+      );
+    opacity: 0.3;
+  }
+  /* Wall shadow */
+  .wall-left::after {
+    content: '';
+    position: absolute; top: 0; right: -20px;
+    width: 20px; height: 100%;
+    background: linear-gradient(90deg, rgba(0,0,0,0.15), transparent);
+    z-index: 5;
+  }
+
+  /* ========== RIGHT GLASS (70%) ========== */
+  .glass-right {
+    position: absolute; right: 0; top: 0;
+    width: 840px; height: 1800px;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  /* Sky */
+  .sky {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(180deg, #87CEEB 0%, #B0E0F6 40%, #d4eef9 70%, #e8f4f8 100%);
+  }
+
+  /* Clouds */
+  .cloud {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.9;
+    animation: cloudMove 60s linear infinite;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+  }
+  .cloud-1 { width: 120px; height: 40px; top: 80px; left: 100px; animation-duration: 80s; }
+  .cloud-1::before { width: 60px; height: 50px; top: -20px; left: 20px; }
+  .cloud-1::after { width: 80px; height: 45px; top: -15px; left: 50px; }
+
+  .cloud-2 { width: 90px; height: 30px; top: 150px; left: 400px; animation-duration: 65s; animation-delay: -20s; }
+  .cloud-2::before { width: 50px; height: 40px; top: -18px; left: 15px; }
+  .cloud-2::after { width: 60px; height: 35px; top: -12px; left: 40px; }
+
+  .cloud-3 { width: 140px; height: 45px; top: 50px; left: 600px; animation-duration: 90s; animation-delay: -40s; }
+  .cloud-3::before { width: 70px; height: 55px; top: -25px; left: 25px; }
+  .cloud-3::after { width: 90px; height: 50px; top: -20px; left: 60px; }
+
+  .cloud-4 { width: 100px; height: 35px; top: 200px; left: 250px; animation-duration: 70s; animation-delay: -10s; }
+  .cloud-4::before { width: 55px; height: 42px; top: -16px; left: 18px; }
+  .cloud-4::after { width: 65px; height: 38px; top: -14px; left: 45px; }
+
+  @keyframes cloudMove {
+    from { transform: translateX(-200px); }
+    to { transform: translateX(1100px); }
+  }
+
+  /* Mountains */
+  .mountains { position: absolute; bottom: 300px; left: 0; width: 100%; height: 400px; }
+  .mountain-far {
+    position: absolute; bottom: 0; left: -50px; width: 100%;
+    height: 250px;
+    background: linear-gradient(135deg, #a8c4d8 0%, #94b5cc 50%, #a0bdd2 100%);
+    clip-path: polygon(0% 100%, 5% 60%, 15% 30%, 25% 50%, 35% 20%, 45% 45%, 55% 15%, 65% 40%, 75% 25%, 85% 50%, 95% 35%, 100% 55%, 100% 100%);
+    opacity: 0.6;
+  }
+  .mountain-mid {
+    position: absolute; bottom: 0; left: -30px; width: 110%;
+    height: 200px;
+    background: linear-gradient(135deg, #7a9ab5 0%, #6b8ea8 50%, #7595af 100%);
+    clip-path: polygon(0% 100%, 8% 50%, 18% 70%, 28% 30%, 38% 55%, 48% 20%, 58% 50%, 68% 35%, 78% 55%, 88% 25%, 98% 60%, 100% 100%);
+    opacity: 0.7;
+  }
+  .mountain-near {
+    position: absolute; bottom: 0; left: -20px; width: 105%;
+    height: 150px;
+    background: linear-gradient(135deg, #5a8a5c 0%, #4e7d50 50%, #5c8e5e 100%);
+    clip-path: polygon(0% 100%, 10% 55%, 20% 70%, 30% 40%, 40% 60%, 50% 30%, 60% 55%, 70% 45%, 80% 65%, 90% 35%, 100% 50%, 100% 100%);
+    opacity: 0.8;
+  }
+
+  /* City Skyline */
+  .city-skyline {
+    position: absolute; bottom: 200px; left: 0; width: 100%; height: 250px;
+  }
+  .city-building {
+    position: absolute; bottom: 0;
+    background: linear-gradient(180deg, #8a9aaa, #6a7a8a);
+    border-radius: 2px 2px 0 0;
+  }
+  .city-building::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent, transparent 14px,
+        rgba(0,0,0,0.1) 14px, rgba(0,0,0,0.1) 16px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent, transparent 8px,
+        rgba(255,255,200,0.3) 8px, rgba(255,255,200,0.3) 12px,
+        transparent 12px, transparent 18px
+      );
+  }
+  /* Glass reflection */
+  .city-building::after {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 40%; height: 100%;
+    background: linear-gradient(180deg, rgba(135,206,235,0.3), transparent);
+    border-radius: 2px 0 0 0;
+  }
+  .cb1 { left: 20px; width: 35px; height: 180px; background: linear-gradient(180deg, #7a8a9a, #5a6a7a); }
+  .cb2 { left: 65px; width: 50px; height: 220px; background: linear-gradient(180deg, #8a9aaa, #6a7a8a); }
+  .cb3 { left: 125px; width: 30px; height: 150px; }
+  .cb4 { left: 165px; width: 60px; height: 200px; background: linear-gradient(180deg, #95a5b5, #75859a); }
+  .cb5 { left: 240px; width: 40px; height: 170px; }
+  .cb6 { left: 290px; width: 55px; height: 240px; background: linear-gradient(180deg, #7a8a9a, #5a6a7a); }
+  .cb7 { left: 355px; width: 35px; height: 130px; }
+  .cb8 { left: 400px; width: 45px; height: 190px; background: linear-gradient(180deg, #8a9aaa, #6a7a8a); }
+  .cb9 { left: 460px; width: 65px; height: 210px; background: linear-gradient(180deg, #90a0b0, #708090); }
+  .cb10 { left: 540px; width: 30px; height: 140px; }
+  .cb11 { left: 580px; width: 50px; height: 230px; background: linear-gradient(180deg, #7a8a9a, #5a6a7a); }
+  .cb12 { left: 640px; width: 40px; height: 160px; }
+  .cb13 { left: 695px; width: 55px; height: 200px; background: linear-gradient(180deg, #8a9aaa, #6a7a8a); }
+  .cb14 { left: 760px; width: 35px; height: 175px; }
+
+  /* Road */
+  .road-area {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 200px;
+  }
+  .sidewalk-far {
+    position: absolute; top: 0; left: 0; width: 100%; height: 30px;
+    background: #c8c0b8;
+  }
+  .road {
+    position: absolute; top: 30px; left: 0; width: 100%; height: 120px;
+    background: #555;
+  }
+  .road-line {
+    position: absolute; top: 58px; left: 0; width: 100%; height: 4px;
+    background: repeating-linear-gradient(90deg, #fff 0px, #fff 30px, transparent 30px, transparent 60px);
+  }
+  .road-line-solid-top {
+    position: absolute; top: 28px; left: 0; width: 100%; height: 2px;
+    background: #fff;
+  }
+  .road-line-solid-bottom {
+    position: absolute; top: 90px; left: 0; width: 100%; height: 2px;
+    background: #fff;
+  }
+  .sidewalk-near {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 50px;
+    background: linear-gradient(180deg, #d0c8c0, #c8c0b8);
+  }
+  .sidewalk-near::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: repeating-linear-gradient(90deg, transparent 0px, transparent 58px, rgba(0,0,0,0.08) 58px, rgba(0,0,0,0.08) 60px);
+  }
+
+  /* Trees along road */
+  .tree {
+    position: absolute;
+  }
+  .tree-trunk {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 8px; height: 30px;
+    background: linear-gradient(90deg, #6b4226, #8B5E3C);
+    border-radius: 2px;
+  }
+  .tree-crown {
+    position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);
+    width: 40px; height: 50px;
+    background: radial-gradient(ellipse, #4a8c4a 30%, #3a7a3a 70%);
+    border-radius: 50%;
+  }
+  .tree-1 { bottom: 155px; left: 60px; }
+  .tree-2 { bottom: 155px; left: 200px; }
+  .tree-3 { bottom: 155px; left: 380px; }
+  .tree-4 { bottom: 155px; left: 550px; }
+  .tree-5 { bottom: 155px; left: 720px; }
+
+  /* Cars */
+  .car {
+    position: absolute;
+    width: 60px; height: 24px;
+    border-radius: 4px 4px 2px 2px;
+    z-index: 1;
+  }
+  .car::before {
+    content: '';
+    position: absolute; top: -10px;
+    width: 34px; height: 12px;
+    border-radius: 4px 4px 0 0;
+    background: inherit;
+    filter: brightness(0.9);
+  }
+  .car::after {
+    content: '';
+    position: absolute; bottom: -4px;
+    width: 10px; height: 8px;
+    background: #333;
+    border-radius: 50%;
+  }
+  .car .wheel-back {
+    position: absolute; bottom: -4px; right: 8px;
+    width: 10px; height: 8px;
+    background: #333;
+    border-radius: 50%;
+  }
+
+  /* Car going right (top lane) */
+  .car-1 {
+    bottom: 116px; left: 0;
+    background: #e74c3c;
+    animation: carRight 12s linear infinite;
+  }
+  .car-1::before { left: 12px; }
+  .car-1::after { left: 8px; }
+
+  .car-2 {
+    bottom: 116px; left: 0;
+    background: #3498db;
+    animation: carRight 15s linear infinite;
+    animation-delay: -6s;
+  }
+  .car-2::before { left: 12px; }
+  .car-2::after { left: 8px; }
+
+  /* Car going left (bottom lane) */
+  .car-3 {
+    bottom: 82px; left: 0;
+    background: #f39c12;
+    animation: carLeft 10s linear infinite;
+    transform: scaleX(-1);
+  }
+  .car-3::before { left: 12px; }
+  .car-3::after { left: 8px; }
+
+  .car-4 {
+    bottom: 82px; left: 0;
+    background: #2ecc71;
+    animation: carLeft 14s linear infinite;
+    animation-delay: -5s;
+    transform: scaleX(-1);
+  }
+  .car-4::before { left: 12px; }
+  .car-4::after { left: 8px; }
+
+  .car-5 {
+    bottom: 82px; left: 0;
+    background: #9b59b6;
+    animation: carLeft 18s linear infinite;
+    animation-delay: -12s;
+    transform: scaleX(-1);
+  }
+  .car-5::before { left: 12px; }
+  .car-5::after { left: 8px; }
+
+  @keyframes carRight {
+    from { transform: translateX(-100px); }
+    to { transform: translateX(950px); }
+  }
+  @keyframes carLeft {
+    from { transform: scaleX(-1) translateX(-950px); }
+    to { transform: scaleX(-1) translateX(100px); }
+  }
+
+  /* Glass frame overlay */
+  .glass-frame {
+    position: absolute; right: 0; top: 0;
+    width: 840px; height: 1800px;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .glass-mullion-h {
+    position: absolute; left: 0; width: 100%; height: 6px;
+    background: linear-gradient(180deg, #b0b8c0, #8a9098, #b0b8c0);
+  }
+  .gm-h1 { top: 494px; }
+  .gm-h2 { top: 994px; }
+  .gm-h3 { top: 1494px; }
+  .glass-mullion-v {
+    position: absolute; top: 0; width: 4px; height: 100%;
+    background: linear-gradient(90deg, #b0b8c0, #8a9098, #b0b8c0);
+  }
+  .gm-v1 { left: 0; width: 6px; }
+  .gm-v2 { left: 280px; }
+  .gm-v3 { left: 560px; }
+  .glass-tint {
+    position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(135,206,235,0.08) 0%, rgba(255,255,255,0.03) 50%, rgba(135,206,235,0.05) 100%);
+  }
+  /* Glass reflection streaks */
+  .glass-reflection {
+    position: absolute; top: 0; width: 80px; height: 100%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), transparent 30%, rgba(255,255,255,0.06) 50%, transparent 70%, rgba(255,255,255,0.1));
+    transform: skewX(-5deg);
+  }
+  .gr-1 { left: 60px; }
+  .gr-2 { left: 350px; opacity: 0.7; }
+  .gr-3 { left: 620px; opacity: 0.5; }
+
+
+  /* ========== FLOOR STRUCTURE ========== */
+  .floor {
+    position: absolute;
+    left: 0; width: 1200px; height: 500px;
+    z-index: 4;
+    overflow: hidden;
+  }
+  .floor-3f { top: 0; }
+  .floor-2f { top: 500px; }
+  .floor-1f { top: 1000px; }
+  .lobby { position: absolute; top: 1500px; left: 0; width: 1200px; height: 300px; z-index: 4; overflow: hidden; }
+
+  /* Floor interior background */
+  .floor-interior {
+    position: absolute; left: 20px; top: 10px;
+    width: 340px; height: 480px;
+    background: #f0ede8;
+    border-radius: 0;
+  }
+  /* Extended interior across full width */
+  .floor-interior-full {
+    position: absolute; left: 0; top: 0;
+    width: 1200px; height: 500px;
+  }
+
+  /* Ceiling */
+  .ceiling {
+    position: absolute; top: 0; left: 0;
+    width: 1200px; height: 40px;
+    background: linear-gradient(180deg, #f5f5f5, #ececec);
+    z-index: 6;
+  }
+
+  /* Floor slab / separator */
+  .floor-slab {
+    position: absolute; bottom: 0; left: 0;
+    width: 1200px; height: 20px;
+    background: linear-gradient(180deg, #888, #666);
+    z-index: 6;
+  }
+
+  /* Wooden floor */
+  .wood-floor {
+    position: absolute; bottom: 20px; left: 0;
+    width: 1200px; height: 30px;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        #c4a67a 0px, #c4a67a 148px,
+        #b89a6e 148px, #b89a6e 150px
+      ),
+      linear-gradient(180deg, #c9ab7f, #b89a6e);
+    z-index: 5;
+  }
+
+  /* Fluorescent lights */
+  .fluorescent {
+    position: absolute; top: 12px;
+    width: 100px; height: 10px;
+    background: linear-gradient(180deg, #fff, #f8f8f0);
+    border-radius: 3px;
+    box-shadow: 0 2px 15px rgba(255,255,240,0.6), 0 0 30px rgba(255,255,200,0.3);
+    z-index: 7;
+  }
+  .fl-1 { left: 150px; }
+  .fl-2 { left: 500px; }
+  .fl-3 { left: 850px; }
+
+  /* Wall background (interior) */
+  .interior-wall {
+    position: absolute; top: 40px; left: 0;
+    width: 360px; height: 410px;
+    background: #eae7e2;
+    z-index: 5;
+  }
+  /* Extended interior for glass area */
+  .interior-bg {
+    position: absolute; top: 40px; left: 360px;
+    width: 840px; height: 410px;
+    background: rgba(240,237,232,0.85);
+    z-index: 1;
+  }
+
+
+  /* ========== 3F EXECUTIVE ========== */
+
+  /* CEO Desk */
+  .ceo-desk {
+    position: absolute; left: 40px; bottom: 70px;
+    width: 180px; height: 80px;
+    background: linear-gradient(135deg, #6b4226 0%, #8B5E3C 50%, #7a4e30 100%);
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+    z-index: 10;
+  }
+  .ceo-desk::before {
+    content: '';
+    position: absolute; top: 10px; left: 10px;
+    width: 160px; height: 55px;
+    background: linear-gradient(135deg, #5a3520, #704228);
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  /* CEO Monitor */
+  .ceo-monitor {
+    position: absolute; left: 80px; bottom: 150px;
+    width: 70px; height: 50px;
+    background: linear-gradient(180deg, #2c3e50, #1a252f);
+    border-radius: 4px;
+    border: 2px solid #444;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    z-index: 11;
+  }
+  .ceo-monitor::before {
+    content: '';
+    position: absolute; top: 3px; left: 3px;
+    width: 60px; height: 35px;
+    background: linear-gradient(135deg, #4a90d9, #357abd);
+    border-radius: 2px;
+  }
+  .ceo-monitor::after {
+    content: '';
+    position: absolute; bottom: -15px; left: 28px;
+    width: 14px; height: 15px;
+    background: #555;
+    border-radius: 0 0 3px 3px;
+  }
+
+  /* CEO Chair */
+  .ceo-chair {
+    position: absolute; left: 85px; bottom: 55px;
+    width: 50px; height: 90px;
+    z-index: 9;
+  }
+  .ceo-chair-seat {
+    position: absolute; bottom: 10px; left: 0;
+    width: 50px; height: 12px;
+    background: linear-gradient(180deg, #2c2c2c, #1a1a1a);
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  .ceo-chair-back {
+    position: absolute; bottom: 22px; left: 5px;
+    width: 40px; height: 65px;
+    background: linear-gradient(180deg, #333, #222);
+    border-radius: 8px 8px 4px 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .ceo-chair-base {
+    position: absolute; bottom: 0; left: 15px;
+    width: 20px; height: 12px;
+    background: #555;
+    border-radius: 2px;
+  }
+
+  /* Bookshelf behind CEO */
+  .bookshelf {
+    position: absolute; left: 20px; bottom: 190px;
+    width: 120px; height: 200px;
+    background: linear-gradient(135deg, #8B5E3C, #6b4226);
+    border-radius: 4px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    z-index: 8;
+  }
+  .shelf-row {
+    position: absolute; left: 5px;
+    width: 110px; height: 4px;
+    background: #7a4e30;
+  }
+  .sr-1 { top: 48px; }
+  .sr-2 { top: 98px; }
+  .sr-3 { top: 148px; }
+  /* Books */
+  .book {
+    position: absolute;
+    border-radius: 1px;
+  }
+  .bk1 { left: 8px; top: 10px; width: 10px; height: 36px; background: #e74c3c; }
+  .bk2 { left: 20px; top: 14px; width: 8px; height: 32px; background: #3498db; }
+  .bk3 { left: 30px; top: 8px; width: 12px; height: 38px; background: #2ecc71; }
+  .bk4 { left: 44px; top: 12px; width: 9px; height: 34px; background: #f39c12; }
+  .bk5 { left: 55px; top: 16px; width: 10px; height: 30px; background: #9b59b6; }
+  .bk6 { left: 67px; top: 10px; width: 11px; height: 36px; background: #1abc9c; }
+  .bk7 { left: 80px; top: 18px; width: 8px; height: 28px; background: #e67e22; }
+  .bk8 { left: 90px; top: 8px; width: 12px; height: 38px; background: #34495e; }
+  .bk9 { left: 10px; top: 55px; width: 11px; height: 40px; background: #c0392b; }
+  .bk10 { left: 23px; top: 60px; width: 9px; height: 36px; background: #2980b9; }
+  .bk11 { left: 34px; top: 58px; width: 13px; height: 38px; background: #27ae60; }
+  .bk12 { left: 50px; top: 62px; width: 8px; height: 34px; background: #8e44ad; }
+  .bk13 { left: 60px; top: 56px; width: 10px; height: 40px; background: #d35400; }
+  .bk14 { left: 72px; top: 64px; width: 12px; height: 32px; background: #16a085; }
+
+  /* Frame/Picture */
+  .frame-pic {
+    position: absolute; left: 160px; bottom: 300px;
+    width: 60px; height: 45px;
+    background: #fff;
+    border: 3px solid #8B5E3C;
+    border-radius: 2px;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+    z-index: 8;
+  }
+  .frame-pic::before {
+    content: '';
+    position: absolute; top: 5px; left: 5px;
+    width: 46px; height: 31px;
+    background: linear-gradient(180deg, #87CEEB 50%, #4a8c4a 50%);
+    border-radius: 1px;
+  }
+
+  /* Partition (3F center) */
+  .partition-3f {
+    position: absolute; left: 350px; bottom: 50px;
+    width: 8px; height: 200px;
+    background: linear-gradient(90deg, #d0ccc5, #c0bcb5, #d0ccc5);
+    border-radius: 2px;
+    box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+    z-index: 10;
+  }
+
+  /* PM Standing Desk */
+  .pm-desk {
+    position: absolute; left: 400px; bottom: 70px;
+    width: 160px; height: 8px;
+    background: linear-gradient(90deg, #e0dcd5, #d5d0c8);
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+  /* Desk legs (standing) */
+  .pm-desk-leg {
+    position: absolute; bottom: 50px;
+    width: 6px; height: 100px;
+    background: #aaa;
+    border-radius: 2px;
+    z-index: 9;
+  }
+  .pm-leg-l { left: 405px; }
+  .pm-leg-r { left: 550px; }
+
+  /* PM Monitor on standing desk */
+  .pm-monitor {
+    position: absolute; left: 445px; bottom: 178px;
+    width: 65px; height: 45px;
+    background: linear-gradient(180deg, #2c3e50, #1a252f);
+    border-radius: 3px;
+    border: 2px solid #444;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 11;
+  }
+  .pm-monitor::before {
+    content: '';
+    position: absolute; top: 3px; left: 3px;
+    width: 55px; height: 30px;
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    border-radius: 2px;
+  }
+  .pm-monitor::after {
+    content: '';
+    position: absolute; bottom: -12px; left: 25px;
+    width: 12px; height: 12px;
+    background: #555;
+  }
+
+  /* Whiteboard with post-its */
+  .whiteboard {
+    position: absolute; left: 600px; bottom: 200px;
+    width: 150px; height: 120px;
+    background: #fff;
+    border: 3px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+    z-index: 8;
+  }
+  .postit {
+    position: absolute;
+    width: 25px; height: 25px;
+    border-radius: 1px;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+    transform: rotate(var(--rot, 0deg));
+  }
+  .pi-1 { left: 10px; top: 10px; background: #fff176; --rot: -3deg; }
+  .pi-2 { left: 40px; top: 8px; background: #ff8a80; --rot: 2deg; }
+  .pi-3 { left: 70px; top: 12px; background: #80d8ff; --rot: -1deg; }
+  .pi-4 { left: 100px; top: 10px; background: #b9f6ca; --rot: 4deg; }
+  .pi-5 { left: 15px; top: 45px; background: #ff80ab; --rot: 1deg; }
+  .pi-6 { left: 45px; top: 42px; background: #fff176; --rot: -2deg; }
+  .pi-7 { left: 75px; top: 48px; background: #82b1ff; --rot: 3deg; }
+  .pi-8 { left: 105px; top: 44px; background: #ccff90; --rot: -1deg; }
+  .pi-9 { left: 25px; top: 78px; background: #ffd180; --rot: 2deg; }
+  .pi-10 { left: 60px; top: 80px; background: #ea80fc; --rot: -3deg; }
+  .pi-11 { left: 95px; top: 76px; background: #80d8ff; --rot: 1deg; }
+
+  /* Sofa (3F) */
+  .sofa-3f {
+    position: absolute; left: 800px; bottom: 55px;
+    width: 120px; height: 40px;
+    background: linear-gradient(180deg, #5d4e37, #4a3e2d);
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+    z-index: 10;
+  }
+  .sofa-3f::before {
+    content: '';
+    position: absolute; top: -20px; left: 0;
+    width: 120px; height: 25px;
+    background: linear-gradient(180deg, #6b5b44, #5d4e37);
+    border-radius: 8px 8px 0 0;
+  }
+  .sofa-3f::after {
+    content: '';
+    position: absolute; top: -20px; left: -8px;
+    width: 12px; height: 45px;
+    background: linear-gradient(90deg, #6b5b44, #5d4e37);
+    border-radius: 8px 0 0 8px;
+  }
+  .sofa-3f-arm-r {
+    position: absolute; left: 908px; bottom: 35px;
+    width: 12px; height: 45px;
+    background: linear-gradient(90deg, #5d4e37, #6b5b44);
+    border-radius: 0 8px 8px 0;
+    z-index: 10;
+  }
+
+  /* Big plant (3F) */
+  .plant-big {
+    position: absolute; left: 950px; bottom: 50px;
+    z-index: 10;
+  }
+  .plant-pot {
+    position: absolute; bottom: 0; left: 10px;
+    width: 40px; height: 35px;
+    background: linear-gradient(180deg, #c0755a, #a85d42);
+    border-radius: 4px 4px 8px 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .plant-pot::before {
+    content: '';
+    position: absolute; top: -5px; left: -3px;
+    width: 46px; height: 8px;
+    background: #c0755a;
+    border-radius: 3px;
+  }
+  .leaf {
+    position: absolute;
+    width: 20px; height: 40px;
+    background: #4a8c4a;
+    border-radius: 50% 0 50% 0;
+    transform-origin: bottom center;
+  }
+  .lf-1 { bottom: 30px; left: 10px; transform: rotate(-30deg); background: #5a9c5a; }
+  .lf-2 { bottom: 35px; left: 25px; transform: rotate(-10deg); }
+  .lf-3 { bottom: 38px; left: 35px; transform: rotate(15deg); background: #3a7c3a; }
+  .lf-4 { bottom: 30px; left: 42px; transform: rotate(35deg); background: #5a9c5a; }
+  .lf-5 { bottom: 45px; left: 18px; transform: rotate(-20deg); height: 45px; background: #3a7c3a; }
+  .lf-6 { bottom: 42px; left: 32px; transform: rotate(5deg); height: 50px; }
+  .lf-7 { bottom: 48px; left: 22px; transform: rotate(-5deg); height: 48px; background: #5a9c5a; }
+
+  /* Wall clock */
+  .wall-clock {
+    position: absolute; left: 280px; bottom: 380px;
+    width: 40px; height: 40px;
+    background: #fff;
+    border: 3px solid #555;
+    border-radius: 50%;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+    z-index: 8;
+  }
+  .clock-hand-h {
+    position: absolute; top: 50%; left: 50%;
+    width: 10px; height: 2px;
+    background: #333;
+    transform-origin: left center;
+    transform: rotate(-30deg);
+  }
+  .clock-hand-m {
+    position: absolute; top: 50%; left: 50%;
+    width: 14px; height: 1.5px;
+    background: #333;
+    transform-origin: left center;
+    transform: rotate(60deg);
+  }
+  .clock-center {
+    position: absolute; top: 50%; left: 50%;
+    width: 4px; height: 4px;
+    background: #e74c3c;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* CEO seat marker */
+  .seat-marker {
+    position: absolute;
+    z-index: 15;
+  }
+
+  /* Floor label */
+  .floor-label {
+    position: absolute; left: 8px; top: 12px;
+    font-size: 14px; font-weight: 700; color: rgba(0,0,0,0.15);
+    z-index: 8;
+    writing-mode: vertical-rl;
+    letter-spacing: 2px;
+  }
+
+
+  /* ========== 2F FRONTEND ========== */
+
+  /* Partitions */
+  .partition-2f {
+    position: absolute; bottom: 50px;
+    width: 6px; height: 160px;
+    background: linear-gradient(90deg, #d8d4cd, #ccc8c0, #d8d4cd);
+    border-radius: 2px;
+    box-shadow: 1px 0 3px rgba(0,0,0,0.1);
+    z-index: 10;
+  }
+  .p2f-1 { left: 340px; }
+  .p2f-2 { left: 640px; }
+
+  /* Senior L-desk */
+  .senior-desk-main {
+    position: absolute; left: 50px; bottom: 70px;
+    width: 150px; height: 70px;
+    background: linear-gradient(135deg, #e0dcd5, #d5d0c8);
+    border-radius: 4px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+  .senior-desk-side {
+    position: absolute; left: 50px; bottom: 70px;
+    width: 60px; height: 110px;
+    background: linear-gradient(135deg, #ddd8d0, #d0cbc3);
+    border-radius: 4px 0 0 4px;
+    box-shadow: -2px 3px 6px rgba(0,0,0,0.15);
+    z-index: 9;
+  }
+
+  /* Dual monitors */
+  .dual-monitor {
+    position: absolute; z-index: 11;
+  }
+  .dm-screen {
+    position: absolute;
+    width: 55px; height: 38px;
+    background: linear-gradient(180deg, #2c3e50, #1a252f);
+    border-radius: 3px;
+    border: 2px solid #444;
+  }
+  .dm-screen::before {
+    content: '';
+    position: absolute; top: 2px; left: 2px;
+    width: 47px; height: 26px;
+    background: linear-gradient(135deg, #4a90d9, #357abd);
+    border-radius: 1px;
+  }
+  .dm-screen::after {
+    content: '';
+    position: absolute; bottom: -10px; left: 20px;
+    width: 12px; height: 10px;
+    background: #555;
+  }
+  .dm-1 .dm-screen:nth-child(1) { left: 0; bottom: 0; }
+  .dm-1 .dm-screen:nth-child(2) { left: 60px; bottom: 0; }
+  .dm-1 { left: 80px; bottom: 152px; }
+
+  /* Keyboard */
+  .keyboard {
+    position: absolute;
+    width: 50px; height: 16px;
+    background: linear-gradient(180deg, #ddd, #ccc);
+    border-radius: 3px;
+    border: 1px solid #bbb;
+    z-index: 11;
+  }
+  .kb-1 { left: 100px; bottom: 145px; }
+
+  /* Senior chair */
+  .chair {
+    position: absolute; z-index: 9;
+  }
+  .chair-seat {
+    position: absolute; bottom: 0;
+    width: 40px; height: 10px;
+    background: #444;
+    border-radius: 5px;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+  }
+  .chair-back {
+    position: absolute; bottom: 10px; left: 5px;
+    width: 30px; height: 45px;
+    background: #555;
+    border-radius: 6px 6px 2px 2px;
+  }
+  .chair-base {
+    position: absolute; bottom: -6px; left: 12px;
+    width: 16px; height: 8px;
+    background: #666;
+    border-radius: 2px;
+  }
+  .ch-senior { left: 130px; bottom: 55px; }
+
+  /* Junior desk */
+  .junior-desk {
+    position: absolute; left: 390px; bottom: 70px;
+    width: 130px; height: 65px;
+    background: linear-gradient(135deg, #e0dcd5, #d5d0c8);
+    border-radius: 4px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+  /* Laptop */
+  .laptop {
+    position: absolute;
+    z-index: 11;
+  }
+  .laptop-base {
+    position: absolute; bottom: 0;
+    width: 45px; height: 28px;
+    background: linear-gradient(180deg, #bbb, #aaa);
+    border-radius: 3px;
+    border: 1px solid #999;
+  }
+  .laptop-screen {
+    position: absolute; bottom: 26px; left: 2px;
+    width: 41px; height: 28px;
+    background: #333;
+    border-radius: 3px 3px 0 0;
+    border: 2px solid #555;
+  }
+  .laptop-screen::before {
+    content: '';
+    position: absolute; top: 2px; left: 2px;
+    width: 33px; height: 18px;
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    border-radius: 1px;
+  }
+  .lt-junior { left: 430px; bottom: 138px; }
+
+  /* Junior chair */
+  .ch-junior { left: 440px; bottom: 55px; }
+
+  /* Reviewer desk */
+  .reviewer-desk {
+    position: absolute; left: 690px; bottom: 70px;
+    width: 130px; height: 65px;
+    background: linear-gradient(135deg, #e0dcd5, #d5d0c8);
+    border-radius: 4px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+  /* Reviewer monitor */
+  .reviewer-monitor {
+    position: absolute; left: 730px; bottom: 148px;
+    width: 55px; height: 38px;
+    background: linear-gradient(180deg, #2c3e50, #1a252f);
+    border-radius: 3px;
+    border: 2px solid #444;
+    z-index: 11;
+  }
+  .reviewer-monitor::before {
+    content: '';
+    position: absolute; top: 2px; left: 2px;
+    width: 47px; height: 26px;
+    background: linear-gradient(135deg, #e67e22, #d35400);
+    border-radius: 1px;
+  }
+  .reviewer-monitor::after {
+    content: '';
+    position: absolute; bottom: -10px; left: 20px;
+    width: 12px; height: 10px;
+    background: #555;
+  }
+
+  /* Reviewer chair */
+  .ch-reviewer { left: 740px; bottom: 55px; }
+
+  /* Reviewer bookshelf small */
+  .bookshelf-sm {
+    position: absolute; left: 840px; bottom: 50px;
+    width: 80px; height: 150px;
+    background: linear-gradient(135deg, #8B5E3C, #6b4226);
+    border-radius: 3px;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+    z-index: 8;
+  }
+  .bsm-shelf {
+    position: absolute; left: 4px; width: 72px; height: 3px;
+    background: #7a4e30;
+  }
+  .bsm-s1 { top: 36px; }
+  .bsm-s2 { top: 72px; }
+  .bsm-s3 { top: 108px; }
+  .bsm-book {
+    position: absolute;
+    border-radius: 1px;
+  }
+  .bb1 { left: 8px; top: 8px; width: 8px; height: 26px; background: #e74c3c; }
+  .bb2 { left: 18px; top: 10px; width: 7px; height: 24px; background: #3498db; }
+  .bb3 { left: 27px; top: 6px; width: 10px; height: 28px; background: #f1c40f; }
+  .bb4 { left: 39px; top: 12px; width: 8px; height: 22px; background: #9b59b6; }
+  .bb5 { left: 49px; top: 8px; width: 9px; height: 26px; background: #2ecc71; }
+  .bb6 { left: 60px; top: 10px; width: 8px; height: 24px; background: #e67e22; }
+
+  /* Coffee machine */
+  .coffee-machine {
+    position: absolute; left: 960px; bottom: 70px;
+    width: 35px; height: 50px;
+    background: linear-gradient(180deg, #555, #333);
+    border-radius: 4px;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+  .coffee-machine::before {
+    content: '';
+    position: absolute; top: 8px; left: 5px;
+    width: 25px; height: 15px;
+    background: #222;
+    border-radius: 2px;
+  }
+  .coffee-machine::after {
+    content: '';
+    position: absolute; bottom: 5px; left: 12px;
+    width: 12px; height: 8px;
+    background: #8B5E3C;
+    border-radius: 2px 2px 0 0;
+  }
+
+  /* Plants 2F */
+  .plant-sm {
+    position: absolute; z-index: 10;
+  }
+  .plant-sm .sm-pot {
+    position: absolute; bottom: 0; left: 3px;
+    width: 22px; height: 20px;
+    background: linear-gradient(180deg, #c0755a, #a85d42);
+    border-radius: 3px 3px 5px 5px;
+  }
+  .plant-sm .sm-leaves {
+    position: absolute; bottom: 18px; left: 0;
+    width: 28px; height: 30px;
+    background: radial-gradient(ellipse, #5a9c5a 40%, #4a8c4a 70%);
+    border-radius: 50%;
+  }
+  .pl-2f-1 { left: 1020px; bottom: 50px; }
+  .pl-2f-2 { left: 1060px; bottom: 50px; }
+
+  /* Coat rack */
+  .coat-rack {
+    position: absolute; left: 1100px; bottom: 50px;
+    z-index: 10;
+  }
+  .rack-pole {
+    position: absolute; bottom: 0; left: 8px;
+    width: 4px; height: 120px;
+    background: linear-gradient(90deg, #888, #666);
+    border-radius: 2px;
+  }
+  .rack-base {
+    position: absolute; bottom: 0; left: 0;
+    width: 20px; height: 5px;
+    background: #666;
+    border-radius: 3px;
+  }
+  .rack-hook {
+    position: absolute; top: 0;
+    width: 15px; height: 8px;
+    border: 2px solid #666;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+  }
+  .rh-l { left: -5px; }
+  .rh-r { left: 10px; }
+  /* Coat */
+  .coat {
+    position: absolute; top: 6px; left: -2px;
+    width: 18px; height: 40px;
+    background: #34495e;
+    border-radius: 0 0 6px 6px;
+    transform: rotate(5deg);
+  }
+
+
+  /* ========== 1F BACKEND/PLANNING ========== */
+
+  /* Backend desk */
+  .backend-desk {
+    position: absolute; left: 50px; bottom: 70px;
+    width: 140px; height: 65px;
+    background: linear-gradient(135deg, #e0dcd5, #d5d0c8);
+    border-radius: 4px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+  /* Backend monitor */
+  .backend-monitor {
+    position: absolute; left: 85px; bottom: 148px;
+    width: 60px; height: 42px;
+    background: linear-gradient(180deg, #2c3e50, #1a252f);
+    border-radius: 3px;
+    border: 2px solid #444;
+    z-index: 11;
+  }
+  .backend-monitor::before {
+    content: '';
+    position: absolute; top: 3px; left: 3px;
+    width: 50px; height: 28px;
+    background: #1a1a2e;
+    border-radius: 1px;
+  }
+  /* Terminal text lines */
+  .terminal-line {
+    position: absolute; left: 6px;
+    height: 2px; border-radius: 1px;
+  }
+  .tl-1 { top: 8px; width: 20px; background: #0f0; }
+  .tl-2 { top: 13px; width: 30px; background: #0f0; }
+  .tl-3 { top: 18px; width: 15px; background: #0f0; }
+  .tl-4 { top: 23px; width: 25px; background: #0f0; }
+  .backend-monitor::after {
+    content: '';
+    position: absolute; bottom: -12px; left: 22px;
+    width: 14px; height: 12px;
+    background: #555;
+  }
+
+  /* Backend chair */
+  .ch-backend { left: 110px; bottom: 55px; }
+
+  /* Server rack */
+  .server-rack {
+    position: absolute; left: 210px; bottom: 50px;
+    width: 50px; height: 160px;
+    background: linear-gradient(90deg, #2c2c2c, #1a1a1a, #2c2c2c);
+    border-radius: 3px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+    z-index: 10;
+  }
+  .server-unit {
+    position: absolute; left: 4px;
+    width: 42px; height: 18px;
+    background: linear-gradient(180deg, #444, #333);
+    border-radius: 2px;
+    border: 1px solid #555;
+  }
+  .su-1 { top: 10px; }
+  .su-2 { top: 35px; }
+  .su-3 { top: 60px; }
+  .su-4 { top: 85px; }
+  .su-5 { top: 110px; }
+  .su-6 { top: 135px; }
+  /* LED lights */
+  .server-led {
+    position: absolute;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    z-index: 11;
+  }
+  .led-green {
+    background: #2ecc71;
+    box-shadow: 0 0 4px #2ecc71;
+    animation: ledBlink 2s ease-in-out infinite;
+  }
+  .led-blue {
+    background: #3498db;
+    box-shadow: 0 0 4px #3498db;
+    animation: ledBlink 3s ease-in-out infinite;
+  }
+  .led-red {
+    background: #e74c3c;
+    box-shadow: 0 0 4px #e74c3c;
+    animation: ledBlink 1.5s ease-in-out infinite;
+  }
+  .sl-1 { left: 216px; bottom: 188px; }
+  .sl-2 { left: 224px; bottom: 188px; }
+  .sl-3 { left: 216px; bottom: 163px; }
+  .sl-4 { left: 224px; bottom: 163px; }
+  .sl-5 { left: 216px; bottom: 138px; }
+  .sl-6 { left: 224px; bottom: 138px; }
+  .sl-7 { left: 216px; bottom: 113px; }
+  .sl-8 { left: 224px; bottom: 113px; }
+  .sl-9 { left: 216px; bottom: 88px; }
+  .sl-10 { left: 224px; bottom: 88px; }
+  .sl-11 { left: 216px; bottom: 63px; }
+  .sl-12 { left: 224px; bottom: 63px; }
+
+  @keyframes ledBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Meeting room glass walls */
+  .meeting-room {
+    position: absolute; left: 380px; bottom: 50px;
+    width: 300px; height: 220px;
+    border: 3px solid rgba(135,206,235,0.5);
+    border-radius: 6px;
+    background: rgba(240,248,255,0.3);
+    box-shadow: 0 0 15px rgba(135,206,235,0.15);
+    z-index: 10;
+  }
+  /* Meeting table */
+  .meeting-table {
+    position: absolute; left: 60px; bottom: 40px;
+    width: 180px; height: 70px;
+    background: linear-gradient(135deg, #e0dcd5, #d0cbc3);
+    border-radius: 35px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  }
+  /* Meeting chairs */
+  .mc {
+    position: absolute;
+    width: 30px; height: 30px;
+    background: #555;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .mc-1 { left: 80px; bottom: 22px; }
+  .mc-2 { left: 180px; bottom: 22px; }
+  .mc-3 { left: 80px; bottom: 118px; }
+  .mc-4 { left: 180px; bottom: 118px; }
+
+  /* Meeting whiteboard */
+  .meeting-wb {
+    position: absolute; left: 20px; top: 15px;
+    width: 80px; height: 55px;
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+  }
+  .meeting-wb::before {
+    content: '';
+    position: absolute; top: 8px; left: 8px;
+    width: 40px; height: 2px;
+    background: #333;
+    box-shadow: 0 8px 0 #666, 0 16px 0 #999, 0 24px 0 #333;
+  }
+
+  /* Meeting TV */
+  .meeting-tv {
+    position: absolute; right: 20px; top: 15px;
+    width: 70px; height: 45px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    border: 2px solid #333;
+  }
+  .meeting-tv::before {
+    content: '';
+    position: absolute; top: 3px; left: 3px;
+    width: 60px; height: 33px;
+    background: linear-gradient(135deg, #4a90d9, #357abd);
+    border-radius: 1px;
+  }
+
+  /* Planning desk */
+  .planning-desk {
+    position: absolute; left: 750px; bottom: 70px;
+    width: 140px; height: 65px;
+    background: linear-gradient(135deg, #e0dcd5, #d5d0c8);
+    border-radius: 4px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+  .planning-monitor {
+    position: absolute; left: 790px; bottom: 148px;
+    width: 55px; height: 38px;
+    background: linear-gradient(180deg, #2c3e50, #1a252f);
+    border-radius: 3px;
+    border: 2px solid #444;
+    z-index: 11;
+  }
+  .planning-monitor::before {
+    content: '';
+    position: absolute; top: 2px; left: 2px;
+    width: 47px; height: 26px;
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    border-radius: 1px;
+  }
+  .planning-monitor::after {
+    content: '';
+    position: absolute; bottom: -10px; left: 20px;
+    width: 12px; height: 10px;
+    background: #555;
+  }
+  .ch-planning { left: 800px; bottom: 55px; }
+
+  /* Sticky notes on wall */
+  .wall-sticky {
+    position: absolute; z-index: 8;
+  }
+  .ws {
+    position: absolute;
+    width: 30px; height: 30px;
+    border-radius: 1px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+    transform: rotate(var(--r, 0deg));
+  }
+  .ws-1 { left: 920px; bottom: 360px; background: #fff176; --r: -2deg; }
+  .ws-2 { left: 955px; bottom: 365px; background: #ff8a80; --r: 3deg; }
+  .ws-3 { left: 990px; bottom: 358px; background: #80d8ff; --r: -1deg; }
+  .ws-4 { left: 1025px; bottom: 362px; background: #b9f6ca; --r: 4deg; }
+  .ws-5 { left: 928px; bottom: 320px; background: #ffd180; --r: 1deg; }
+  .ws-6 { left: 960px; bottom: 325px; background: #ea80fc; --r: -3deg; }
+  .ws-7 { left: 995px; bottom: 318px; background: #fff176; --r: 2deg; }
+  .ws-8 { left: 1028px; bottom: 322px; background: #82b1ff; --r: -1deg; }
+
+  /* Printer */
+  .printer {
+    position: absolute; left: 930px; bottom: 50px;
+    width: 55px; height: 35px;
+    background: linear-gradient(180deg, #eee, #ddd);
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    z-index: 10;
+  }
+  .printer::before {
+    content: '';
+    position: absolute; top: -8px; left: 8px;
+    width: 38px; height: 10px;
+    background: #e0e0e0;
+    border-radius: 2px 2px 0 0;
+  }
+  .printer::after {
+    content: '';
+    position: absolute; bottom: 5px; left: 5px;
+    width: 45px; height: 3px;
+    background: #aaa;
+    border-radius: 1px;
+  }
+
+  /* Water dispenser */
+  .water-disp {
+    position: absolute; left: 1020px; bottom: 50px;
+    width: 30px; height: 90px;
+    background: linear-gradient(90deg, #eee, #ddd, #eee);
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    z-index: 10;
+  }
+  .water-bottle {
+    position: absolute; top: -30px; left: 3px;
+    width: 24px; height: 35px;
+    background: linear-gradient(180deg, rgba(100,180,255,0.5), rgba(100,180,255,0.3));
+    border-radius: 4px 4px 12px 12px;
+    border: 1px solid rgba(100,180,255,0.4);
+  }
+  .water-tap {
+    position: absolute; top: 30px; left: -5px;
+    width: 12px; height: 8px;
+    background: #999;
+    border-radius: 2px;
+  }
+
+
+  /* ========== LOBBY ========== */
+  .lobby .interior-wall {
+    height: 260px;
+  }
+  .lobby .interior-bg {
+    height: 260px;
+  }
+
+  /* Lobby wooden floor */
+  .lobby-floor {
+    position: absolute; bottom: 20px; left: 0;
+    width: 1200px; height: 30px;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        #d4b48a 0px, #d4b48a 148px,
+        #c8a87e 148px, #c8a87e 150px
+      ),
+      linear-gradient(180deg, #d4b48a, #c8a87e);
+    z-index: 5;
+  }
+
+  /* Reception desk */
+  .reception-desk {
+    position: absolute; left: 200px; bottom: 50px;
+    width: 200px; height: 70px;
+    background: linear-gradient(180deg, #8B5E3C, #6b4226);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    z-index: 10;
+  }
+  .reception-desk::before {
+    content: '';
+    position: absolute; top: -5px; left: -10px;
+    width: 220px; height: 8px;
+    background: linear-gradient(180deg, #9a6e4a, #8B5E3C);
+    border-radius: 4px;
+  }
+  /* Reception monitor */
+  .reception-monitor {
+    position: absolute; left: 270px; bottom: 122px;
+    width: 45px; height: 32px;
+    background: #222;
+    border-radius: 3px;
+    border: 2px solid #444;
+    z-index: 11;
+  }
+  .reception-monitor::before {
+    content: '';
+    position: absolute; top: 2px; left: 2px;
+    width: 37px; height: 22px;
+    background: linear-gradient(135deg, #4a90d9, #357abd);
+    border-radius: 1px;
+  }
+  .reception-monitor::after {
+    content: '';
+    position: absolute; bottom: -8px; left: 16px;
+    width: 10px; height: 8px;
+    background: #555;
+  }
+
+  /* Lobby sofa */
+  .lobby-sofa {
+    position: absolute; left: 550px; bottom: 50px;
+    width: 150px; height: 45px;
+    background: linear-gradient(180deg, #4a6fa5, #3d5d8a);
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+  .lobby-sofa::before {
+    content: '';
+    position: absolute; top: -22px; left: 0;
+    width: 150px; height: 28px;
+    background: linear-gradient(180deg, #5a7fb5, #4a6fa5);
+    border-radius: 10px 10px 0 0;
+  }
+  .lobby-sofa::after {
+    content: '';
+    position: absolute; top: -22px; left: -10px;
+    width: 14px; height: 50px;
+    background: linear-gradient(90deg, #5a7fb5, #4a6fa5);
+    border-radius: 10px 0 0 10px;
+  }
+  .lobby-sofa-arm-r {
+    position: absolute; left: 690px; bottom: 28px;
+    width: 14px; height: 50px;
+    background: linear-gradient(90deg, #4a6fa5, #5a7fb5);
+    border-radius: 0 10px 10px 0;
+    z-index: 10;
+  }
+
+  /* Coffee table */
+  .coffee-table {
+    position: absolute; left: 590px; bottom: 50px;
+    width: 80px; height: 6px;
+    background: linear-gradient(180deg, #c4a67a, #b89a6e);
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 9;
+  }
+  .ct-leg {
+    position: absolute; bottom: -20px;
+    width: 4px; height: 20px;
+    background: #b89a6e;
+    border-radius: 1px;
+  }
+  .ct-l1 { left: 8px; }
+  .ct-l2 { right: 8px; }
+
+  /* Lobby plant */
+  .lobby-plant {
+    position: absolute; left: 760px; bottom: 50px;
+    z-index: 10;
+  }
+
+  /* Logo sign */
+  .logo-sign {
+    position: absolute; left: 80px; top: 50px;
+    width: 220px; height: 50px;
+    background: linear-gradient(135deg, #2c3e50, #1a252f);
+    border-radius: 6px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    z-index: 12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo-text {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 3px;
+  }
+
+  /* Automatic doors */
+  .auto-door {
+    position: absolute; right: 80px; bottom: 50px;
+    width: 120px; height: 180px;
+    z-index: 10;
+  }
+  .door-frame {
+    position: absolute; top: 0; left: 0;
+    width: 120px; height: 180px;
+    border: 6px solid #888;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    background: transparent;
+  }
+  .door-panel-l {
+    position: absolute; top: 6px; left: 6px;
+    width: 51px; height: 168px;
+    background: linear-gradient(135deg, rgba(135,206,235,0.4), rgba(255,255,255,0.2));
+    border: 1px solid rgba(135,206,235,0.5);
+    border-radius: 2px;
+  }
+  .door-panel-r {
+    position: absolute; top: 6px; right: 6px;
+    width: 51px; height: 168px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(135,206,235,0.4));
+    border: 1px solid rgba(135,206,235,0.5);
+    border-radius: 2px;
+  }
+  .door-handle {
+    position: absolute; top: 80px;
+    width: 8px; height: 24px;
+    background: #aaa;
+    border-radius: 2px;
+  }
+  .dh-l { right: 4px; }
+  .dh-r { left: 4px; }
+
+  /* Lobby floor mat */
+  .floor-mat {
+    position: absolute; right: 80px; bottom: 50px;
+    width: 120px; height: 15px;
+    background: #555;
+    border-radius: 3px;
+    z-index: 9;
+  }
+
+  /* Pedestrians on sidewalk */
+  .pedestrian-area {
+    position: absolute; bottom: 8px; right: 0;
+    width: 840px; height: 40px;
+    z-index: 2;
+  }
+
+  /* Floor labels on wall */
+  .f-label {
+    position: absolute; left: 15px; top: 55px;
+    font-size: 20px; font-weight: 800;
+    color: rgba(0,0,0,0.08);
+    letter-spacing: 1px;
+    z-index: 8;
+  }
+</style>
+</head>
+<body>
+<div class="building">
+
+  <!-- ===== OUTSIDE VIEW (RIGHT 70%) ===== -->
+  <div class="glass-right">
+    <div class="sky"></div>
+
+    <!-- Clouds -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="cloud cloud-4"></div>
+
+    <!-- Mountains -->
+    <div class="mountains">
+      <div class="mountain-far"></div>
+      <div class="mountain-mid"></div>
+      <div class="mountain-near"></div>
+    </div>
+
+    <!-- City skyline -->
+    <div class="city-skyline">
+      <div class="city-building cb1"></div>
+      <div class="city-building cb2"></div>
+      <div class="city-building cb3"></div>
+      <div class="city-building cb4"></div>
+      <div class="city-building cb5"></div>
+      <div class="city-building cb6"></div>
+      <div class="city-building cb7"></div>
+      <div class="city-building cb8"></div>
+      <div class="city-building cb9"></div>
+      <div class="city-building cb10"></div>
+      <div class="city-building cb11"></div>
+      <div class="city-building cb12"></div>
+      <div class="city-building cb13"></div>
+      <div class="city-building cb14"></div>
+    </div>
+
+    <!-- Road area -->
+    <div class="road-area">
+      <div class="sidewalk-far"></div>
+      <div class="road">
+        <div class="road-line-solid-top"></div>
+        <div class="road-line"></div>
+        <div class="road-line-solid-bottom"></div>
+      </div>
+      <div class="sidewalk-near"></div>
+
+      <!-- Trees -->
+      <div class="tree tree-1">
+        <div class="tree-crown"></div>
+        <div class="tree-trunk"></div>
+      </div>
+      <div class="tree tree-2">
+        <div class="tree-crown"></div>
+        <div class="tree-trunk"></div>
+      </div>
+      <div class="tree tree-3">
+        <div class="tree-crown"></div>
+        <div class="tree-trunk"></div>
+      </div>
+      <div class="tree tree-4">
+        <div class="tree-crown"></div>
+        <div class="tree-trunk"></div>
+      </div>
+      <div class="tree tree-5">
+        <div class="tree-crown"></div>
+        <div class="tree-trunk"></div>
+      </div>
+
+      <!-- Cars -->
+      <div class="car car-1"><div class="wheel-back"></div></div>
+      <div class="car car-2"><div class="wheel-back"></div></div>
+      <div class="car car-3"><div class="wheel-back"></div></div>
+      <div class="car car-4"><div class="wheel-back"></div></div>
+      <div class="car car-5"><div class="wheel-back"></div></div>
+    </div>
+  </div>
+
+  <!-- ===== LEFT WALL ===== -->
+  <div class="wall-left"></div>
+
+  <!-- ===== GLASS FRAME ===== -->
+  <div class="glass-frame">
+    <div class="glass-mullion-h gm-h1"></div>
+    <div class="glass-mullion-h gm-h2"></div>
+    <div class="glass-mullion-h gm-h3"></div>
+    <div class="glass-mullion-v gm-v1"></div>
+    <div class="glass-mullion-v gm-v2"></div>
+    <div class="glass-mullion-v gm-v3"></div>
+    <div class="glass-tint"></div>
+    <div class="glass-reflection gr-1"></div>
+    <div class="glass-reflection gr-2"></div>
+    <div class="glass-reflection gr-3"></div>
+  </div>
+
+
+  <!-- ===== 3F EXECUTIVE ===== -->
+  <div class="floor floor-3f">
+    <div class="ceiling">
+      <div class="fluorescent fl-1"></div>
+      <div class="fluorescent fl-2"></div>
+      <div class="fluorescent fl-3"></div>
+    </div>
+    <div class="interior-wall"></div>
+    <div class="interior-bg"></div>
+    <div class="wood-floor"></div>
+    <div class="floor-slab"></div>
+    <div class="f-label">3F</div>
+
+    <!-- CEO area -->
+    <div class="bookshelf">
+      <div class="shelf-row sr-1"></div>
+      <div class="shelf-row sr-2"></div>
+      <div class="shelf-row sr-3"></div>
+      <div class="book bk1"></div><div class="book bk2"></div><div class="book bk3"></div>
+      <div class="book bk4"></div><div class="book bk5"></div><div class="book bk6"></div>
+      <div class="book bk7"></div><div class="book bk8"></div>
+      <div class="book bk9"></div><div class="book bk10"></div><div class="book bk11"></div>
+      <div class="book bk12"></div><div class="book bk13"></div><div class="book bk14"></div>
+    </div>
+    <div class="frame-pic"></div>
+    <div class="ceo-desk"></div>
+    <div class="ceo-monitor"></div>
+    <div class="ceo-chair">
+      <div class="ceo-chair-back"></div>
+      <div class="ceo-chair-seat"></div>
+      <div class="ceo-chair-base"></div>
+    </div>
+
+    <!-- Seat marker: CEO -->
+    <div class="seat-marker" data-seat="ceo" style="left:90px; bottom:100px; width:40px; height:80px;"></div>
+
+    <!-- Partition -->
+    <div class="partition-3f"></div>
+
+    <!-- Wall clock -->
+    <div class="wall-clock">
+      <div class="clock-hand-h"></div>
+      <div class="clock-hand-m"></div>
+      <div class="clock-center"></div>
+    </div>
+
+    <!-- PM area -->
+    <div class="pm-desk"></div>
+    <div class="pm-desk-leg pm-leg-l"></div>
+    <div class="pm-desk-leg pm-leg-r"></div>
+    <div class="pm-monitor"></div>
+
+    <!-- Seat marker: PM -->
+    <div class="seat-marker" data-seat="pm" style="left:460px; bottom:80px; width:40px; height:80px;"></div>
+
+    <!-- Whiteboard -->
+    <div class="whiteboard">
+      <div class="postit pi-1"></div><div class="postit pi-2"></div>
+      <div class="postit pi-3"></div><div class="postit pi-4"></div>
+      <div class="postit pi-5"></div><div class="postit pi-6"></div>
+      <div class="postit pi-7"></div><div class="postit pi-8"></div>
+      <div class="postit pi-9"></div><div class="postit pi-10"></div>
+      <div class="postit pi-11"></div>
+    </div>
+
+    <!-- Sofa -->
+    <div class="sofa-3f"></div>
+    <div class="sofa-3f-arm-r"></div>
+
+    <!-- Big plant -->
+    <div class="plant-big">
+      <div class="leaf lf-1"></div><div class="leaf lf-2"></div>
+      <div class="leaf lf-3"></div><div class="leaf lf-4"></div>
+      <div class="leaf lf-5"></div><div class="leaf lf-6"></div>
+      <div class="leaf lf-7"></div>
+      <div class="plant-pot"></div>
+    </div>
+  </div>
+
+
+  <!-- ===== 2F FRONTEND ===== -->
+  <div class="floor floor-2f">
+    <div class="ceiling">
+      <div class="fluorescent fl-1"></div>
+      <div class="fluorescent fl-2"></div>
+      <div class="fluorescent fl-3"></div>
+    </div>
+    <div class="interior-wall"></div>
+    <div class="interior-bg"></div>
+    <div class="wood-floor"></div>
+    <div class="floor-slab"></div>
+    <div class="f-label">2F</div>
+
+    <!-- Partitions -->
+    <div class="partition-2f p2f-1"></div>
+    <div class="partition-2f p2f-2"></div>
+
+    <!-- Senior (L-desk, dual monitor) -->
+    <div class="senior-desk-side"></div>
+    <div class="senior-desk-main"></div>
+    <div class="dual-monitor dm-1">
+      <div class="dm-screen"></div>
+      <div class="dm-screen"></div>
+    </div>
+    <div class="keyboard kb-1"></div>
+    <div class="chair ch-senior">
+      <div class="chair-back"></div>
+      <div class="chair-seat"></div>
+      <div class="chair-base"></div>
+    </div>
+
+    <!-- Seat marker: Senior -->
+    <div class="seat-marker" data-seat="senior" style="left:135px; bottom:85px; width:40px; height:80px;"></div>
+
+    <!-- Junior (laptop) -->
+    <div class="junior-desk"></div>
+    <div class="laptop lt-junior">
+      <div class="laptop-screen"></div>
+      <div class="laptop-base"></div>
+    </div>
+    <div class="chair ch-junior">
+      <div class="chair-back"></div>
+      <div class="chair-seat"></div>
+      <div class="chair-base"></div>
+    </div>
+
+    <!-- Seat marker: Junior -->
+    <div class="seat-marker" data-seat="junior" style="left:445px; bottom:85px; width:40px; height:80px;"></div>
+
+    <!-- Reviewer -->
+    <div class="reviewer-desk"></div>
+    <div class="reviewer-monitor"></div>
+    <div class="chair ch-reviewer">
+      <div class="chair-back"></div>
+      <div class="chair-seat"></div>
+      <div class="chair-base"></div>
+    </div>
+
+    <!-- Seat marker: Reviewer -->
+    <div class="seat-marker" data-seat="reviewer" style="left:745px; bottom:85px; width:40px; height:80px;"></div>
+
+    <!-- Reviewer bookshelf -->
+    <div class="bookshelf-sm">
+      <div class="bsm-shelf bsm-s1"></div>
+      <div class="bsm-shelf bsm-s2"></div>
+      <div class="bsm-shelf bsm-s3"></div>
+      <div class="bsm-book bb1"></div><div class="bsm-book bb2"></div>
+      <div class="bsm-book bb3"></div><div class="bsm-book bb4"></div>
+      <div class="bsm-book bb5"></div><div class="bsm-book bb6"></div>
+    </div>
+
+    <!-- Coffee machine -->
+    <div class="coffee-machine"></div>
+
+    <!-- Plants -->
+    <div class="plant-sm pl-2f-1">
+      <div class="sm-leaves"></div>
+      <div class="sm-pot"></div>
+    </div>
+    <div class="plant-sm pl-2f-2">
+      <div class="sm-leaves"></div>
+      <div class="sm-pot"></div>
+    </div>
+
+    <!-- Coat rack -->
+    <div class="coat-rack">
+      <div class="rack-pole">
+        <div class="rack-hook rh-l"></div>
+        <div class="rack-hook rh-r"></div>
+        <div class="coat"></div>
+      </div>
+      <div class="rack-base"></div>
+    </div>
+  </div>
+
+
+  <!-- ===== 1F BACKEND/PLANNING ===== -->
+  <div class="floor floor-1f">
+    <div class="ceiling">
+      <div class="fluorescent fl-1"></div>
+      <div class="fluorescent fl-2"></div>
+      <div class="fluorescent fl-3"></div>
+    </div>
+    <div class="interior-wall"></div>
+    <div class="interior-bg"></div>
+    <div class="wood-floor"></div>
+    <div class="floor-slab"></div>
+    <div class="f-label">1F</div>
+
+    <!-- Backend desk -->
+    <div class="backend-desk"></div>
+    <div class="backend-monitor">
+      <div class="terminal-line tl-1"></div>
+      <div class="terminal-line tl-2"></div>
+      <div class="terminal-line tl-3"></div>
+      <div class="terminal-line tl-4"></div>
+    </div>
+    <div class="chair ch-backend">
+      <div class="chair-back"></div>
+      <div class="chair-seat"></div>
+      <div class="chair-base"></div>
+    </div>
+
+    <!-- Seat marker: Backend -->
+    <div class="seat-marker" data-seat="backend" style="left:115px; bottom:85px; width:40px; height:80px;"></div>
+
+    <!-- Server rack -->
+    <div class="server-rack">
+      <div class="server-unit su-1"></div>
+      <div class="server-unit su-2"></div>
+      <div class="server-unit su-3"></div>
+      <div class="server-unit su-4"></div>
+      <div class="server-unit su-5"></div>
+      <div class="server-unit su-6"></div>
+    </div>
+    <!-- Server LEDs -->
+    <div class="server-led led-green sl-1"></div>
+    <div class="server-led led-blue sl-2"></div>
+    <div class="server-led led-green sl-3"></div>
+    <div class="server-led led-red sl-4"></div>
+    <div class="server-led led-blue sl-5"></div>
+    <div class="server-led led-green sl-6"></div>
+    <div class="server-led led-green sl-7"></div>
+    <div class="server-led led-blue sl-8"></div>
+    <div class="server-led led-red sl-9"></div>
+    <div class="server-led led-green sl-10"></div>
+    <div class="server-led led-blue sl-11"></div>
+    <div class="server-led led-green sl-12"></div>
+
+    <!-- Meeting room -->
+    <div class="meeting-room">
+      <div class="meeting-table"></div>
+      <div class="mc mc-1"></div>
+      <div class="mc mc-2"></div>
+      <div class="mc mc-3"></div>
+      <div class="mc mc-4"></div>
+      <div class="meeting-wb"></div>
+      <div class="meeting-tv"></div>
+    </div>
+
+    <!-- Planning desk -->
+    <div class="planning-desk"></div>
+    <div class="planning-monitor"></div>
+    <div class="chair ch-planning">
+      <div class="chair-back"></div>
+      <div class="chair-seat"></div>
+      <div class="chair-base"></div>
+    </div>
+
+    <!-- Seat marker: Planning -->
+    <div class="seat-marker" data-seat="planning" style="left:805px; bottom:85px; width:40px; height:80px;"></div>
+
+    <!-- Wall sticky notes -->
+    <div class="ws ws-1"></div><div class="ws ws-2"></div>
+    <div class="ws ws-3"></div><div class="ws ws-4"></div>
+    <div class="ws ws-5"></div><div class="ws ws-6"></div>
+    <div class="ws ws-7"></div><div class="ws ws-8"></div>
+
+    <!-- Printer -->
+    <div class="printer"></div>
+
+    <!-- Water dispenser -->
+    <div class="water-disp">
+      <div class="water-bottle"></div>
+      <div class="water-tap"></div>
+    </div>
+  </div>
+
+
+  <!-- ===== LOBBY ===== -->
+  <div class="lobby">
+    <div class="ceiling">
+      <div class="fluorescent fl-1"></div>
+      <div class="fluorescent fl-2"></div>
+      <div class="fluorescent fl-3"></div>
+    </div>
+    <div class="interior-wall"></div>
+    <div class="interior-bg"></div>
+    <div class="lobby-floor"></div>
+    <div class="floor-slab"></div>
+    <div class="f-label">LOBBY</div>
+
+    <!-- Logo sign -->
+    <div class="logo-sign">
+      <span class="logo-text">TheBigger</span>
+    </div>
+
+    <!-- Reception desk -->
+    <div class="reception-desk"></div>
+    <div class="reception-monitor"></div>
+
+    <!-- Seat marker: Reception -->
+    <div class="seat-marker" data-seat="reception" style="left:280px; bottom:80px; width:40px; height:80px;"></div>
+
+    <!-- Lobby sofa -->
+    <div class="lobby-sofa"></div>
+    <div class="lobby-sofa-arm-r"></div>
+
+    <!-- Coffee table -->
+    <div class="coffee-table">
+      <div class="ct-leg ct-l1"></div>
+      <div class="ct-leg ct-l2"></div>
+    </div>
+
+    <!-- Lobby plant -->
+    <div class="lobby-plant">
+      <div class="plant-big">
+        <div class="leaf lf-1"></div><div class="leaf lf-2"></div>
+        <div class="leaf lf-3"></div><div class="leaf lf-4"></div>
+        <div class="leaf lf-5"></div><div class="leaf lf-6"></div>
+        <div class="plant-pot"></div>
+      </div>
+    </div>
+
+    <!-- Automatic doors -->
+    <div class="auto-door">
+      <div class="door-frame"></div>
+      <div class="door-panel-l">
+        <div class="door-handle dh-l"></div>
+      </div>
+      <div class="door-panel-r">
+        <div class="door-handle dh-r"></div>
+      </div>
+    </div>
+    <div class="floor-mat"></div>
+  </div>
+
+</div>
+</body>
+</html>
