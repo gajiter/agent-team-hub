@@ -38,7 +38,8 @@
     "theme": "Theme",
     "selectProject": "Select Project",
     "addProject": "Add Project",
-    "office": "Office"
+    "office": "Office",
+    "logout": "Logout"
   },
   "office": {
     "title": "Office",

@@ -38,7 +38,8 @@
     "theme": "테마",
     "selectProject": "프로젝트 선택",
     "addProject": "프로젝트 추가",
-    "office": "사무실"
+    "office": "사무실",
+    "logout": "로그아웃"
   },
   "office": {
     "title": "사무실",

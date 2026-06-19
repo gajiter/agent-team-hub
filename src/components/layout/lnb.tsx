@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
   FileText,
@@ -80,6 +80,13 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 export function LNB() {
   const { t } = useI18n()
+  const router = useRouter()
+
+  async function handleLogout() {
+    await fetch('/api/auth', { method: 'DELETE' })
+    router.push('/login')
+    router.refresh()
+  }
 
   return (
     <aside className="w-[220px] min-w-[220px] bg-sidebar border-r border-sidebar-border flex flex-col">
@@ -147,8 +154,14 @@ export function LNB() {
         ))}
       </div>
 
-      {/* Bottom: Theme Toggle + Project Status */}
+      {/* Bottom: Logout + Theme Toggle + Project Status */}
       <div className="mt-auto p-4 space-y-2">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+        >
+          <span>{t('nav.logout')}</span>
+        </button>
         <div className="flex items-center justify-between px-3 py-1">
           <span className="text-xs text-muted-foreground">{t('nav.theme')}</span>
           <ThemeToggle />
