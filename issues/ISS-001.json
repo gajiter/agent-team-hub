@@ -1,0 +1,39 @@
+{
+  "id": "ISS-001",
+  "title": "rhymix layout 생성",
+  "description": "라이믹스에서 사용가능한 layout을 디자인 및 코딩한다.",
+  "status": "resolved",
+  "priority": "critical",
+  "type": "task",
+  "assignee": "human",
+  "assignees": [
+    "human",
+    "신기획"
+  ],
+  "reporter": "human",
+  "labels": [],
+  "relatedFiles": [],
+  "relatedIds": [],
+  "comments": [
+    {
+      "id": "c-1781841084573",
+      "author": "신피엠",
+      "content": "ISS-001을 세부 이슈로 분할합니다. PRD 작성(ISS-002), 기능 명세(ISS-003), 유저 플로우(ISS-004), 레이아웃 구현(ISS-005), 코드 리뷰(ISS-006)로 나누어 진행합니다.",
+      "createdAt": "2026-06-19T03:51:24.572Z"
+    },
+    {
+      "id": "c-1781841114049",
+      "author": "신피엠",
+      "content": "세부 이슈 분할 완료:\n\nISS-002: PRD 작성 (data/prd.json) — 담당: 신기획\nISS-003: 기능 명세 작성 (data/features.json) — 담당: 신기획\nISS-004: 유저 플로우 작성 (data/userflow.json) — 담당: 신기획\nISS-005: 레이아웃 구현 (layouts/) — 담당: 신프엔드 (ISS-002,003,004 완료 후)\nISS-006: 코드 리뷰 — 담당: 신리뷰 (ISS-005 완료 후)\n\n진행 순서: ISS-002/003/004 (병렬) → ISS-005 → ISS-006",
+      "createdAt": "2026-06-19T03:51:54.048Z"
+    },
+    {
+      "id": "c-1781843965983",
+      "author": "신피엠",
+      "content": "전체 레이아웃 프로젝트 완료. PRD/기능명세/유저플로우 작성(ISS-002~004), 레이아웃 구현(ISS-005, Rhymix 2.0+SCSS), 코드 리뷰(ISS-006, 91점), 버그 수정(ISS-007) 모두 완료.",
+      "createdAt": "2026-06-19T04:39:25.982Z"
+    }
+  ],
+  "createdAt": "2026-06-19T02:21:55.108Z",
+  "updatedAt": "2026-06-19T04:39:25.982Z"
+}

@@ -1,0 +1,27 @@
+{
+  "id": "ISS-007",
+  "title": "사이드바 위젯 영역 extra_var 누락 (left_sidebar, right_sidebar)",
+  "description": "layout.html에서 left_sidebar, right_sidebar를 참조하지만 info.xml extra_vars에 해당 변수가 정의되어 있지 않음. 관리자가 사이드바 위젯을 설정할 방법이 없어 사이드바가 항상 빈 상태로 렌더링됨. info.xml 사이드바 설정 그룹에 left_sidebar(textarea)와 right_sidebar(textarea) 추가 필요.",
+  "status": "resolved",
+  "priority": "high",
+  "type": "bug",
+  "assignee": "신프엔드",
+  "assignees": [],
+  "reporter": "신리뷰",
+  "labels": [],
+  "relatedFiles": [],
+  "relatedIds": [
+    "ISS-005",
+    "ISS-006"
+  ],
+  "comments": [
+    {
+      "id": "c-1781843965630",
+      "author": "신프엔드",
+      "content": "info.xml 사이드바 그룹에 left_sidebar, right_sidebar textarea 변수 추가 완료",
+      "createdAt": "2026-06-19T04:39:25.629Z"
+    }
+  ],
+  "createdAt": "2026-06-19T04:25:35.273Z",
+  "updatedAt": "2026-06-19T04:39:25.629Z"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "ISS-004",
+  "title": "유저 플로우 작성 (data/userflow.json)",
+  "description": "페이지 탐색 흐름을 data/userflow.json으로 작성한다. 사용자가 레이아웃 내에서 이동하는 주요 경로, 네비게이션 구조, 페이지 간 전환 흐름을 정의한다.",
+  "status": "resolved",
+  "priority": "high",
+  "type": "task",
+  "assignee": "신기획",
+  "assignees": [],
+  "reporter": "신피엠",
+  "labels": [],
+  "relatedFiles": [],
+  "relatedIds": [
+    "ISS-001"
+  ],
+  "comments": [
+    {
+      "id": "c-1781841607403",
+      "author": "신기획",
+      "content": "유저 플로우 작성 완료 (data/userflow.json). 5개 섹션 정의: (1) 관리자 레이아웃 설정 플로우 - 로고/사이트명/사이드바/배너/푸터 설정 경로, (2) 관리자 위젯 배치 플로우 - 위젯 생성부터 영역 선택까지, (3) 방문자 메인 페이지 탐색 - 배너/콘텐츠/사이드바/메뉴/검색 경로, (4) 방문자 모바일 탐색 - 햄버거 메뉴/서브메뉴/단일컬럼 경로, (5) 다크모드 전환 - OS감지/토글/localStorage 저장 경로. 총 53개 노드, 53개 엣지.",
+      "createdAt": "2026-06-19T04:00:07.402Z"
+    }
+  ],
+  "createdAt": "2026-06-19T03:51:39.178Z",
+  "updatedAt": "2026-06-19T04:00:07.402Z"
+}
