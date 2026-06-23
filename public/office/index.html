@@ -487,10 +487,14 @@
       { id: 1, label: '1', yEnd: 91, xS: 18, xE: 52 },
     ],
     'bg-night.png': [
-      { id: 6, label: '4', yEnd: 18, xS: 3, xE: 26 },
-      { id: 5, label: '3', yEnd: 42, xS: 3, xE: 26 },
-      { id: 4, label: '2', yEnd: 65, xS: 3, xE: 26 },
-      { id: 1, label: '1', yEnd: 85, xS: 3, xE: 26 },
+      { id: 6, label: '4', yEnd: 27, xS: 3, xE: 26 },
+      { id: 16, label: '', yEnd: 27, xS: 74, xE: 97 },
+      { id: 5, label: '3', yEnd: 48, xS: 3, xE: 26 },
+      { id: 15, label: '', yEnd: 48, xS: 74, xE: 97 },
+      { id: 4, label: '2', yEnd: 71, xS: 3, xE: 26 },
+      { id: 14, label: '', yEnd: 71, xS: 74, xE: 97 },
+      { id: 1, label: '1', yEnd: 97, xS: 3, xE: 26 },
+      { id: 11, label: '', yEnd: 97, xS: 74, xE: 97 },
     ],
   };
 
@@ -545,15 +549,15 @@
 
   // night 전용 배치 (좌우 사무실 분리)
   const NIGHT_POSITION = {
-    'CEO':           { x: 15, y: 27 },   // 좌 4F
-    '신데브주니어':    { x: 85, y: 27 },   // 우 4F
-    '신프론트엔드':    { x: 15, y: 48 },   // 좌 3F
-    '신프론트엔드주니어': { x: 85, y: 48 }, // 우 3F
-    'CFO':           { x: 15, y: 71 },    // 좌 2F
-    '신테스터':       { x: 78, y: 71 },    // 우 2F
-    '신테스터주니어':  { x: 92, y: 71 },    // 우 2F
-    '신데브':         { x: 15, y: 97 },    // 좌 1F
-    '신피엠':         { x: 85, y: 97 },    // 우 1F
+    'CEO':           { x: 15, y: 25 },   // 좌 4F
+    '신데브주니어':    { x: 85, y: 25 },   // 우 4F
+    '신프론트엔드':    { x: 15, y: 46 },   // 좌 3F
+    '신프론트엔드주니어': { x: 85, y: 46 }, // 우 3F
+    'CFO':           { x: 15, y: 69 },    // 좌 2F
+    '신테스터':       { x: 78, y: 69 },    // 우 2F
+    '신테스터주니어':  { x: 92, y: 69 },    // 우 2F
+    '신데브':         { x: 15, y: 95 },    // 좌 1F
+    '신피엠':         { x: 85, y: 95 },    // 우 1F
   };
 
   const AGENT_POSITION = {
@@ -694,10 +698,16 @@
   function getFloor(agent, idx) {
     if (isNight() && NIGHT_POSITION[agent.name]) {
       const np = NIGHT_POSITION[agent.name];
-      // night에서는 y값에 가장 가까운 floor 반환
+      const isRight = np.x > 50;
+      // night: y값 가장 가까운 + 좌우 매칭
       let closest = FLOORS[0];
       let minDist = 9999;
-      FLOORS.forEach(f => { const d = Math.abs(f.yEnd - np.y); if (d < minDist) { minDist = d; closest = f; } });
+      FLOORS.forEach(f => {
+        const fIsRight = f.xS > 50;
+        if (fIsRight !== isRight) return;
+        const d = Math.abs(f.yEnd - np.y);
+        if (d < minDist) { minDist = d; closest = f; }
+      });
       return closest;
     }
     const pos = AGENT_POSITION[agent.name];
