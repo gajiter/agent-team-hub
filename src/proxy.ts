@@ -17,8 +17,8 @@ function generateToken(password: string): string {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Allow login page and auth API
-  if (pathname === '/login' || pathname.startsWith('/api/auth')) {
+  // Allow login page, auth API, and office static assets
+  if (pathname === '/login' || pathname.startsWith('/api/auth') || pathname.startsWith('/office')) {
     return NextResponse.next()
   }
 
