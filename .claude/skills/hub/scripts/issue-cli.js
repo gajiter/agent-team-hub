@@ -93,7 +93,7 @@ function cmdCreate(args) {
     id: issueId,
     title: opts.title,
     description: opts.description || '',
-    status: opts.status || 'open',
+    status: opts.status || (opts.assignee ? 'in-progress' : 'open'),
     priority: opts.priority || 'medium',
     type: opts.type,
     assignee: opts.assignee || '',
@@ -247,21 +247,75 @@ function cmdList(args) {
 
 const [command, ...args] = process.argv.slice(2)
 
-const commands = { create: cmdCreate, update: cmdUpdate, comment: cmdComment, get: cmdGet, list: cmdList }
+// start: 이슈를 in-progress로 변경 + 작업 시작 코멘트 자동 추가
+function cmdStart(args) {
+  const issueId = args[0]
+  if (!issueId || issueId.startsWith('--')) fail('Issue ID is required (e.g., ISS-001)')
+
+  const opts = parseArgs(args.slice(1))
+  const filePath = issuePath(issueId)
+  if (!fs.existsSync(filePath)) fail(`Issue not found: ${issueId}`)
+
+  const issue = readJson(filePath)
+  issue.status = 'in-progress'
+  issue.updatedAt = now()
+
+  const author = opts.author || issue.assignee || 'agent'
+  issue.comments.push({
+    id: `c-${Date.now()}`,
+    author,
+    content: opts.content || `${author}가 작업을 시작합니다.`,
+    createdAt: now(),
+  })
+
+  writeJson(filePath, issue)
+  console.log(JSON.stringify(issue, null, 2))
+}
+
+// finish: 이슈를 resolved로 변경 + 완료 코멘트 자동 추가
+function cmdFinish(args) {
+  const issueId = args[0]
+  if (!issueId || issueId.startsWith('--')) fail('Issue ID is required (e.g., ISS-001)')
+
+  const opts = parseArgs(args.slice(1))
+  const filePath = issuePath(issueId)
+  if (!fs.existsSync(filePath)) fail(`Issue not found: ${issueId}`)
+
+  const issue = readJson(filePath)
+  issue.status = 'resolved'
+  issue.updatedAt = now()
+
+  const author = opts.author || issue.assignee || 'agent'
+  issue.comments.push({
+    id: `c-${Date.now()}`,
+    author,
+    content: opts.content || `${author}가 작업을 완료했습니다.`,
+    createdAt: now(),
+  })
+
+  writeJson(filePath, issue)
+  console.log(JSON.stringify(issue, null, 2))
+}
+
+const commands = { create: cmdCreate, update: cmdUpdate, comment: cmdComment, get: cmdGet, list: cmdList, start: cmdStart, finish: cmdFinish }
 
 if (!command || !commands[command]) {
   console.log(`Usage: issue-cli <command> [options]
 
 Commands:
-  create   Create a new issue
+  create   Create a new issue (assignee가 있으면 자동 in-progress)
            --title (required) --type (required) --priority --status
            --description --assignee --assignees --reporter
            --labels --relatedFiles --relatedIds
 
+  start    작업 시작 (status → in-progress + 시작 코멘트)
+           issue-cli start ISS-001 --author 신데브
+
+  finish   작업 완료 (status → resolved + 완료 코멘트)
+           issue-cli finish ISS-001 --author 신데브 --content "결과 요약"
+
   update   Update an existing issue
            issue-cli update ISS-001 --status resolved --priority high
-           Updatable: title, description, status, priority, type,
-                      assignee, assignees, labels, relatedFiles, relatedIds
 
   comment  Add a comment to an issue
            issue-cli comment ISS-001 --author claude --content "내용"

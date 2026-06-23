@@ -25,8 +25,14 @@
       "author": "CEO",
       "content": "이름표 기본색 초록으로 변경 완료 (idle 상태도 working과 동일한 초록색). 이제 날씨별 FLOOR_MAP yEnd 좌표 조정 작업 진행해주세요. http://localhost:6099/office/index.html 에서 browse 도구로 스크린샷 찍으면서 검은 바 위치에 이름표가 맞도록 조정. bg-rainy.png은 기준 — 절대 변경 금지.",
       "createdAt": "2026-06-23T03:54:30.400Z"
+    },
+    {
+      "id": "c-1782201158887",
+      "author": "신프론트엔드",
+      "content": "FLOOR_MAP 최종 점검 시작",
+      "createdAt": "2026-06-23T07:52:38.887Z"
     }
   ],
   "createdAt": "2026-06-23T03:51:25.290Z",
-  "updatedAt": "2026-06-23T07:39:54.500Z"
+  "updatedAt": "2026-06-23T07:52:38.886Z"
 }
