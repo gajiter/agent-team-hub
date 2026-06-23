@@ -175,16 +175,15 @@
   .floor-label {
     position: absolute;
     left: 12px;
-    padding: 3px 8px;
-    border-radius: 5px;
-    background: rgba(0,0,0,0.5);
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.5);
     backdrop-filter: blur(8px);
-    color: rgba(255,255,255,0.6);
-    font-size: 9px;
-    font-weight: 700;
+    color: #000;
+    font-size: 11px;
+    font-weight: 800;
     letter-spacing: 0.6px;
-    text-transform: uppercase;
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.6);
     z-index: 5;
     pointer-events: none;
   }
@@ -448,52 +447,50 @@
   // Each floor: yEnd = bottom of floor (feet walk here), xS/xE = left/right walk bounds
   const FLOOR_MAP = {
     'bg-sunny.png': [
-      { id: 6, label: '6', yEnd: 6, xS: 5, xE: 55 },
-      { id: 5, label: '5', yEnd: 20, xS: 5, xE: 55 },
-      { id: 4, label: '4', yEnd: 36, xS: 5, xE: 55 },
-      { id: 3, label: '3', yEnd: 52, xS: 5, xE: 55 },
-      { id: 2, label: '2', yEnd: 68, xS: 5, xE: 55 },
-      { id: 1, label: '1', yEnd: 82, xS: 5, xE: 55 },
+      { id: 6, label: '6', yEnd: 20, xS: 5, xE: 55 },
+      { id: 5, label: '5', yEnd: 36, xS: 5, xE: 55 },
+      { id: 4, label: '4', yEnd: 52, xS: 5, xE: 55 },
+      { id: 3, label: '3', yEnd: 68, xS: 5, xE: 55 },
+      { id: 2, label: '2', yEnd: 82, xS: 5, xE: 55 },
+      { id: 1, label: '1', yEnd: 94, xS: 5, xE: 55 },
     ],
     'bg-bright.png': [
-      { id: 6, label: '6', yEnd: 10, xS: 12, xE: 58 },
-      { id: 5, label: '5', yEnd: 24, xS: 12, xE: 58 },
-      { id: 4, label: '4', yEnd: 37, xS: 12, xE: 58 },
-      { id: 3, label: '3', yEnd: 51, xS: 12, xE: 58 },
-      { id: 2, label: '2', yEnd: 64, xS: 12, xE: 58 },
-      { id: 1, label: '1', yEnd: 77, xS: 12, xE: 58 },
+      { id: 6, label: '6', yEnd: 24, xS: 12, xE: 58 },
+      { id: 5, label: '5', yEnd: 37, xS: 12, xE: 58 },
+      { id: 4, label: '4', yEnd: 51, xS: 12, xE: 58 },
+      { id: 3, label: '3', yEnd: 64, xS: 12, xE: 58 },
+      { id: 2, label: '2', yEnd: 77, xS: 12, xE: 58 },
+      { id: 1, label: '1', yEnd: 90, xS: 12, xE: 58 },
     ],
     'bg-cloudy.png': [
-      { id: 6, label: '6', yEnd: 8, xS: 32, xE: 92 },
-      { id: 5, label: '5', yEnd: 22, xS: 32, xE: 92 },
-      { id: 4, label: '4', yEnd: 36, xS: 32, xE: 92 },
-      { id: 3, label: '3', yEnd: 50, xS: 32, xE: 92 },
-      { id: 2, label: '2', yEnd: 64, xS: 32, xE: 92 },
-      { id: 1, label: '1', yEnd: 78, xS: 32, xE: 92 },
+      { id: 6, label: '6', yEnd: 22, xS: 32, xE: 92 },
+      { id: 5, label: '5', yEnd: 36, xS: 32, xE: 92 },
+      { id: 4, label: '4', yEnd: 50, xS: 32, xE: 92 },
+      { id: 3, label: '3', yEnd: 64, xS: 32, xE: 92 },
+      { id: 2, label: '2', yEnd: 78, xS: 32, xE: 92 },
+      { id: 1, label: '1', yEnd: 91, xS: 32, xE: 92 },
     ],
     'bg-rainy.png': [
-      { id: 6, label: '6', yEnd: 7.3, xS: 28, xE: 88 },
-      { id: 5, label: '5', yEnd: 20.3, xS: 28, xE: 88 },
-      { id: 4, label: '4', yEnd: 35.3, xS: 28, xE: 88 },
-      { id: 3, label: '3', yEnd: 52, xS: 28, xE: 88 },
-      { id: 2, label: '2', yEnd: 66, xS: 28, xE: 88 },
-      { id: 1, label: '1', yEnd: 81.2, xS: 28, xE: 88 },
+      { id: 6, label: '6', yEnd: 20.3, xS: 28, xE: 88 },
+      { id: 5, label: '5', yEnd: 35.3, xS: 28, xE: 88 },
+      { id: 4, label: '4', yEnd: 52, xS: 28, xE: 88 },
+      { id: 3, label: '3', yEnd: 66, xS: 28, xE: 88 },
+      { id: 2, label: '2', yEnd: 81.2, xS: 28, xE: 88 },
+      { id: 1, label: '1', yEnd: 93.4, xS: 28, xE: 88 },
     ],
     'bg-snowy.png': [
-      { id: 6, label: '6', yEnd: 10, xS: 16, xE: 56 },
-      { id: 5, label: '5', yEnd: 24, xS: 16, xE: 56 },
-      { id: 4, label: '4', yEnd: 37, xS: 16, xE: 56 },
-      { id: 3, label: '3', yEnd: 50, xS: 16, xE: 56 },
-      { id: 2, label: '2', yEnd: 63, xS: 16, xE: 56 },
-      { id: 1, label: '1', yEnd: 76, xS: 16, xE: 56 },
+      { id: 6, label: '6', yEnd: 26, xS: 18, xE: 52 },
+      { id: 5, label: '5', yEnd: 39, xS: 18, xE: 52 },
+      { id: 4, label: '4', yEnd: 51, xS: 18, xE: 52 },
+      { id: 3, label: '3', yEnd: 64, xS: 18, xE: 52 },
+      { id: 2, label: '2', yEnd: 77, xS: 18, xE: 52 },
+      { id: 1, label: '1', yEnd: 91, xS: 18, xE: 52 },
     ],
     'bg-night.png': [
-      { id: 6, label: '6', yEnd: 11, xS: 6, xE: 40 },
-      { id: 5, label: '5', yEnd: 33, xS: 6, xE: 40 },
-      { id: 4, label: '4', yEnd: 55, xS: 6, xE: 40 },
-      { id: 3, label: '3', yEnd: 11, xS: 60, xE: 94 },
-      { id: 2, label: '2', yEnd: 33, xS: 60, xE: 94 },
-      { id: 1, label: '1', yEnd: 55, xS: 60, xE: 94 },
+      { id: 6, label: '4', yEnd: 18, xS: 3, xE: 26 },
+      { id: 5, label: '3', yEnd: 42, xS: 3, xE: 26 },
+      { id: 4, label: '2', yEnd: 65, xS: 3, xE: 26 },
+      { id: 1, label: '1', yEnd: 85, xS: 3, xE: 26 },
     ],
   };
 
@@ -518,18 +515,47 @@
     });
     // Update floor labels
     overlay.querySelectorAll('.floor-label').forEach(l => l.remove());
-    FLOORS.forEach(f => {
+    const labelCount = FLOORS.length;
+    const labelStart = 8;
+    const labelEnd = 85;
+    const labelStep = (labelEnd - labelStart) / (labelCount - 1);
+    FLOORS.forEach((f, i) => {
       const el = document.createElement('div');
       el.className = 'floor-label';
       el.textContent = f.label;
-      el.style.top = (f.yEnd - 10) + '%';
-      el.style.left = Math.max(2, f.xS - 8) + '%';
+      el.style.top = (labelStart + i * labelStep) + '%';
+      el.style.left = '2%';
       overlay.appendChild(el);
     });
   }
 
   // G=1, 1F=2, 2F=3, 3F=4, 4F=5, 5F=6, 6F=7
-  // floor + xPct per agent name
+  // 에이전트별 고유 색상
+  const AGENT_COLOR = {
+    'CEO':           { bg: 'rgba(59,130,246,0.5)',  border: 'rgba(59,130,246,0.8)',  bubble: 'rgba(59,130,246,0.45)' },   // 블루
+    'CFO':           { bg: 'rgba(168,85,247,0.5)',  border: 'rgba(168,85,247,0.8)',  bubble: 'rgba(168,85,247,0.45)' },   // 퍼플
+    '신데브':         { bg: 'rgba(234,179,8,0.5)',   border: 'rgba(234,179,8,0.8)',   bubble: 'rgba(234,179,8,0.45)' },    // 옐로
+    '신데브주니어':    { bg: 'rgba(249,115,22,0.5)',  border: 'rgba(249,115,22,0.8)',  bubble: 'rgba(249,115,22,0.45)' },   // 오렌지
+    '신프론트엔드':    { bg: 'rgba(74,222,128,0.5)',  border: 'rgba(74,222,128,0.8)',  bubble: 'rgba(74,222,128,0.45)' },   // 그린
+    '신프론트엔드주니어': { bg: 'rgba(45,212,191,0.5)', border: 'rgba(45,212,191,0.8)', bubble: 'rgba(45,212,191,0.45)' },  // 틸
+    '신테스터':       { bg: 'rgba(244,63,94,0.5)',   border: 'rgba(244,63,94,0.8)',   bubble: 'rgba(244,63,94,0.45)' },    // 로즈
+    '신테스터주니어':  { bg: 'rgba(236,72,153,0.5)',  border: 'rgba(236,72,153,0.8)',  bubble: 'rgba(236,72,153,0.45)' },   // 핑크
+    '신피엠':         { bg: 'rgba(139,92,246,0.5)',  border: 'rgba(139,92,246,0.8)',  bubble: 'rgba(139,92,246,0.45)' },   // 바이올렛
+  };
+
+  // night 전용 배치 (좌우 사무실 분리)
+  const NIGHT_POSITION = {
+    'CEO':           { x: 15, y: 27 },   // 좌 4F
+    '신데브주니어':    { x: 85, y: 27 },   // 우 4F
+    '신프론트엔드':    { x: 15, y: 48 },   // 좌 3F
+    '신프론트엔드주니어': { x: 85, y: 48 }, // 우 3F
+    'CFO':           { x: 15, y: 71 },    // 좌 2F
+    '신테스터':       { x: 78, y: 71 },    // 우 2F
+    '신테스터주니어':  { x: 92, y: 71 },    // 우 2F
+    '신데브':         { x: 15, y: 97 },    // 좌 1F
+    '신피엠':         { x: 85, y: 97 },    // 우 1F
+  };
+
   const AGENT_POSITION = {
     'CEO':           { floor: 6, xPct: 45 },
     'CFO':           { floor: 5, xPct: 40 },
@@ -663,15 +689,37 @@
   }
 
   // ── Agents ──
+  function isNight() { return currentBgFile === 'bg-night.png'; }
+
   function getFloor(agent, idx) {
+    if (isNight() && NIGHT_POSITION[agent.name]) {
+      const np = NIGHT_POSITION[agent.name];
+      // night에서는 y값에 가장 가까운 floor 반환
+      let closest = FLOORS[0];
+      let minDist = 9999;
+      FLOORS.forEach(f => { const d = Math.abs(f.yEnd - np.y); if (d < minDist) { minDist = d; closest = f; } });
+      return closest;
+    }
     const pos = AGENT_POSITION[agent.name];
     const fid = pos ? pos.floor : (ROLE_FLOOR[agent.role] || (3 + (idx % 4)));
     return FLOORS.find(f => f.id === fid) || FLOORS[idx % FLOORS.length];
   }
 
   function getAgentX(agent, idx, floor) {
+    if (isNight() && NIGHT_POSITION[agent.name]) {
+      return NIGHT_POSITION[agent.name].x;
+    }
     const pos = AGENT_POSITION[agent.name];
-    if (pos) return pos.xPct;
+    if (pos) {
+      const xPct = pos.xPct;
+      if (xPct < floor.xS || xPct > floor.xE) {
+        const sameFloor = agents.filter((a, i) => getFloor(a, i).id === floor.id);
+        const p = sameFloor.indexOf(agent);
+        const total = sameFloor.length;
+        return floor.xS + ((floor.xE - floor.xS) / (total + 1)) * (p + 1);
+      }
+      return xPct;
+    }
     // Fallback: distribute evenly
     const sameFloor = agents.filter((a, i) => getFloor(a, i).id === floor.id);
     const p = sameFloor.indexOf(agent);
@@ -704,6 +752,7 @@
     el._xPct = xPct;
     el._agentName = agent.name;
 
+    const ac = AGENT_COLOR[agent.name];
     const charIdx = ((idx * 7 + 3) % CHAR_COUNT) + 1;
     const cacheBust = Date.now();
 
@@ -712,7 +761,7 @@
     el.innerHTML = `
       <div class="agent__bubble agent__bubble--idle" id="b${idx}" style="display:none"></div>
       <img class="agent__char" src="/office/characters/char-${charIdx}.png?v=${cacheBust}" alt="${agent.name}" />
-      <div class="agent__tag"><span class="agent__dot"></span>${agent.name}</div>
+      <div class="agent__tag" ${ac ? `style="background:${ac.bg};border-color:${ac.border}"` : ''}><span class="agent__dot"></span>${agent.name}</div>
     `;
 
     overlay.appendChild(el);
@@ -735,19 +784,20 @@
 
       const name = el._agentName;
 
-      if (name === 'CEO') {
-        // CEO: 좌우로 천천히 순찰
+      if (name === 'CEO' || name === 'CFO' || name === '신피엠') {
+        // CEO/CFO/신피엠: 좌우로 넓게 순찰 (건물 내)
         const curX = parseFloat(el.style.left);
         const dir = el._walkDir || 1;
-        let newX = curX + dir * 3;
-        if (newX > floor.xE - 5) { newX = floor.xE - 5; el._walkDir = -1; }
-        if (newX < floor.xS + 5) { newX = floor.xS + 5; el._walkDir = 1; }
+        let step = 5 + Math.random() * 3;
+        let newX = curX + dir * step;
+        if (newX > floor.xE - 3) { newX = floor.xE - 3; el._walkDir = -1; }
+        if (newX < floor.xS + 3) { newX = floor.xS + 3; el._walkDir = 1; }
         el.classList.toggle('agent--flip', el._walkDir < 0);
         el.style.left = newX + '%';
-        el.style.transition = 'left 2s linear';
-        walkTimers[idx] = setTimeout(walk, 2000);
+        el.style.transition = 'left 2.5s linear';
+        walkTimers[idx] = setTimeout(walk, 1500 + Math.random() * 1000);
 
-      } else if (name === '신피엠') {
+      } else if (name === '신피엠_DISABLED') {
         // 신피엠: 점프 + 구르기 + 왔다갔다
         const actions = ['jump', 'roll', 'walk'];
         const action = actions[Math.floor(Math.random() * actions.length)];
@@ -761,7 +811,11 @@
           setTimeout(() => { char.style.animation = 'breathing 4s ease-in-out infinite'; }, 800);
         } else {
           const curX = parseFloat(el.style.left);
-          let newX = floor.xS + Math.random() * (floor.xE - floor.xS);
+          // night에서는 현재 위치 기준 좌/우 사무실 범위 내에서만 이동
+          const np = isNight() && NIGHT_POSITION['신피엠'];
+          const walkXS = (np && np.x > 50) ? 74 : floor.xS;
+          const walkXE = (np && np.x > 50) ? 97 : floor.xE;
+          let newX = walkXS + Math.random() * (walkXE - walkXS);
           el.classList.toggle('agent--flip', newX < curX);
           el.style.left = newX + '%';
           el.style.transition = 'left 1.5s ease-in-out';
@@ -769,8 +823,13 @@
         walkTimers[idx] = setTimeout(walk, 2000 + Math.random() * 2000);
 
       } else {
-        // 나머지: 제자리 (CSS 애니메이션만)
-        walkTimers[idx] = setTimeout(walk, 5000);
+        // 나머지: 해당 층 내 자유롭게 이동
+        const curX = parseFloat(el.style.left);
+        let newX = floor.xS + 5 + Math.random() * (floor.xE - floor.xS - 10);
+        el.classList.toggle('agent--flip', newX < curX);
+        el.style.left = newX + '%';
+        el.style.transition = 'left 3s ease-in-out';
+        walkTimers[idx] = setTimeout(walk, 3000 + Math.random() * 3000);
       }
     }
 
@@ -783,14 +842,17 @@
     if (!b) return;
     const s = getState(agent);
 
+    const ac = AGENT_COLOR[agent.name];
     if (s.isWorking && s.issue) {
       const t = s.issue.title;
       b.textContent = '🔧 ' + (t.length > 25 ? t.slice(0, 25) + '...' : t);
       b.className = 'agent__bubble agent__bubble--working';
+      if (ac) { b.style.background = ac.bubble; b.style.borderColor = ac.border; }
       b.style.display = '';
     } else {
       b.textContent = IDLE_MSG[Math.floor(Math.random() * IDLE_MSG.length)];
       b.className = 'agent__bubble agent__bubble--idle';
+      if (ac) { b.style.background = ac.bubble; b.style.borderColor = ac.border; }
       b.style.display = Math.random() > 0.4 ? '' : 'none';
     }
     b.style.animation = 'none'; void b.offsetHeight; b.style.animation = '';
