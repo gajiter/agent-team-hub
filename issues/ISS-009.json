@@ -1,0 +1,27 @@
+{
+  "id": "ISS-009",
+  "title": "Grace 레이아웃 원본 비교 및 CSS 수정",
+  "description": "원본(grace-template.webflow.io)과 비교하여 CSS/HTML 차이 수정",
+  "status": "resolved",
+  "priority": "high",
+  "type": "task",
+  "assignee": "신프론트엔드주니어",
+  "assignees": [],
+  "reporter": "CEO",
+  "labels": [
+    "ui",
+    "grace"
+  ],
+  "relatedFiles": [],
+  "relatedIds": [],
+  "comments": [
+    {
+      "id": "c-1782188049710",
+      "author": "신프론트엔드주니어",
+      "content": "원본과 비교하여 색상체계, 헤더, 히어로, 버튼, 섹션구조, 간증, FAQ, 서비스카드, 푸터, 반응형 전면 수정 완료. rhymix/layouts/grace/에도 동기화됨.",
+      "createdAt": "2026-06-23T04:14:09.708Z"
+    }
+  ],
+  "createdAt": "2026-06-23T04:08:07.245Z",
+  "updatedAt": "2026-06-23T04:14:09.708Z"
+}

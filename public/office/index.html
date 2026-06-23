@@ -108,10 +108,10 @@
   }
 
   .agent--idle .agent__tag {
-    background: rgba(0,0,0,0.7);
-    color: rgba(255,255,255,0.9);
-    border: 1.5px solid rgba(255,255,255,0.15);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    background: rgba(74,222,128,0.35);
+    color: #fff;
+    border: 1.5px solid rgba(74,222,128,0.6);
+    box-shadow: 0 2px 8px rgba(74,222,128,0.3);
   }
 
   .agent__dot {
@@ -126,15 +126,15 @@
   }
 
   .agent--idle .agent__dot {
-    background: #6b7280;
+    background: #4ade80;
   }
 
   /* Bubble */
   .agent__bubble {
     position: absolute;
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    left: calc(100% + 8px);
+    transform: translateY(-50%);
     padding: 6px 14px;
     border-radius: 12px;
     font-size: 11px;
@@ -149,27 +149,27 @@
   }
 
   .agent__bubble--working {
-    background: rgba(74,222,128,0.15);
-    color: #bbf7d0;
-    border: 1px solid rgba(74,222,128,0.2);
+    background: rgba(255,120,150,0.45);
+    color: #fff;
+    border: 1px solid rgba(255,120,150,0.6);
   }
 
   .agent__bubble--idle {
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.5);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,120,150,0.25);
+    color: rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,120,150,0.3);
   }
 
   .agent__bubble::after {
     content: '';
     position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
     border: 4px solid transparent;
   }
-  .agent__bubble--working::after { border-top-color: rgba(74,222,128,0.2); }
-  .agent__bubble--idle::after { border-top-color: rgba(255,255,255,0.06); }
+  .agent__bubble--working::after { border-right-color: rgba(255,120,150,0.6); }
+  .agent__bubble--idle::after { border-right-color: rgba(255,120,150,0.3); }
 
   /* Floor labels */
   .floor-label {
@@ -448,58 +448,52 @@
   // Each floor: yEnd = bottom of floor (feet walk here), xS/xE = left/right walk bounds
   const FLOOR_MAP = {
     'bg-sunny.png': [
-      { id: 7, label: '6F', yEnd: 15, xS: 15, xE: 55 },
-      { id: 6, label: '5F', yEnd: 28, xS: 15, xE: 55 },
-      { id: 5, label: '4F', yEnd: 42, xS: 15, xE: 55 },
-      { id: 4, label: '3F', yEnd: 56, xS: 15, xE: 55 },
-      { id: 3, label: '2F', yEnd: 70, xS: 15, xE: 55 },
-      { id: 2, label: '1F', yEnd: 84, xS: 15, xE: 55 },
-      { id: 1, label: 'G',  yEnd: 95, xS: 15, xE: 55 },
+      { id: 6, label: '6', yEnd: 6, xS: 5, xE: 55 },
+      { id: 5, label: '5', yEnd: 20, xS: 5, xE: 55 },
+      { id: 4, label: '4', yEnd: 36, xS: 5, xE: 55 },
+      { id: 3, label: '3', yEnd: 52, xS: 5, xE: 55 },
+      { id: 2, label: '2', yEnd: 68, xS: 5, xE: 55 },
+      { id: 1, label: '1', yEnd: 82, xS: 5, xE: 55 },
     ],
     'bg-bright.png': [
-      { id: 7, label: '6F', yEnd: 10, xS: 12, xE: 60 },
-      { id: 6, label: '5F', yEnd: 22, xS: 12, xE: 60 },
-      { id: 5, label: '4F', yEnd: 36, xS: 12, xE: 60 },
-      { id: 4, label: '3F', yEnd: 50, xS: 12, xE: 60 },
-      { id: 3, label: '2F', yEnd: 64, xS: 12, xE: 60 },
-      { id: 2, label: '1F', yEnd: 78, xS: 12, xE: 60 },
-      { id: 1, label: 'G',  yEnd: 90, xS: 12, xE: 60 },
+      { id: 6, label: '6', yEnd: 10, xS: 12, xE: 58 },
+      { id: 5, label: '5', yEnd: 24, xS: 12, xE: 58 },
+      { id: 4, label: '4', yEnd: 37, xS: 12, xE: 58 },
+      { id: 3, label: '3', yEnd: 51, xS: 12, xE: 58 },
+      { id: 2, label: '2', yEnd: 64, xS: 12, xE: 58 },
+      { id: 1, label: '1', yEnd: 77, xS: 12, xE: 58 },
     ],
     'bg-cloudy.png': [
-      { id: 7, label: '6F', yEnd: 12, xS: 30, xE: 92 },
-      { id: 6, label: '5F', yEnd: 24, xS: 30, xE: 92 },
-      { id: 5, label: '4F', yEnd: 38, xS: 30, xE: 92 },
-      { id: 4, label: '3F', yEnd: 52, xS: 30, xE: 92 },
-      { id: 3, label: '2F', yEnd: 66, xS: 30, xE: 92 },
-      { id: 2, label: '1F', yEnd: 80, xS: 30, xE: 92 },
-      { id: 1, label: 'G',  yEnd: 92, xS: 30, xE: 92 },
+      { id: 6, label: '6', yEnd: 8, xS: 32, xE: 92 },
+      { id: 5, label: '5', yEnd: 22, xS: 32, xE: 92 },
+      { id: 4, label: '4', yEnd: 36, xS: 32, xE: 92 },
+      { id: 3, label: '3', yEnd: 50, xS: 32, xE: 92 },
+      { id: 2, label: '2', yEnd: 64, xS: 32, xE: 92 },
+      { id: 1, label: '1', yEnd: 78, xS: 32, xE: 92 },
     ],
     'bg-rainy.png': [
-      { id: 7, label: '6F', yEnd: 7.3, xS: 28, xE: 88 },
-      { id: 6, label: '5F', yEnd: 20.3, xS: 28, xE: 88 },
-      { id: 5, label: '4F', yEnd: 35.3, xS: 28, xE: 88 },
-      { id: 4, label: '3F', yEnd: 52, xS: 28, xE: 88 },
-      { id: 3, label: '2F', yEnd: 66, xS: 28, xE: 88 },
-      { id: 2, label: '1F', yEnd: 81.2, xS: 28, xE: 88 },
-      { id: 1, label: 'G',  yEnd: 93.4, xS: 28, xE: 88 },
+      { id: 6, label: '6', yEnd: 7.3, xS: 28, xE: 88 },
+      { id: 5, label: '5', yEnd: 20.3, xS: 28, xE: 88 },
+      { id: 4, label: '4', yEnd: 35.3, xS: 28, xE: 88 },
+      { id: 3, label: '3', yEnd: 52, xS: 28, xE: 88 },
+      { id: 2, label: '2', yEnd: 66, xS: 28, xE: 88 },
+      { id: 1, label: '1', yEnd: 81.2, xS: 28, xE: 88 },
     ],
     'bg-snowy.png': [
-      { id: 7, label: '6F', yEnd: 20, xS: 14, xE: 56 },
-      { id: 6, label: '5F', yEnd: 30, xS: 14, xE: 56 },
-      { id: 5, label: '4F', yEnd: 41, xS: 14, xE: 56 },
-      { id: 4, label: '3F', yEnd: 52, xS: 14, xE: 56 },
-      { id: 3, label: '2F', yEnd: 63, xS: 14, xE: 56 },
-      { id: 2, label: '1F', yEnd: 75, xS: 14, xE: 56 },
-      { id: 1, label: 'G',  yEnd: 87, xS: 14, xE: 56 },
+      { id: 6, label: '6', yEnd: 10, xS: 16, xE: 56 },
+      { id: 5, label: '5', yEnd: 24, xS: 16, xE: 56 },
+      { id: 4, label: '4', yEnd: 37, xS: 16, xE: 56 },
+      { id: 3, label: '3', yEnd: 50, xS: 16, xE: 56 },
+      { id: 2, label: '2', yEnd: 63, xS: 16, xE: 56 },
+      { id: 1, label: '1', yEnd: 76, xS: 16, xE: 56 },
     ],
     'bg-night.png': [
-      { id: 7, label: '6F', yEnd: 14, xS: 8, xE: 42 },
-      { id: 6, label: '5F', yEnd: 28, xS: 8, xE: 42 },
-      { id: 5, label: '4F', yEnd: 42, xS: 8, xE: 42 },
-      { id: 4, label: '3F', yEnd: 14, xS: 55, xE: 92 },
-      { id: 3, label: '2F', yEnd: 28, xS: 55, xE: 92 },
-      { id: 2, label: '1F', yEnd: 42, xS: 55, xE: 92 },
-      { id: 1, label: 'G',  yEnd: 58, xS: 30, xE: 70 },
+      { id: 6, label: '6', yEnd: 11, xS: 6, xE: 40 },
+      { id: 5, label: '5', yEnd: 33, xS: 6, xE: 40 },
+      { id: 4, label: '4', yEnd: 55, xS: 6, xE: 40 },
+      { id: 3, label: '3', yEnd: 11, xS: 60, xE: 94 },
+      { id: 2, label: '2', yEnd: 33, xS: 60, xE: 94 },
+      { id: 1, label: '1', yEnd: 55, xS: 60, xE: 94 },
     ],
   };
 
@@ -561,6 +555,10 @@
     'Project Manager': 1,
   };
 
+  // G=1, 1F=2 ... 매핑 제거 — 이제 id와 floor 직접 매핑
+  // 코멘트 정리: floor 1=1층, 2=2층, ..., 6=6층
+  };
+
   const WEATHER_BG = {
     clear: 'bg-sunny.png',
     clouds: 'bg-cloudy.png',
@@ -594,13 +592,6 @@
 
   bg.onload = () => {
     loading.classList.add('hidden');
-    FLOORS.forEach(f => {
-      const el = document.createElement('div');
-      el.className = 'floor-label';
-      el.textContent = f.label;
-      el.style.top = (f.yPct + 1) + '%';
-      overlay.appendChild(el);
-    });
   };
 
   // ── Weather ──
@@ -839,8 +830,27 @@
     $('statusTime').textContent = t;
   }
 
+  const DEFAULT_AGENTS = [
+    { name: 'CEO', role: 'CEO' },
+    { name: 'CFO', role: 'CFO' },
+    { name: '신데브', role: 'Senior Full-Stack Developer' },
+    { name: '신데브주니어', role: 'junior develoer' },
+    { name: '신프론트엔드', role: 'Senior Frontend Designer' },
+    { name: '신프론트엔드주니어', role: 'Frontend Junior' },
+    { name: '신테스터', role: 'QA Tester' },
+    { name: '신테스터주니어', role: 'Junior Tester' },
+    { name: '신피엠', role: 'Project Manager' },
+  ];
+
   async function fetchData() {
-    if (!projectId) return;
+    if (!projectId) {
+      if (agents.length === 0) {
+        agents = DEFAULT_AGENTS;
+        agents.forEach((a, i) => createAgent(a, i));
+        updateStatus();
+      }
+      return;
+    }
     try {
       const [aR, iR] = await Promise.all([
         fetch('/api/agents?projectId=' + encodeURIComponent(projectId)),

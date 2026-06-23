@@ -1,24 +1,27 @@
 {
   "id": "ISS-010",
-  "title": "hub-issue-tracker SKILL.md 작성",
-  "description": "agent-hub 플러그인 구조 재편 7단계 계획의 Task 1: .claude/plugins/agent-hub/skills/hub-issue-tracker/SKILL.md 파일 생성",
+  "title": "Grace 프로젝트 문서 작성 (README/ARCHITECTURE/SETUP/DESIGN)",
+  "description": "docs/ 폴더에 프로젝트 문서 4개 생성",
   "status": "resolved",
   "priority": "medium",
   "type": "task",
-  "assignee": "claude",
+  "assignee": "신피엠",
   "assignees": [],
-  "reporter": "user",
-  "labels": [],
+  "reporter": "CEO",
+  "labels": [
+    "docs",
+    "grace"
+  ],
   "relatedFiles": [],
   "relatedIds": [],
   "comments": [
     {
-      "id": "c-1774600672844",
-      "author": "claude",
-      "content": ".claude/plugins/agent-hub/skills/hub-issue-tracker/ 디렉토리 생성 및 SKILL.md 파일 작성 완료. scripts/, references/ 하위 디렉토리도 함께 생성. 커밋: feat: add hub-issue-tracker skill with guardrail pattern",
-      "createdAt": "2026-03-27T08:37:52.844Z"
+      "id": "c-1782187763331",
+      "author": "신피엠",
+      "content": "docs/ 폴더에 README.md, ARCHITECTURE.md, SETUP.md, DESIGN.md 4개 문서 생성 완료. PRD/features/코드 기반으로 정확한 정보 반영.",
+      "createdAt": "2026-06-23T04:09:23.330Z"
     }
   ],
-  "createdAt": "2026-03-27T08:35:37.188Z",
-  "updatedAt": "2026-03-27T08:37:52.844Z"
+  "createdAt": "2026-06-23T04:08:07.374Z",
+  "updatedAt": "2026-06-23T04:09:23.330Z"
 }
