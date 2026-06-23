@@ -2,7 +2,7 @@
   "id": "ISS-008",
   "title": "날씨별 에이전트 층 좌표(FLOOR_MAP) 미세조정",
   "description": "## 목표\n비 오는 날(bg-rainy.png) 좌표를 기준으로, 나머지 5개 배경의 FLOOR_MAP yEnd 값을 조정한다.\n\n## 기준 (절대 변경 금지)\nbg-rainy.png FLOOR_MAP은 확정. 이것이 기준이다.\n\n## 규칙\n- 각 층 사이 '검은 천정/바닥 바' 위치에 에이전트 이름표가 오도록 yEnd를 맞춘다\n- 캐릭터 본체는 해당 층 공간 안에 서 있는 것처럼 보여야 한다\n- xS, xE는 빌딩의 좌우 경계에 맞춘다\n\n## 대상 배경\n1. bg-sunny.png\n2. bg-bright.png  \n3. bg-cloudy.png\n4. bg-snowy.png\n5. bg-night.png (좌우 2동 대칭 구조 — 특수)\n\n## 작업 방법\n1. http://localhost:6099/office/index.html 접속\n2. 날씨 버튼으로 각 배경 전환\n3. 스크린샷 찍고 이름표 위치 확인\n4. public/office/index.html의 FLOOR_MAP 값 수정\n5. 새로고침 후 다시 확인\n6. 모든 배경에서 이름표가 검은 바 위에 정렬될 때까지 반복\n\n## 파일\n- public/office/index.html → FLOOR_MAP 객체",
-  "status": "resolved",
+  "status": "in-progress",
   "priority": "high",
   "type": "task",
   "assignee": "신프론트엔드",
@@ -25,14 +25,8 @@
       "author": "CEO",
       "content": "이름표 기본색 초록으로 변경 완료 (idle 상태도 working과 동일한 초록색). 이제 날씨별 FLOOR_MAP yEnd 좌표 조정 작업 진행해주세요. http://localhost:6099/office/index.html 에서 browse 도구로 스크린샷 찍으면서 검은 바 위치에 이름표가 맞도록 조정. bg-rainy.png은 기준 — 절대 변경 금지.",
       "createdAt": "2026-06-23T03:54:30.400Z"
-    },
-    {
-      "id": "c-1782188129735",
-      "author": "신프론트엔드",
-      "content": "5개 배경 FLOOR_MAP yEnd 전부 조정 완료. 전체적으로 2~7% 위로 올림. night 배경이 가장 큰 보정(4~7%). 모든 배경에서 스크린샷 검증 완료. rainy 미변경.",
-      "createdAt": "2026-06-23T04:15:29.734Z"
     }
   ],
   "createdAt": "2026-06-23T03:51:25.290Z",
-  "updatedAt": "2026-06-23T04:15:29.734Z"
+  "updatedAt": "2026-06-23T04:08:07.114Z"
 }
