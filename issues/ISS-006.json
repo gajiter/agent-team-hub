@@ -5,7 +5,7 @@
   "status": "resolved",
   "priority": "high",
   "type": "task",
-  "assignee": "신리뷰",
+  "assignee": "신테스터",
   "assignees": [],
   "reporter": "신피엠",
   "labels": [],
@@ -26,8 +26,14 @@
       "author": "신리뷰",
       "content": "리뷰 결과 요약: Rhymix 호환성 9/9 PASS, 기능 완성도 5/7 (FAIL 2건: 사이드바 위젯 extra_var 누락), 코드 품질 6/6 PASS. 총점 20/22 (91%). 핵심 버그 ISS-007 생성 완료. 수정 후 배포 가능.",
       "createdAt": "2026-06-19T04:26:03.430Z"
+    },
+    {
+      "id": "c-1782200625638",
+      "author": "신테스터",
+      "content": "코드 리뷰 완료. CRITICAL: middleware.ts 미존재로 인증 우회됨. HIGH: /api/debug 인증없이 노출, resolveProjectPath 폴백 위험. MEDIUM: wttr.in 직접호출, bubbleIn keyframe 버그. LOW: junior develoer 오타, walkTimers 누수.",
+      "createdAt": "2026-06-23T07:43:45.637Z"
     }
   ],
   "createdAt": "2026-06-19T03:51:44.682Z",
-  "updatedAt": "2026-06-19T04:26:03.430Z"
+  "updatedAt": "2026-06-23T07:43:45.761Z"
 }

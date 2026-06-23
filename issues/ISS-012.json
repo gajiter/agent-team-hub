@@ -5,7 +5,7 @@
   "status": "resolved",
   "priority": "medium",
   "type": "task",
-  "assignee": "claude",
+  "assignee": "신데브주니어",
   "assignees": [],
   "reporter": "user",
   "labels": [],
@@ -17,8 +17,14 @@
       "author": "claude",
       "content": "issue-schema.md 파일을 .claude/plugins/agent-hub/skills/hub-issue-tracker/references/ 에 생성하고 커밋 완료. 커밋: feat: add issue schema reference for hub-issue-tracker",
       "createdAt": "2026-03-27T08:52:15.650Z"
+    },
+    {
+      "id": "c-1782200650272",
+      "author": "신데브주니어",
+      "content": "스키마 검증 완료. comments 객체 구조(id/author/content/createdAt) 누락 발견. 불변 필드, CLI 사용 규칙 추가 필요.",
+      "createdAt": "2026-06-23T07:44:10.271Z"
     }
   ],
   "createdAt": "2026-03-27T08:51:34.383Z",
-  "updatedAt": "2026-03-27T08:52:15.650Z"
+  "updatedAt": "2026-06-23T07:44:10.396Z"
 }

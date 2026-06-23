@@ -5,7 +5,7 @@
   "status": "resolved",
   "priority": "medium",
   "type": "task",
-  "assignee": "claude",
+  "assignee": "신데브",
   "assignees": [],
   "reporter": "user",
   "labels": [],
@@ -17,8 +17,14 @@
       "author": "claude",
       "content": "issue-cli.js를 .claude/plugins/agent-hub/skills/hub-issue-tracker/scripts/에 복사하고 PROJECT_ROOT 경로를 6 levels up으로 수정 완료. node list 명령어로 정상 동작 확인. 커밋 완료.",
       "createdAt": "2026-03-27T08:50:02.968Z"
+    },
+    {
+      "id": "c-1782200483352",
+      "author": "신데브",
+      "content": "검증 완료. issue-cli.js의 PROJECT_ROOT는 __dirname에서 4레벨 상위(.claude/skills/hub/scripts → .claude/skills/hub → .claude/skills → .claude → 프로젝트 루트)로 설정되어 있으며, 실제 경로(/Users/thebig/Documents/side-projects/agent-team-hub)와 정확히 일치함. ISSUES_DIR도 issues/ 폴더를 올바르게 가리킴. node issue-cli.js list 실행 결과 정상 동작 확인.",
+      "createdAt": "2026-06-23T07:41:23.351Z"
     }
   ],
   "createdAt": "2026-03-27T08:38:50.741Z",
-  "updatedAt": "2026-03-27T08:50:02.968Z"
+  "updatedAt": "2026-06-23T07:41:27.020Z"
 }

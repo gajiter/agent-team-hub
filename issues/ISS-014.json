@@ -2,16 +2,23 @@
   "id": "ISS-014",
   "title": "통합 검증 테스트",
   "description": "",
-  "status": "open",
+  "status": "resolved",
   "priority": "medium",
   "type": "task",
-  "assignee": "test",
+  "assignee": "신테스터주니어",
   "assignees": [],
   "reporter": "test",
   "labels": [],
   "relatedFiles": [],
   "relatedIds": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "c-1782200650519",
+      "author": "신테스터주니어",
+      "content": "통합 검증 완료. issue-cli list 정상(6개), API 정상(인증후 200), office/index.html 200, bg-rainy.png 200. 전체 PASS.",
+      "createdAt": "2026-06-23T07:44:10.518Z"
+    }
+  ],
   "createdAt": "2026-03-27T09:00:16.329Z",
-  "updatedAt": "2026-03-27T09:00:16.329Z"
+  "updatedAt": "2026-06-23T07:44:10.644Z"
 }
