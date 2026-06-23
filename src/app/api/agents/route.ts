@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
 
     const fileName = name
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/[^a-z0-9가-힣]+/g, '-')
       .replace(/^-|-$/g, '') + '.md'
 
     const filePath = `${AGENTS_DIR}/${fileName}`

@@ -11,6 +11,7 @@ import { useProject } from '@/hooks/use-project'
 import { useAgents } from '@/hooks/use-agents'
 import { useI18n } from '@/lib/i18n'
 import { FolderOpen, Rocket } from 'lucide-react'
+import OfficeView from '@/components/dashboard/office-view'
 import type { Issue } from '@/types/issues'
 import { fileService } from '@/lib/services/file-service'
 import { docService } from '@/lib/services/doc-service'
@@ -365,7 +366,7 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        {/* Agent Team Grid */}
+        {/* Agent Team - Pixel Art Office */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium text-muted-foreground">{t('dashboard.agentTeam')}</CardTitle>
@@ -373,42 +374,13 @@ export default function DashboardPage() {
               {t('common.details')}
             </Link>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 overflow-hidden rounded-b-xl">
             {agentsLoading ? (
               <div className="text-sm text-muted-foreground py-4 text-center">{t('common.loading')}</div>
             ) : agents.length === 0 ? (
               <div className="text-sm text-muted-foreground py-6 text-center">{t('dashboard.noAgents')}</div>
             ) : (
-              <div className="grid grid-cols-3 gap-3">
-                {agents.map((agent) => {
-                  const agentIssueCount = issues.filter(
-                    (i) =>
-                      (i.assignees?.includes(agent.name) ?? i.assignee === agent.name) &&
-                      (i.status === 'open' || i.status === 'in-progress')
-                  ).length
-
-                  return (
-                    <Link
-                      key={agent.name}
-                      href="/agents"
-                      className="flex items-center gap-3 p-3 rounded-lg border transition-colors hover:bg-accent/50"
-                    >
-                      <span className="text-2xl">{agent.emoji}</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-foreground">{agent.name}</div>
-                        <div className="text-xs text-muted-foreground truncate">
-                          {agent.description.split('.')[0]}
-                        </div>
-                      </div>
-                      {agentIssueCount > 0 && (
-                        <Badge variant="secondary" className="text-xs">
-                          {agentIssueCount}
-                        </Badge>
-                      )}
-                    </Link>
-                  )
-                })}
-              </div>
+              <OfficeView />
             )}
           </CardContent>
         </Card>

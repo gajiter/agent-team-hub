@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Office</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #0a0c10;
+    font-family: 'Inter', -apple-system, sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    user-select: none;
+  }
+
+  .office {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .office__bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 1.5s ease;
+  }
+
+  .office__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* ── Agent ── */
+  .agent {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+    cursor: default;
+    transition: left 2s cubic-bezier(.4,0,.2,1), top 2s cubic-bezier(.4,0,.2,1);
+    z-index: 10;
+    transform: translate(-50%, -85%);
+  }
+
+  .agent__char {
+    width: 52px;
+    height: 65px;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 10px rgba(0,0,0,0.6));
+    transition: filter 0.3s, transform 0.3s;
+    background: transparent;
+  }
+
+  .agent--working .agent__char {
+    filter: drop-shadow(0 2px 10px rgba(74,222,128,0.4));
+  }
+
+  .agent--idle .agent__char {
+    opacity: 0.75;
+  }
+
+  /* 개별 움직임 패턴 */
+  .motion-ceo         .agent__char { animation: ceo-pace 3s ease-in-out infinite; }
+  .motion-cfo         .agent__char { animation: cfo-think 4s ease-in-out infinite; }
+  .motion-dev         .agent__char { animation: dev-type 0.8s ease-in-out infinite; }
+  .motion-dev-jr      .agent__char { animation: devjr-fidget 2.5s ease-in-out infinite; }
+  .motion-front       .agent__char { animation: front-design 3s ease-in-out infinite; }
+  .motion-front-jr    .agent__char { animation: frontjr-nod 2s ease-in-out infinite; }
+  .motion-tester      .agent__char { animation: tester-check 1.5s steps(2) infinite; }
+  .motion-tester-jr   .agent__char { animation: testerjr-click 1s ease-in-out infinite; }
+  .motion-pm          .agent__char { animation: pm-energy 2s ease-in-out infinite; }
+  .motion-idle        .agent__char { animation: breathing 4s ease-in-out infinite; }
+
+  /* Walking flip */
+  .agent--flip .agent__char {
+    transform: scaleX(-1);
+  }
+
+  /* Name tag */
+  .agent__tag {
+    margin-top: 3px;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+
+  .agent--working .agent__tag {
+    background: rgba(74,222,128,0.35);
+    color: #fff;
+    border: 1.5px solid rgba(74,222,128,0.6);
+    box-shadow: 0 2px 8px rgba(74,222,128,0.3);
+  }
+
+  .agent--idle .agent__tag {
+    background: rgba(0,0,0,0.7);
+    color: rgba(255,255,255,0.9);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  .agent__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .agent--working .agent__dot {
+    background: #4ade80;
+    animation: pulse 1.5s infinite;
+  }
+
+  .agent--idle .agent__dot {
+    background: #6b7280;
+  }
+
+  /* Bubble */
+  .agent__bubble {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    backdrop-filter: blur(14px);
+    animation: bubbleIn 0.3s ease-out;
+    pointer-events: none;
+  }
+
+  .agent__bubble--working {
+    background: rgba(74,222,128,0.15);
+    color: #bbf7d0;
+    border: 1px solid rgba(74,222,128,0.2);
+  }
+
+  .agent__bubble--idle {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .agent__bubble::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+  }
+  .agent__bubble--working::after { border-top-color: rgba(74,222,128,0.2); }
+  .agent__bubble--idle::after { border-top-color: rgba(255,255,255,0.06); }
+
+  /* Floor labels */
+  .floor-label {
+    position: absolute;
+    left: 12px;
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px);
+    color: rgba(255,255,255,0.6);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.06);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* Weather badge */
+  .weather-badge {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    color: rgba(255,255,255,0.7);
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.08);
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Status bar */
+  .statusbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 28px;
+    background: rgba(10,12,16,0.9);
+    backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 500;
+    z-index: 20;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .statusbar__left { display: flex; align-items: center; gap: 8px; }
+  .statusbar__dot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; animation: pulse 2s infinite; }
+
+  /* Rain overlay */
+  .rain-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 1s;
+    overflow: hidden;
+  }
+  .rain-overlay.active { opacity: 1; }
+
+  .raindrop {
+    position: absolute;
+    width: 2px;
+    background: linear-gradient(transparent, rgba(180,210,240,0.6));
+    border-radius: 0 0 2px 2px;
+    animation: raindrop-fall linear infinite;
+  }
+
+  /* Snow overlay */
+  .snow-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 1s;
+  }
+  .snow-overlay.active { opacity: 1; }
+  .snowflake {
+    position: absolute;
+    color: white;
+    font-size: 10px;
+    opacity: 0.7;
+    animation: snow-fall linear infinite;
+  }
+
+  /* Animations */
+  /* CEO: 팔짱 끼고 천천히 좌우 기울이며 순찰 느낌 */
+  @keyframes ceo-pace {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(4px) rotate(1deg); }
+    50% { transform: translateX(0) rotate(0deg); }
+    75% { transform: translateX(-4px) rotate(-1deg); }
+  }
+  /* CFO: 팔짱 끼고 생각하며 크게 끄덕+기울임 */
+  @keyframes cfo-think {
+    0%, 100% { transform: translateY(0) rotate(0deg) translateX(0); }
+    15% { transform: translateY(-6px) rotate(-3deg) translateX(-3px); }
+    30% { transform: translateY(0) rotate(0deg) translateX(0); }
+    50% { transform: translateY(-8px) rotate(2deg) translateX(4px); }
+    70% { transform: translateY(-2px) rotate(-1deg) translateX(-2px); }
+    85% { transform: translateY(-5px) rotate(1.5deg) translateX(2px); }
+  }
+  /* 시니어 개발자: 격렬한 타이핑 + 모니터 가까이 */
+  @keyframes dev-type {
+    0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+    10% { transform: translateY(-3px) rotate(-1deg) scale(1.02); }
+    20% { transform: translateY(0) rotate(1deg) scale(1); }
+    30% { transform: translateY(-4px) rotate(-0.5deg) scale(1.01); }
+    40% { transform: translateY(0) rotate(0.5deg) scale(1); }
+    50% { transform: translateY(-2px) rotate(-1.5deg) scale(1.02); }
+    60% { transform: translateY(0) rotate(0deg) scale(1); }
+    70% { transform: translateY(-5px) rotate(1deg) scale(1.01); }
+    80% { transform: translateY(-1px) rotate(-0.5deg) scale(1); }
+  }
+  /* 주니어 개발자: 불안하게 크게 움찔 + 좌우 흔들 */
+  @keyframes devjr-fidget {
+    0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+    15% { transform: translateY(-4px) translateX(6px) rotate(2deg); }
+    30% { transform: translateY(0) translateX(-4px) rotate(-1deg); }
+    45% { transform: translateY(-6px) translateX(3px) rotate(1.5deg); }
+    60% { transform: translateY(-1px) translateX(-6px) rotate(-2deg); }
+    75% { transform: translateY(-3px) translateX(5px) rotate(1deg); }
+    90% { transform: translateY(0) translateX(-2px) rotate(-0.5deg); }
+  }
+  /* 시니어 프론트: 디자인 검토, 크게 좌우 + 확대 */
+  @keyframes front-design {
+    0%, 100% { transform: rotate(0deg) scale(1) translateX(0); }
+    20% { transform: rotate(-3deg) scale(1.03) translateX(-5px); }
+    40% { transform: rotate(1deg) scale(1) translateX(3px); }
+    60% { transform: rotate(-1.5deg) scale(1.02) translateX(-3px); }
+    80% { transform: rotate(2deg) scale(1.01) translateX(4px); }
+  }
+  /* 주니어 프론트: 열심히 크게 끄덕끄덕 */
+  @keyframes frontjr-nod {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    15% { transform: translateY(-8px) rotate(-1deg); }
+    30% { transform: translateY(0) rotate(0deg); }
+    45% { transform: translateY(-6px) rotate(1deg); }
+    60% { transform: translateY(-1px) rotate(0deg); }
+    75% { transform: translateY(-10px) rotate(-1.5deg); }
+    90% { transform: translateY(-2px) rotate(0.5deg); }
+  }
+  /* 시니어 테스터: 딱딱 체크 + 좌우 이동 */
+  @keyframes tester-check {
+    0%, 100% { transform: translateX(0) rotate(0deg) translateY(0); }
+    20% { transform: translateX(5px) rotate(1.5deg) translateY(-3px); }
+    40% { transform: translateX(0) rotate(0deg) translateY(0); }
+    60% { transform: translateX(-5px) rotate(-1.5deg) translateY(-4px); }
+    80% { transform: translateX(3px) rotate(0.5deg) translateY(-1px); }
+  }
+  /* 주니어 테스터: 빠른 클릭 연타 + 흔들림 */
+  @keyframes testerjr-click {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    12% { transform: translateY(-5px) translateX(2px); }
+    25% { transform: translateY(2px) translateX(-1px); }
+    37% { transform: translateY(-4px) translateX(-3px); }
+    50% { transform: translateY(1px) translateX(2px); }
+    62% { transform: translateY(-6px) translateX(-2px); }
+    75% { transform: translateY(0) translateX(3px); }
+    87% { transform: translateY(-3px) translateX(-1px); }
+  }
+  /* 신피엠: 에너지 폭발, 크게 점프+왔다갔다+구르기 */
+  @keyframes pm-energy {
+    0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+    10% { transform: translateY(-15px) translateX(8px) rotate(5deg); }
+    25% { transform: translateY(0) translateX(15px) rotate(0deg); }
+    35% { transform: translateY(-10px) translateX(10px) rotate(-3deg); }
+    50% { transform: translateY(0) translateX(0) rotate(0deg); }
+    60% { transform: translateY(-12px) translateX(-10px) rotate(4deg); }
+    75% { transform: translateY(0) translateX(-15px) rotate(0deg); }
+    85% { transform: translateY(-8px) translateX(-5px) rotate(-2deg); }
+  }
+  /* 대기 중: 숨쉬기 */
+  @keyframes breathing {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-1px) scale(1.01); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  @keyframes bubbleIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(4px) scale(0.95); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+  }
+  @keyframes raindrop-fall {
+    from { transform: translateY(-20px) rotate(8deg); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(8deg); opacity: 0.3; }
+  }
+  @keyframes snow-fall {
+    from { transform: translateY(-10px) rotate(0deg); }
+    to { transform: translateY(100vh) rotate(360deg); }
+  }
+
+  /* Control buttons */
+  .ctrl-btn {
+    width: 30px; height: 30px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    padding: 0;
+  }
+  .ctrl-btn:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.25);
+    transform: translateY(-1px);
+  }
+
+  .loading {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: #0a0c10; color: rgba(255,255,255,0.35); font-size: 12px;
+    z-index: 100; transition: opacity 0.8s;
+  }
+  .loading.hidden { opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div class="office">
+  <img class="office__bg" id="bg" src="/office/bg-sunny.png" alt="" />
+  <div class="rain-overlay" id="rainOverlay"></div>
+  <div class="snow-overlay" id="snowOverlay"></div>
+  <div class="office__overlay" id="overlay"></div>
+  <div class="weather-badge" id="weatherBadge">☀️ 맑음</div>
+
+  <!-- Control Panel -->
+  <div id="controlPanel" style="position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:25;display:flex;gap:4px;">
+    <button class="ctrl-btn" onclick="setWeather('bright')" title="화창">🌤️</button>
+    <button class="ctrl-btn" onclick="setWeather('clear')" title="맑음">☀️</button>
+    <button class="ctrl-btn" onclick="setWeather('clouds')" title="흐림">☁️</button>
+    <button class="ctrl-btn" onclick="setWeather('rain')" title="비">🌧️</button>
+    <button class="ctrl-btn" onclick="setWeather('snow')" title="눈">❄️</button>
+    <button class="ctrl-btn" onclick="setWeather('night')" title="밤">🌙</button>
+    <span style="width:8px"></span>
+    <button class="ctrl-btn" onclick="setAllWorking()" title="전원 작업중">🟢</button>
+    <button class="ctrl-btn" onclick="setAllIdle()" title="전원 대기">⚪</button>
+    <button class="ctrl-btn" onclick="setAutoMode()" title="자동(API)">🔄</button>
+  </div>
+  <div class="statusbar">
+    <div class="statusbar__left">
+      <span class="statusbar__dot"></span>
+      <span id="statusText">Team Office</span>
+    </div>
+    <span id="statusTime"></span>
+  </div>
+  <div class="loading" id="loading">Loading office...</div>
+</div>
+
+<script>
+(function() {
+  const params = new URLSearchParams(location.search);
+  const projectId = params.get('projectId') || '';
+
+  // Per-background floor coordinates (% of image)
+  // Each floor: yEnd = bottom of floor (feet walk here), xS/xE = left/right walk bounds
+  const FLOOR_MAP = {
+    'bg-sunny.png': [
+      { id: 7, label: '6F', yEnd: 15, xS: 15, xE: 55 },
+      { id: 6, label: '5F', yEnd: 28, xS: 15, xE: 55 },
+      { id: 5, label: '4F', yEnd: 42, xS: 15, xE: 55 },
+      { id: 4, label: '3F', yEnd: 56, xS: 15, xE: 55 },
+      { id: 3, label: '2F', yEnd: 70, xS: 15, xE: 55 },
+      { id: 2, label: '1F', yEnd: 84, xS: 15, xE: 55 },
+      { id: 1, label: 'G',  yEnd: 95, xS: 15, xE: 55 },
+    ],
+    'bg-bright.png': [
+      { id: 7, label: '6F', yEnd: 10, xS: 12, xE: 60 },
+      { id: 6, label: '5F', yEnd: 22, xS: 12, xE: 60 },
+      { id: 5, label: '4F', yEnd: 36, xS: 12, xE: 60 },
+      { id: 4, label: '3F', yEnd: 50, xS: 12, xE: 60 },
+      { id: 3, label: '2F', yEnd: 64, xS: 12, xE: 60 },
+      { id: 2, label: '1F', yEnd: 78, xS: 12, xE: 60 },
+      { id: 1, label: 'G',  yEnd: 90, xS: 12, xE: 60 },
+    ],
+    'bg-cloudy.png': [
+      { id: 7, label: '6F', yEnd: 12, xS: 30, xE: 92 },
+      { id: 6, label: '5F', yEnd: 24, xS: 30, xE: 92 },
+      { id: 5, label: '4F', yEnd: 38, xS: 30, xE: 92 },
+      { id: 4, label: '3F', yEnd: 52, xS: 30, xE: 92 },
+      { id: 3, label: '2F', yEnd: 66, xS: 30, xE: 92 },
+      { id: 2, label: '1F', yEnd: 80, xS: 30, xE: 92 },
+      { id: 1, label: 'G',  yEnd: 92, xS: 30, xE: 92 },
+    ],
+    'bg-rainy.png': [
+      { id: 7, label: '6F', yEnd: 7.3, xS: 28, xE: 88 },
+      { id: 6, label: '5F', yEnd: 20.3, xS: 28, xE: 88 },
+      { id: 5, label: '4F', yEnd: 35.3, xS: 28, xE: 88 },
+      { id: 4, label: '3F', yEnd: 52, xS: 28, xE: 88 },
+      { id: 3, label: '2F', yEnd: 66, xS: 28, xE: 88 },
+      { id: 2, label: '1F', yEnd: 81.2, xS: 28, xE: 88 },
+      { id: 1, label: 'G',  yEnd: 93.4, xS: 28, xE: 88 },
+    ],
+    'bg-snowy.png': [
+      { id: 7, label: '6F', yEnd: 20, xS: 14, xE: 56 },
+      { id: 6, label: '5F', yEnd: 30, xS: 14, xE: 56 },
+      { id: 5, label: '4F', yEnd: 41, xS: 14, xE: 56 },
+      { id: 4, label: '3F', yEnd: 52, xS: 14, xE: 56 },
+      { id: 3, label: '2F', yEnd: 63, xS: 14, xE: 56 },
+      { id: 2, label: '1F', yEnd: 75, xS: 14, xE: 56 },
+      { id: 1, label: 'G',  yEnd: 87, xS: 14, xE: 56 },
+    ],
+    'bg-night.png': [
+      { id: 7, label: '6F', yEnd: 14, xS: 8, xE: 42 },
+      { id: 6, label: '5F', yEnd: 28, xS: 8, xE: 42 },
+      { id: 5, label: '4F', yEnd: 42, xS: 8, xE: 42 },
+      { id: 4, label: '3F', yEnd: 14, xS: 55, xE: 92 },
+      { id: 3, label: '2F', yEnd: 28, xS: 55, xE: 92 },
+      { id: 2, label: '1F', yEnd: 42, xS: 55, xE: 92 },
+      { id: 1, label: 'G',  yEnd: 58, xS: 30, xE: 70 },
+    ],
+  };
+
+  let currentBgFile = 'bg-sunny.png';
+  let FLOORS = FLOOR_MAP[currentBgFile];
+
+  function updateFloors() {
+    FLOORS = FLOOR_MAP[currentBgFile] || FLOOR_MAP['bg-sunny.png'];
+    // Reposition all agents
+    agents.forEach((a, i) => {
+      const el = agentEls[i];
+      if (!el) return;
+      const floor = getFloor(a, i);
+      el._floor = floor;
+      const sameFloor = agents.filter((ag, j) => getFloor(ag, j).id === floor.id);
+      const pos = sameFloor.indexOf(a);
+      const total = sameFloor.length;
+      const xPct = getAgentX(a, i, floor);
+      el.style.left = xPct + '%';
+      el.style.top = floor.yEnd + '%';
+      el._xPct = xPct;
+    });
+    // Update floor labels
+    overlay.querySelectorAll('.floor-label').forEach(l => l.remove());
+    FLOORS.forEach(f => {
+      const el = document.createElement('div');
+      el.className = 'floor-label';
+      el.textContent = f.label;
+      el.style.top = (f.yEnd - 10) + '%';
+      el.style.left = Math.max(2, f.xS - 8) + '%';
+      overlay.appendChild(el);
+    });
+  }
+
+  // G=1, 1F=2, 2F=3, 3F=4, 4F=5, 5F=6, 6F=7
+  // floor + xPct per agent name
+  const AGENT_POSITION = {
+    'CEO':           { floor: 6, xPct: 45 },
+    'CFO':           { floor: 5, xPct: 40 },
+    '신데브':         { floor: 4, xPct: 35 },
+    '신데브주니어':    { floor: 4, xPct: 60 },
+    '신프론트엔드':    { floor: 3, xPct: 38 },
+    '신프론트엔드주니어': { floor: 3, xPct: 65 },
+    '신테스터':       { floor: 2, xPct: 35 },
+    '신테스터주니어':  { floor: 2, xPct: 58 },
+    '신피엠':         { floor: 1, xPct: 50 },
+  };
+
+  // Fallback role-based floor
+  const ROLE_FLOOR = {
+    'CEO': 6,
+    'CFO': 5,
+    'Senior Full-Stack Developer': 4,
+    'junior develoer': 4,
+    'Senior Frontend Designer': 3,
+    'Frontend Junior': 3,
+    'QA Tester': 2,
+    'Junior Tester': 2,
+    'Project Manager': 1,
+  };
+
+  const WEATHER_BG = {
+    clear: 'bg-sunny.png',
+    clouds: 'bg-cloudy.png',
+    rain: 'bg-rainy.png',
+    drizzle: 'bg-rainy.png',
+    thunderstorm: 'bg-rainy.png',
+    snow: 'bg-snowy.png',
+    night: 'bg-night.png',
+    bright: 'bg-bright.png',
+  };
+
+  const WEATHER_LABEL = {
+    clear: '☀️ 맑음',
+    clouds: '☁️ 흐림',
+    rain: '🌧️ 비',
+    drizzle: '🌦️ 이슬비',
+    thunderstorm: '⛈️ 뇌우',
+    snow: '❄️ 눈',
+    night: '🌙 밤',
+    bright: '🌤️ 화창',
+  };
+
+  const IDLE_MSG = ['휴식 중...', '코드 리뷰 중', '커피 타임 ☕', '문서 읽는 중', '다음 태스크 준비', '회의 대기 중', '점심 먹고 옴 🍱', '디버깅 고민...'];
+  const CHAR_COUNT = 12;
+
+  let agents = [], issues = [], agentEls = {}, bubbleTimers = {}, currentWeather = 'clear';
+
+  const $ = id => document.getElementById(id);
+  const bg = $('bg'), overlay = $('overlay'), loading = $('loading');
+  const weatherBadge = $('weatherBadge'), rainOv = $('rainOverlay'), snowOv = $('snowOverlay');
+
+  bg.onload = () => {
+    loading.classList.add('hidden');
+    FLOORS.forEach(f => {
+      const el = document.createElement('div');
+      el.className = 'floor-label';
+      el.textContent = f.label;
+      el.style.top = (f.yPct + 1) + '%';
+      overlay.appendChild(el);
+    });
+  };
+
+  // ── Weather ──
+  async function fetchWeather() {
+    try {
+      // Seoul weather (free OpenWeatherMap - no key needed for basic)
+      // Fallback: time-based
+      const hour = new Date().getHours();
+      let weather;
+
+      try {
+        const res = await fetch('https://wttr.in/Seoul?format=j1');
+        const data = await res.json();
+        const code = parseInt(data.current_condition[0].weatherCode);
+        if (code >= 200 && code < 300) weather = 'thunderstorm';
+        else if (code >= 300 && code < 400) weather = 'drizzle';
+        else if (code >= 500 && code < 600) weather = 'rain';
+        else if (code >= 600 && code < 700) weather = 'snow';
+        else if (code >= 801) weather = 'clouds';
+        else weather = 'clear';
+      } catch {
+        weather = 'clear';
+      }
+
+      // Night override
+      if (hour >= 20 || hour < 6) weather = 'night';
+      // Bright midday
+      else if (weather === 'clear' && hour >= 10 && hour <= 14) weather = 'bright';
+
+      if (weather !== currentWeather) {
+        currentWeather = weather;
+        bg.src = '/office/' + (WEATHER_BG[weather] || 'bg-sunny.png');
+        weatherBadge.textContent = WEATHER_LABEL[weather] || '☀️ 맑음';
+
+        rainOv.classList.toggle('active', weather === 'rain' || weather === 'drizzle' || weather === 'thunderstorm');
+
+        if (weather === 'snow') {
+          snowOv.classList.add('active');
+          if (!snowOv.children.length) createSnowflakes();
+        } else {
+          snowOv.classList.remove('active');
+        }
+      }
+    } catch {}
+  }
+
+  function createRaindrops() {
+    rainOv.innerHTML = '';
+    for (let i = 0; i < 80; i++) {
+      const d = document.createElement('div');
+      d.className = 'raindrop';
+      d.style.left = Math.random() * 100 + '%';
+      d.style.height = (15 + Math.random() * 25) + 'px';
+      d.style.animationDuration = (0.4 + Math.random() * 0.4) + 's';
+      d.style.animationDelay = Math.random() * 2 + 's';
+      d.style.opacity = 0.3 + Math.random() * 0.5;
+      rainOv.appendChild(d);
+    }
+  }
+
+  function createSnowflakes() {
+    for (let i = 0; i < 40; i++) {
+      const s = document.createElement('div');
+      s.className = 'snowflake';
+      s.textContent = '❄';
+      s.style.left = Math.random() * 100 + '%';
+      s.style.fontSize = (6 + Math.random() * 8) + 'px';
+      s.style.opacity = 0.3 + Math.random() * 0.5;
+      s.style.animationDuration = (4 + Math.random() * 6) + 's';
+      s.style.animationDelay = Math.random() * 5 + 's';
+      snowOv.appendChild(s);
+    }
+  }
+
+  // ── Agents ──
+  function getFloor(agent, idx) {
+    const pos = AGENT_POSITION[agent.name];
+    const fid = pos ? pos.floor : (ROLE_FLOOR[agent.role] || (3 + (idx % 4)));
+    return FLOORS.find(f => f.id === fid) || FLOORS[idx % FLOORS.length];
+  }
+
+  function getAgentX(agent, idx, floor) {
+    const pos = AGENT_POSITION[agent.name];
+    if (pos) return pos.xPct;
+    // Fallback: distribute evenly
+    const sameFloor = agents.filter((a, i) => getFloor(a, i).id === floor.id);
+    const p = sameFloor.indexOf(agent);
+    const total = sameFloor.length;
+    return floor.xS + ((floor.xE - floor.xS) / (total + 1)) * (p + 1);
+  }
+
+  function getState(agent) {
+    const active = issues.filter(i =>
+      (i.assignees?.includes(agent.name) || i.assignee === agent.name) &&
+      (i.status === 'open' || i.status === 'in-progress')
+    );
+    const working = active.find(i => i.status === 'in-progress');
+    return { isWorking: !!working, issue: working, count: active.length };
+  }
+
+  const walkTimers = {};
+
+  function createAgent(agent, idx) {
+    const el = document.createElement('div');
+    el.id = 'a' + idx;
+
+    const floor = getFloor(agent, idx);
+    const xPct = getAgentX(agent, idx, floor);
+    const yPct = floor.yEnd;
+
+    el.style.left = xPct + '%';
+    el.style.top = yPct + '%';
+    el._floor = floor;
+    el._xPct = xPct;
+    el._agentName = agent.name;
+
+    const charIdx = ((idx * 7 + 3) % CHAR_COUNT) + 1;
+    const cacheBust = Date.now();
+
+    setAgentClass(el, agent.name, 'idle');
+
+    el.innerHTML = `
+      <div class="agent__bubble agent__bubble--idle" id="b${idx}" style="display:none"></div>
+      <img class="agent__char" src="/office/characters/char-${charIdx}.png?v=${cacheBust}" alt="${agent.name}" />
+      <div class="agent__tag"><span class="agent__dot"></span>${agent.name}</div>
+    `;
+
+    overlay.appendChild(el);
+    agentEls[idx] = el;
+
+    updateBubble(idx, agent);
+    bubbleTimers[idx] = setInterval(() => updateBubble(idx, agent), 5000 + Math.random() * 5000);
+
+    // Start walking
+    startWalk(idx);
+  }
+
+  function startWalk(idx) {
+    const el = agentEls[idx];
+    if (!el) return;
+
+    function walk() {
+      const floor = el._floor;
+      if (!floor) { walkTimers[idx] = setTimeout(walk, 3000); return; }
+
+      const name = el._agentName;
+
+      if (name === 'CEO') {
+        // CEO: 좌우로 천천히 순찰
+        const curX = parseFloat(el.style.left);
+        const dir = el._walkDir || 1;
+        let newX = curX + dir * 3;
+        if (newX > floor.xE - 5) { newX = floor.xE - 5; el._walkDir = -1; }
+        if (newX < floor.xS + 5) { newX = floor.xS + 5; el._walkDir = 1; }
+        el.classList.toggle('agent--flip', el._walkDir < 0);
+        el.style.left = newX + '%';
+        el.style.transition = 'left 2s linear';
+        walkTimers[idx] = setTimeout(walk, 2000);
+
+      } else if (name === '신피엠') {
+        // 신피엠: 점프 + 구르기 + 왔다갔다
+        const actions = ['jump', 'roll', 'walk'];
+        const action = actions[Math.floor(Math.random() * actions.length)];
+        const char = el.querySelector('.agent__char');
+
+        if (action === 'jump') {
+          char.style.animation = 'pm-jump 0.6s ease-out';
+          setTimeout(() => { char.style.animation = 'breathing 4s ease-in-out infinite'; }, 600);
+        } else if (action === 'roll') {
+          char.style.animation = 'pm-roll 0.8s ease-in-out';
+          setTimeout(() => { char.style.animation = 'breathing 4s ease-in-out infinite'; }, 800);
+        } else {
+          const curX = parseFloat(el.style.left);
+          let newX = floor.xS + Math.random() * (floor.xE - floor.xS);
+          el.classList.toggle('agent--flip', newX < curX);
+          el.style.left = newX + '%';
+          el.style.transition = 'left 1.5s ease-in-out';
+        }
+        walkTimers[idx] = setTimeout(walk, 2000 + Math.random() * 2000);
+
+      } else {
+        // 나머지: 제자리 (CSS 애니메이션만)
+        walkTimers[idx] = setTimeout(walk, 5000);
+      }
+    }
+
+    const delay = 1000 + Math.random() * 2000;
+    walkTimers[idx] = setTimeout(walk, delay);
+  }
+
+  function updateBubble(idx, agent) {
+    const b = $('b' + idx);
+    if (!b) return;
+    const s = getState(agent);
+
+    if (s.isWorking && s.issue) {
+      const t = s.issue.title;
+      b.textContent = '🔧 ' + (t.length > 25 ? t.slice(0, 25) + '...' : t);
+      b.className = 'agent__bubble agent__bubble--working';
+      b.style.display = '';
+    } else {
+      b.textContent = IDLE_MSG[Math.floor(Math.random() * IDLE_MSG.length)];
+      b.className = 'agent__bubble agent__bubble--idle';
+      b.style.display = Math.random() > 0.4 ? '' : 'none';
+    }
+    b.style.animation = 'none'; void b.offsetHeight; b.style.animation = '';
+  }
+
+  function getMotionClass(name) {
+    const MOTION_MAP = {
+      'CEO': 'motion-ceo', 'CFO': 'motion-cfo',
+      '신데브': 'motion-dev', '신데브주니어': 'motion-dev-jr',
+      '신프론트엔드': 'motion-front', '신프론트엔드주니어': 'motion-front-jr',
+      '신테스터': 'motion-tester', '신테스터주니어': 'motion-tester-jr',
+      '신피엠': 'motion-pm',
+    };
+    return MOTION_MAP[name] || 'motion-idle';
+  }
+
+  function setAgentClass(el, agentName, state) {
+    el.className = 'agent ' + (state === 'working' ? 'agent--working' : 'agent--idle') + ' ' + getMotionClass(agentName);
+  }
+
+  function updateAgent(idx, agent) {
+    const el = agentEls[idx];
+    if (!el) return;
+    const s = getState(agent);
+    setAgentClass(el, agent.name, s.isWorking ? 'working' : 'idle');
+  }
+
+  function updateStatus() {
+    const w = agents.filter(a => getState(a).isWorking).length;
+    const now = new Date();
+    const t = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    $('statusText').textContent = `Team Office · ${w}/${agents.length} working`;
+    $('statusTime').textContent = t;
+  }
+
+  async function fetchData() {
+    if (!projectId) return;
+    try {
+      const [aR, iR] = await Promise.all([
+        fetch('/api/agents?projectId=' + encodeURIComponent(projectId)),
+        fetch('/api/issues?projectId=' + encodeURIComponent(projectId)),
+      ]);
+      const aD = await aR.json(), iD = await iR.json();
+      const newA = aD.agents || [];
+      issues = Array.isArray(iD) ? iD : (iD.issues || []);
+
+      if (newA.map(a=>a.name).join() !== agents.map(a=>a.name).join()) {
+        Object.values(agentEls).forEach(e => e.remove());
+        agentEls = {};
+        Object.values(bubbleTimers).forEach(t => clearInterval(t));
+        bubbleTimers = {};
+        agents = newA;
+        agents.forEach((a, i) => createAgent(a, i));
+      } else {
+        agents = newA;
+        agents.forEach((a, i) => updateAgent(i, a));
+      }
+      updateStatus();
+    } catch (e) { console.error(e); }
+  }
+
+  // ── Manual controls ──
+  let manualWeather = null;
+  let manualStatus = null; // null=auto, 'working', 'idle'
+
+  window.setWeather = function(w) {
+    manualWeather = w;
+    currentWeather = '';
+    applyWeather(w);
+  };
+
+  window.setAllWorking = function() {
+    manualStatus = 'working';
+    agents.forEach((a, i) => {
+      const el = agentEls[i];
+      if (el) setAgentClass(el, a.name, 'working');
+    });
+  };
+
+  window.setAllIdle = function() {
+    manualStatus = 'idle';
+    agents.forEach((a, i) => {
+      const el = agentEls[i];
+      if (el) setAgentClass(el, a.name, 'idle');
+    });
+  };
+
+  window.setAutoMode = function() {
+    manualWeather = null;
+    manualStatus = null;
+    fetchWeather();
+    agents.forEach((a, i) => updateAgent(i, a));
+  };
+
+  function applyWeather(w) {
+    currentBgFile = WEATHER_BG[w] || 'bg-sunny.png';
+    bg.src = '/office/' + currentBgFile;
+    weatherBadge.textContent = WEATHER_LABEL[w] || '☀️ 맑음';
+    updateFloors();
+    const isRain = w === 'rain' || w === 'drizzle' || w === 'thunderstorm';
+    rainOv.classList.toggle('active', isRain);
+    if (isRain && !rainOv.children.length) createRaindrops();
+    if (!isRain) rainOv.innerHTML = '';
+    if (w === 'snow') {
+      snowOv.classList.add('active');
+      if (!snowOv.children.length) createSnowflakes();
+    } else {
+      snowOv.classList.remove('active');
+    }
+  }
+
+  // Override updateAgent to respect manual status
+  const _origUpdateAgent = updateAgent;
+  updateAgent = function(idx, agent) {
+    if (manualStatus) {
+      const el = agentEls[idx];
+      if (el) setAgentClass(el, agents[idx]?.name, manualStatus);
+      return;
+    }
+    _origUpdateAgent(idx, agent);
+  };
+
+  // Override fetchWeather to respect manual weather
+  const _origFetchWeather = fetchWeather;
+  fetchWeather = async function() {
+    if (manualWeather) return;
+    await _origFetchWeather();
+  };
+
+  // Init
+  fetchData();
+  _origFetchWeather();
+  setInterval(fetchData, 3000);
+  setInterval(() => { if (!manualWeather) _origFetchWeather(); }, 300000);
+  setInterval(updateStatus, 30000);
+})();
+</script>
+</body>
+</html>
